@@ -78,7 +78,7 @@ public enum ObjectiveExclusion {
             .deaths(KatzeDamageType.LIGHTNING_BOLT)
             .items(Material.MACE, Material.HEAVY_CORE, Material.BEACON, Material.NETHER_STAR, Material.CHAINMAIL_HELMET, Material.CHAINMAIL_CHESTPLATE,
                     Material.CHAINMAIL_LEGGINGS, Material.CHAINMAIL_BOOTS, Material.OCHRE_FROGLIGHT, Material.PEARLESCENT_FROGLIGHT, Material.VERDANT_FROGLIGHT,
-                    Material.OMINOUS_TRIAL_KEY, Material.ECHO_SHARD)),
+                    Material.OMINOUS_TRIAL_KEY, Material.ECHO_SHARD, Material.NETHERITE_BLOCK, Material.WITHER_ROSE)),
     MAPS(ForceBattleSettings.EXCLUDE_MAPS, Material.FILLED_MAP,
             ExclusionRules.builder().itemsNamed(ObjectiveExclusion::isStructureMap));
 
