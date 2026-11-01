@@ -6,6 +6,7 @@ import gg.itzkatze.katze.data.KatzeDamageType;
 import gg.itzkatze.katze.data.KatzeStructure;
 import gg.itzkatze.katze.forcebattle.ForceBattleSettings;
 import lombok.Getter;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +18,7 @@ import java.util.Set;
 
 @Getter
 public enum ObjectiveExclusion {
-    UNOBTAINABLE(null, Material.BARRIER, "Objectives that can't be obtained in survival", ExclusionRules.builder()
+    UNOBTAINABLE(null, Material.BARRIER, ExclusionRules.builder()
             .items(Material.AIR, Material.BEDROCK, Material.BARRIER, Material.LIGHT, Material.STRUCTURE_BLOCK, Material.STRUCTURE_VOID, Material.JIGSAW,
                     Material.TEST_BLOCK, Material.TEST_INSTANCE_BLOCK, Material.COMMAND_BLOCK, Material.CHAIN_COMMAND_BLOCK, Material.REPEATING_COMMAND_BLOCK,
                     Material.COMMAND_BLOCK_MINECART, Material.DEBUG_STICK, Material.KNOWLEDGE_BOOK, Material.SPAWNER, Material.TRIAL_SPAWNER, Material.VAULT,
@@ -27,19 +28,18 @@ public enum ObjectiveExclusion {
             .itemsNamed(name -> name.startsWith("INFESTED_") || name.endsWith("_SPAWN_EGG"))
             .mobs(EntityType.GIANT, EntityType.ILLUSIONER, EntityType.MANNEQUIN, EntityType.ARMOR_STAND, EntityType.CREAKING)
             .biomes("the_void")),
-    MUSIC_DISCS(ForceBattleSettings.EXCLUDE_MUSIC_DISCS, Material.MUSIC_DISC_CAT, "Music discs and the disc fragment", ExclusionRules.builder()
+    MUSIC_DISCS(ForceBattleSettings.EXCLUDE_MUSIC_DISCS, Material.MUSIC_DISC_CAT, ExclusionRules.builder()
             .items(Material.DISC_FRAGMENT_5)
             .itemsNamed(name -> name.startsWith("MUSIC_DISC_"))),
     BANNER_PATTERNS(ForceBattleSettings.EXCLUDE_BANNER_PATTERNS, Material.GLOBE_BANNER_PATTERN,
-            "Banner patterns except Field Masoned, Bordure Indented and Flower Charge",
             ExclusionRules.builder().itemsNamed(ObjectiveExclusion::isRareBannerPattern)),
-    ARMOR_TEMPLATES(ForceBattleSettings.EXCLUDE_ARMOR_TEMPLATES, Material.SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE, "Armor trim and netherite upgrade templates",
+    ARMOR_TEMPLATES(ForceBattleSettings.EXCLUDE_ARMOR_TEMPLATES, Material.SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE,
             ExclusionRules.builder().itemsNamed(name -> name.endsWith("_SMITHING_TEMPLATE"))),
-    POTTERY_SHERDS(ForceBattleSettings.EXCLUDE_POTTERY_SHERDS, Material.ANGLER_POTTERY_SHERD, "All pottery sherds", ExclusionRules.builder()
+    POTTERY_SHERDS(ForceBattleSettings.EXCLUDE_POTTERY_SHERDS, Material.ANGLER_POTTERY_SHERD, ExclusionRules.builder()
             .itemsNamed(name -> name.endsWith("_POTTERY_SHERD"))),
-    ORES(ForceBattleSettings.EXCLUDE_ORES, Material.DIAMOND_ORE, "All ore blocks", ExclusionRules.builder()
+    ORES(ForceBattleSettings.EXCLUDE_ORES, Material.DIAMOND_ORE, ExclusionRules.builder()
             .itemsNamed(name -> name.endsWith("_ORE"))),
-    END(ForceBattleSettings.EXCLUDE_END, Material.END_STONE, "End items, mobs, biomes, structures, advancements and deaths", ExclusionRules.builder()
+    END(ForceBattleSettings.EXCLUDE_END, Material.END_STONE, ExclusionRules.builder()
             .items(Material.END_STONE, Material.END_STONE_BRICKS, Material.END_STONE_BRICK_SLAB, Material.END_STONE_BRICK_STAIRS, Material.END_STONE_BRICK_WALL,
                     Material.END_ROD, Material.ELYTRA, Material.PURPUR_BLOCK, Material.PURPUR_PILLAR, Material.PURPUR_SLAB, Material.PURPUR_STAIRS,
                     Material.CHORUS_FLOWER, Material.CHORUS_FRUIT, Material.POPPED_CHORUS_FRUIT, Material.DRAGON_BREATH, Material.DRAGON_EGG, Material.DRAGON_HEAD,
@@ -52,24 +52,24 @@ public enum ObjectiveExclusion {
                     KatzeAdvancement.YOU_NEED_A_MINT, KatzeAdvancement.THE_CITY_AT_THE_END_OF_THE_GAME, KatzeAdvancement.SKY_IS_THE_LIMIT,
                     KatzeAdvancement.GREAT_VIEW_FROM_UP_HERE, KatzeAdvancement.IS_IT_A_PLANE)
             .deaths(KatzeDamageType.DRAGON_BREATH, KatzeDamageType.FLY_INTO_WALL)),
-    TRIAL_CHAMBERS(ForceBattleSettings.EXCLUDE_TRIAL_ITEMS, Material.TRIAL_SPAWNER, "Trial chamber loot, the Breeze and wind charge deaths", ExclusionRules.builder()
+    TRIAL_CHAMBERS(ForceBattleSettings.EXCLUDE_TRIAL_ITEMS, Material.TRIAL_SPAWNER, ExclusionRules.builder()
             .items(Material.TRIAL_KEY, Material.OMINOUS_TRIAL_KEY, Material.HEAVY_CORE, Material.MACE, Material.BREEZE_ROD, Material.WIND_CHARGE,
                     Material.FLOW_ARMOR_TRIM_SMITHING_TEMPLATE, Material.BOLT_ARMOR_TRIM_SMITHING_TEMPLATE, Material.FLOW_BANNER_PATTERN,
                     Material.GUSTER_BANNER_PATTERN, Material.FLOW_POTTERY_SHERD, Material.GUSTER_POTTERY_SHERD, Material.SCRAPE_POTTERY_SHERD,
                     Material.MUSIC_DISC_PRECIPICE, Material.MUSIC_DISC_CREATOR, Material.MUSIC_DISC_CREATOR_MUSIC_BOX)
             .mobs(EntityType.BREEZE)
             .deaths(KatzeDamageType.WIND_CHARGE)),
-    OXIDIZED_COPPER(ForceBattleSettings.EXCLUDE_OXIDIZED_COPPER, Material.OXIDIZED_COPPER_LANTERN, "Copper items that only exist through oxidation",
+    OXIDIZED_COPPER(ForceBattleSettings.EXCLUDE_OXIDIZED_COPPER, Material.OXIDIZED_COPPER_LANTERN,
             ExclusionRules.builder().itemsNamed(ObjectiveExclusion::isOxidationOnlyCopper)),
-    HEADS(ForceBattleSettings.EXCLUDE_HEADS, Material.PIGLIN_HEAD, "Mob heads, skulls and the banner patterns made from them", ExclusionRules.builder()
+    HEADS(ForceBattleSettings.EXCLUDE_HEADS, Material.PIGLIN_HEAD, ExclusionRules.builder()
             .items(Material.CREEPER_HEAD, Material.ZOMBIE_HEAD, Material.PIGLIN_HEAD, Material.DRAGON_HEAD, Material.SKELETON_SKULL, Material.WITHER_SKELETON_SKULL,
                     Material.CREEPER_BANNER_PATTERN, Material.SKULL_BANNER_PATTERN)
             .advancements(KatzeAdvancement.SPOOKY_SCARY_SKELETON)),
-    SNIFFER(ForceBattleSettings.EXCLUDE_SNIFFER, Material.SNIFFER_EGG, "Sniffer items, the Sniffer and its advancements", ExclusionRules.builder()
+    SNIFFER(ForceBattleSettings.EXCLUDE_SNIFFER, Material.SNIFFER_EGG, ExclusionRules.builder()
             .items(Material.SNIFFER_EGG, Material.TORCHFLOWER_SEEDS, Material.TORCHFLOWER, Material.PITCHER_POD, Material.PITCHER_PLANT)
             .mobs(EntityType.SNIFFER)
             .advancements(KatzeAdvancement.SMELLS_INTERESTING, KatzeAdvancement.LITTLE_SNIFFS, KatzeAdvancement.PLANTING_THE_PAST)),
-    UNREALISTIC(ForceBattleSettings.EXCLUDE_UNREALISTIC, Material.CLOCK, "Very long advancements and thunderstorm-only objectives", ExclusionRules.builder()
+    UNREALISTIC(ForceBattleSettings.EXCLUDE_UNREALISTIC, Material.CLOCK, ExclusionRules.builder()
             .advancements(KatzeAdvancement.HOW_DID_WE_GET_HERE, KatzeAdvancement.ADVENTURING_TIME, KatzeAdvancement.A_BALANCED_DIET, KatzeAdvancement.MONSTERS_HUNTED,
                     KatzeAdvancement.TWO_BY_TWO, KatzeAdvancement.A_COMPLETE_CATALOGUE, KatzeAdvancement.SMITHING_WITH_STYLE, KatzeAdvancement.A_FURIOUS_COCKTAIL,
                     KatzeAdvancement.BEACONATOR, KatzeAdvancement.WITH_OUR_POWERS_COMBINED, KatzeAdvancement.WHEN_THE_SQUAD_HOPS_INTO_TOWN,
@@ -79,7 +79,7 @@ public enum ObjectiveExclusion {
             .items(Material.MACE, Material.HEAVY_CORE, Material.BEACON, Material.NETHER_STAR, Material.CHAINMAIL_HELMET, Material.CHAINMAIL_CHESTPLATE,
                     Material.CHAINMAIL_LEGGINGS, Material.CHAINMAIL_BOOTS, Material.OCHRE_FROGLIGHT, Material.PEARLESCENT_FROGLIGHT, Material.VERDANT_FROGLIGHT,
                     Material.OMINOUS_TRIAL_KEY, Material.ECHO_SHARD)),
-    MAPS(ForceBattleSettings.EXCLUDE_MAPS, Material.FILLED_MAP, "Structure maps from cartographer trades and abandoned camp chests",
+    MAPS(ForceBattleSettings.EXCLUDE_MAPS, Material.FILLED_MAP,
             ExclusionRules.builder().itemsNamed(ObjectiveExclusion::isStructureMap));
 
     private static final Set<String> COMMON_BANNER_PATTERNS = Set.of("FIELD_MASONED_BANNER_PATTERN", "BORDURE_INDENTED_BANNER_PATTERN", "FLOWER_BANNER_PATTERN");
@@ -88,13 +88,19 @@ public enum ObjectiveExclusion {
 
     private final @Nullable ForceBattleSettings setting;
     private final @NotNull Material icon;
-    private final @NotNull String description;
     private final @NotNull ExclusionRules rules;
 
-    ObjectiveExclusion(@Nullable ForceBattleSettings setting, @NotNull Material icon, @NotNull String description, @NotNull ExclusionRules.Builder rules) {
+    public @NotNull Component getDisplayName() {
+        return Component.translatable("katze.forcebattle.exclusion." + name().toLowerCase(java.util.Locale.ROOT) + ".name");
+    }
+
+    @NotNull public Component getDescription() {
+        return Component.translatable("katze.forcebattle.exclusion." + name().toLowerCase(java.util.Locale.ROOT) + ".description");
+    }
+
+    ObjectiveExclusion(@Nullable ForceBattleSettings setting, @NotNull Material icon, @NotNull ExclusionRules.Builder rules) {
         this.setting = setting;
         this.icon = icon;
-        this.description = description;
         this.rules = rules.build();
     }
 

@@ -24,7 +24,7 @@ import gg.itzkatze.katze.lobby.cosmetics.MusicChannel;
 import gg.itzkatze.katze.lobby.cosmetics.MusicManager;
 import gg.itzkatze.katze.lobby.cosmetics.cases.CaseFireworkGuard;
 import gg.itzkatze.katze.lobby.cosmetics.cases.CaseRollGui;
-import gg.itzkatze.katze.lobby.cosmetics.PointsSidebar;
+import gg.itzkatze.katze.lobby.PointsSidebar;
 import gg.itzkatze.katze.player.data.PlayerDataStore;
 import gg.itzkatze.katze.gui.sign.SignInput;
 import gg.itzkatze.katze.configuration.SettingsFile;
@@ -35,6 +35,7 @@ import gg.itzkatze.katze.scoreboard.NameTags;
 import gg.itzkatze.katze.scoreboard.ScoreboardManager;
 import gg.itzkatze.katze.spectator.SpectatorChat;
 import gg.itzkatze.katze.spectator.SpectatorListener;
+import gg.itzkatze.katze.text.Texts;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -78,6 +79,7 @@ public final class KatzeGames extends JavaPlugin {
         } catch (IOException e) {
             throw new RuntimeException("settings.json File not found", e);
         }
+        Texts.load(getFile());
         installTimerEngine();
         PlayerDataStore.load();
         CosmeticStore.load();
@@ -133,6 +135,7 @@ public final class KatzeGames extends JavaPlugin {
         }
         getConfig().set("first-startup", false);
         saveConfig();
+        Texts.unload();
     }
 
     public @NotNull File getDataDirectory() {

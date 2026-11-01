@@ -17,7 +17,7 @@ import java.util.List;
 public class AllItemsMissingObjectivesMenu extends KatzeGUI {
 
     public AllItemsMissingObjectivesMenu() {
-        super("Missing Objectives", 27);
+        super(Component.translatable("katze.allitems.missing.title"), 27);
     }
 
     @Override
@@ -44,14 +44,13 @@ public class AllItemsMissingObjectivesMenu extends KatzeGUI {
             public ItemStack getItem(KatzePlayer p) {
                 TextColor color = enabled ? KatzeColor.LIGHT_BLUE : KatzeColor.RED;
                 return ItemStackCreator.getStack(
-                        Component.text(type.getDisplayName()).color(color),
+                        Component.translatable("katze.allitems.type." + type.name().toLowerCase(java.util.Locale.ROOT)).color(color),
                         type.getIcon(),
                         1,
                         List.of(
-                                Component.text("Status: ").color(KatzeColor.LIGHT_GRAY)
-                                        .append(Component.text(enabled ? "Enabled" : "Disabled").color(color)),
+                                Component.translatable("katze.allitems.gui.status", gg.itzkatze.katze.text.TextArg.component("state", Component.translatable(enabled ? "katze.allitems.gui.enabled" : "katze.allitems.gui.disabled").color(color))),
                                 Component.empty(),
-                                Component.text("Click to view").color(KatzeColor.YELLOW)
+                                Component.translatable("katze.allitems.gui.view").color(KatzeColor.YELLOW)
                         )
                 );
             }

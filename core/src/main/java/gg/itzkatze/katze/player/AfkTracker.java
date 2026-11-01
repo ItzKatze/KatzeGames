@@ -51,10 +51,10 @@ public final class AfkTracker implements Listener {
             long idle = now - lastInput.computeIfAbsent(id, key -> now);
             if (idle >= IDLE_MILLIS) {
                 if (afk.add(id)) {
-                    player.sendMessage(Component.text("You are now AFK.", KatzeColor.LIGHT_GRAY));
+                    player.sendMessage(Component.translatable("katze.game.afk.enter").color(KatzeColor.LIGHT_GRAY));
                 }
             } else if (afk.remove(id)) {
-                player.sendMessage(Component.text("You are no longer AFK.", KatzeColor.LIGHT_GRAY));
+                player.sendMessage(Component.translatable("katze.game.afk.exit").color(KatzeColor.LIGHT_GRAY));
             }
         }
     }

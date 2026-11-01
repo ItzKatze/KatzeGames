@@ -18,9 +18,9 @@ final class PlateDisplay {
     private static final NamespacedKey TAG = new NamespacedKey("katze", "lobby_jump_and_run");
     private static final double HEIGHT = 1.6;
     private static final Component TEXT = Component.textOfChildren(
-            Component.text("Jump & Run", KatzeColor.GOLD, TextDecoration.BOLD),
+            Component.translatable("katze.cosmetics.jump_and_run.title").color(KatzeColor.GOLD).decorate(TextDecoration.BOLD),
             Component.newline(),
-            Component.text("Step on the plate", KatzeColor.LIGHT_GRAY));
+            Component.translatable("katze.cosmetics.jump_and_run.prompt").color(KatzeColor.LIGHT_GRAY));
 
     private PlateDisplay() {
     }

@@ -1,24 +1,23 @@
 package gg.itzkatze.katze.lobby.cosmetics;
 
 import org.bukkit.Material;
+import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
 public enum CosmeticCategory {
 
-    BLOCK("Run Blocks", Material.GRASS_BLOCK),
-    SOUND("Landing Sounds", Material.NOTE_BLOCK),
-    MUSIC("Music", Material.JUKEBOX);
+    BLOCK(Material.GRASS_BLOCK),
+    SOUND(Material.NOTE_BLOCK),
+    MUSIC(Material.JUKEBOX);
 
-    private final String title;
     private final Material icon;
 
-    CosmeticCategory(String title, Material icon) {
-        this.title = title;
+    CosmeticCategory(Material icon) {
         this.icon = icon;
     }
 
-    public @NotNull String title() {
-        return title;
+    public @NotNull Component titleComponent() {
+        return Component.translatable("katze.cosmetics.category." + name().toLowerCase(java.util.Locale.ROOT));
     }
 
     public @NotNull Material icon() {

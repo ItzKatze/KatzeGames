@@ -3,6 +3,7 @@ package gg.itzkatze.katze.gui.sign;
 import gg.itzkatze.katze.KatzeGames;
 import gg.itzkatze.katze.gui.KatzeGUI;
 import gg.itzkatze.katze.player.KatzePlayer;
+import gg.itzkatze.katze.text.Texts;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
@@ -45,7 +46,7 @@ public class SignInput implements Listener {
 
         Sign sign = (Sign) target.getState();
         for (int i = 0; i < 4; i++) {
-            Component line = i < lines.size() ? lines.get(i) : Component.empty();
+            Component line = i < lines.size() ? Texts.render(lines.get(i), bukkitPlayer) : Component.empty();
             sign.line(i, line);
         }
         sign.update(false, false);

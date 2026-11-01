@@ -8,6 +8,7 @@ import gg.itzkatze.katze.data.KatzeAdvancement;
 import gg.itzkatze.katze.data.KatzeDamageType;
 import gg.itzkatze.katze.data.KatzeStructure;
 import gg.itzkatze.katze.data.MobsSimplified;
+import gg.itzkatze.katze.data.ObjectiveNames;
 import gg.itzkatze.katze.data.StructureSimplified;
 import gg.itzkatze.katze.player.KatzePlayer;
 import lombok.Getter;
@@ -18,6 +19,7 @@ import org.bukkit.block.Biome;
 import org.bukkit.entity.EntityType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import net.kyori.adventure.text.Component;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -107,6 +109,17 @@ public class ForceBattleObjective implements ChallengeObjective {
         if (objectiveValue instanceof KatzeStructure || objectiveValue instanceof StructureSimplified) return Material.STRUCTURE_BLOCK;
         if (objectiveValue instanceof KatzeDamageType || objectiveValue instanceof DamageTypeSimplified) return Material.SKELETON_SKULL;
         return Material.BOOK;
+    }
+
+    public @NotNull Component displayName() {
+        if (objectiveValue instanceof BiomeSimplified value) return ObjectiveNames.of(value);
+        if (objectiveValue instanceof MobsSimplified value) return ObjectiveNames.of(value);
+        if (objectiveValue instanceof DamageTypeSimplified value) return ObjectiveNames.of(value);
+        if (objectiveValue instanceof StructureSimplified value) return ObjectiveNames.of(value);
+        if (objectiveValue instanceof KatzeAdvancement value) return ObjectiveNames.of(value);
+        if (objectiveValue instanceof KatzeStructure value) return ObjectiveNames.of(value);
+        if (objectiveValue instanceof KatzeDamageType value) return ObjectiveNames.of(value);
+        return Component.text(gg.itzkatze.katze.util.StringUtility.formatName(objectiveString));
     }
 
     public @Nullable <T> T getObjectiveValue(@NotNull Class<T> type) {

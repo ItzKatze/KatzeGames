@@ -6,8 +6,8 @@ import gg.itzkatze.katze.team.KatzeTeam;
 import gg.itzkatze.katze.player.KatzePlayer;
 import gg.itzkatze.katze.scoreboard.ScoreboardContent;
 import gg.itzkatze.katze.util.KatzeColor;
-import gg.itzkatze.katze.util.StringUtility;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ public class ForceBattleScoreboardContent implements ScoreboardContent {
 
     @Override
     @NotNull public Component getTitle() {
-        return Component.text("ForceBattle");
+        return Component.translatable("katze.forcebattle.scoreboard.title");
     }
 
     @Override
@@ -30,11 +30,10 @@ public class ForceBattleScoreboardContent implements ScoreboardContent {
         // Player's objective
         ForceBattleObjective selfObjective = player.getObjective();
         if (selfObjective != null) {
-            lines.add(Component.text("Your Objective:").color(KatzeColor.YELLOW));
-            String objName = getObjectiveDisplay(selfObjective);
-            lines.add(Component.text(truncate(objName)).color(KatzeColor.WHITE));
+            lines.add(Component.translatable("katze.forcebattle.scoreboard.your_objective").color(KatzeColor.YELLOW));
+            lines.add(truncate(selfObjective.displayName(), KatzeColor.WHITE));
         } else {
-            lines.add(Component.text("No current objective").color(KatzeColor.LIGHT_GRAY));
+            lines.add(Component.translatable("katze.forcebattle.scoreboard.no_objective").color(KatzeColor.LIGHT_GRAY));
         }
 
         lines.add(Component.text(" ")); // Spacer
@@ -46,15 +45,14 @@ public class ForceBattleScoreboardContent implements ScoreboardContent {
             // Team objective (if enabled)
             ForceBattleObjective teamObjective = (ForceBattleObjective) team.getObjective();
             if (teamObjective != null && SettingsManager.isEnabled(GlobalSetting.EXTRA_TEAM_OBJECTIVE)) {
-                lines.add(Component.text("Team Objective:").color(KatzeColor.YELLOW));
-                String objName = getObjectiveDisplay(teamObjective);
-                lines.add(Component.text(truncate(objName)).color(KatzeColor.WHITE));
+                lines.add(Component.translatable("katze.forcebattle.scoreboard.team_objective").color(KatzeColor.YELLOW));
+                lines.add(truncate(teamObjective.displayName(), KatzeColor.WHITE));
                 lines.add(Component.text("  ")); // Spacer
             }
 
             // Teammates
             if (team.getPlayers().size() > 1) {
-                lines.add(Component.text("Teammates:").color(KatzeColor.YELLOW));
+                lines.add(Component.translatable("katze.forcebattle.scoreboard.teammates").color(KatzeColor.YELLOW));
 
                 for (KatzePlayer teammate : team.getPlayers()) {
                     if (teammate.equals(player)) continue;
@@ -64,11 +62,9 @@ public class ForceBattleScoreboardContent implements ScoreboardContent {
                             .append(Component.text(teammate.getName()).color(KatzeColor.LIGHT_BLUE)));
 
                     ForceBattleObjective teammateObjective = teammatePlayer.getObjective();
-                    String objName = teammateObjective != null
-                            ? getObjectiveDisplay(teammateObjective)
-                            : "None";
-
-                    lines.add(Component.text("  " + truncate(objName)).color(KatzeColor.WHITE));
+                    lines.add(teammateObjective == null
+                            ? Component.translatable("katze.forcebattle.scoreboard.none").color(KatzeColor.WHITE)
+                            : Component.text("  ").append(truncate(teammateObjective.displayName(), KatzeColor.WHITE)));
                 }
             }
         }
@@ -76,22 +72,12 @@ public class ForceBattleScoreboardContent implements ScoreboardContent {
         return lines.toArray(new Component[0]);
     }
 
-    private String getObjectiveDisplay(ForceBattleObjective objective) {
-        String icon = switch (objective.getBattleType()) {
-            case FORCE_ITEM -> "✦";
-            case FORCE_MOB -> "☮";
-            case FORCE_ADVANCEMENT -> "★";
-            case FORCE_HEIGHT -> "⛰";
-            case FORCE_COORDS -> "⚑";
-            case FORCE_STRUCTURE -> "⌂";
-            case FORCE_BIOME -> "☀";
-            case FORCE_DEATH -> "☠";
-        };
-        return "[" + icon + "] " + StringUtility.formatName(objective.getObjectiveString());
-    }
-
-    private String truncate(String value) {
-        return value.length() > MAX_STRING_LENGTH ? value.substring(0, 21) + "..." : value;
+    private Component truncate(Component value, TextColor color) {
+        String plain = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(value);
+        if (plain.length() <= MAX_STRING_LENGTH) {
+            return value.color(color);
+        }
+        return Component.text(plain.substring(0, 21) + "...").color(color);
     }
 
     @Override
@@ -99,3 +85,4 @@ public class ForceBattleScoreboardContent implements ScoreboardContent {
         return 0; // Default priority for ForceBattle
     }
 }
+

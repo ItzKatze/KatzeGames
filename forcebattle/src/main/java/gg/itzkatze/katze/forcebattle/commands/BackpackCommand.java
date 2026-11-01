@@ -32,11 +32,11 @@ public class BackpackCommand extends KatzeCommand {
     @Override
     public void executeCommand(CommandCaller caller, String[] args) {
         if (!SettingsManager.isEnabled(ForceBattleSettings.BACKPACK)) {
-            caller.sendMessage(Component.text("Backpacks are disabled.").color(KatzeColor.RED));
+            caller.sendMessage(Component.translatable("katze.forcebattle.command.backpacks_disabled").color(KatzeColor.RED));
             return;
         }
         if (ForceBattleGameListener.startPhase) {
-            caller.sendMessage(Component.text("The game hasn't started yet.").color(KatzeColor.RED));
+            caller.sendMessage(Component.translatable("katze.forcebattle.command.game_not_started").color(KatzeColor.RED));
             return;
         }
 

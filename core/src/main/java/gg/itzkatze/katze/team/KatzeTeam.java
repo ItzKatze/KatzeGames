@@ -156,8 +156,7 @@ public class KatzeTeam {
         }
         this.lastJoinRequest = new JoinRequest(katzePlayer, this);
         players.forEach(teamPlayer ->
-                teamPlayer.sendMessage(Component.text(katzePlayer.getName(), KatzeColor.BLUE)
-                        .append(Component.text(" has requested to join your team. /team accept|reject.", KatzeColor.LIGHT_GRAY)))
+                teamPlayer.sendMessage(Component.translatable("katze.team.requested_join", gg.itzkatze.katze.text.TextArg.text("name", katzePlayer.getName())))
         );
     }
 
@@ -187,10 +186,9 @@ public class KatzeTeam {
         }
 
         players.forEach(teamPlayer ->
-                teamPlayer.sendMessage(Component.text(katzePlayer.getName(), KatzeColor.BLUE)
-                        .append(Component.text(" has joined your team.", KatzeColor.LIGHT_GRAY))));
+                teamPlayer.sendMessage(Component.translatable("katze.team.player_joined", gg.itzkatze.katze.text.TextArg.text("name", katzePlayer.getName()))));
         players.add(katzePlayer);
-        katzePlayer.sendMessage(Component.text("You have joined team " + this.getId() + ".", KatzeColor.LIME));
+        katzePlayer.sendMessage(Component.translatable("katze.team.joined", gg.itzkatze.katze.text.TextArg.number("id", this.getId())).color(KatzeColor.LIME));
     }
 
     public void removePlayer(KatzePlayer katzePlayer) {
@@ -203,8 +201,7 @@ public class KatzeTeam {
 
         players.remove(katzePlayer);
         players.forEach(teamPlayer ->
-                teamPlayer.sendMessage(Component.text(katzePlayer.getName(), KatzeColor.BLUE)
-                        .append(Component.text(" has left your team.", KatzeColor.LIGHT_GRAY))));
+                teamPlayer.sendMessage(Component.translatable("katze.team.player_left", gg.itzkatze.katze.text.TextArg.text("name", katzePlayer.getName()))));
         if (players.isEmpty()) {
             this.delete();
         }
@@ -303,7 +300,7 @@ public class KatzeTeam {
             }
 
             public void reject() {
-                katzePlayer.sendMessage(Component.text("Your join request has been rejected.", KatzeColor.LIGHT_GRAY));
+                katzePlayer.sendMessage(Component.translatable("katze.team.request_rejected").color(KatzeColor.LIGHT_GRAY));
             }
 
         }

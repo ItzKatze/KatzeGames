@@ -13,6 +13,7 @@ import gg.itzkatze.katze.data.MobsSimplified;
 import gg.itzkatze.katze.data.StructureSimplified;
 import gg.itzkatze.katze.forcebattle.exclusion.ObjectiveFilter;
 import gg.itzkatze.katze.player.KatzePlayer;
+import gg.itzkatze.katze.text.TextArg;
 import gg.itzkatze.katze.util.KatzeColor;
 import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
@@ -114,8 +115,8 @@ public class ForceBattleObjectiveManager {
         }
 
         if (allPossible.isEmpty()) {
-            player.sendMessage(Component.text("No objective available for BattleType " + battleType.name() + ". Possible all completed already?")
-                    .color(KatzeColor.RED));
+            player.sendMessage(Component.translatable("katze.forcebattle.objective.none_available",
+                    TextArg.text("type", battleType.name())).color(KatzeColor.RED));
             if (team != null && SettingsManager.isEnabled(GlobalSetting.EXTRA_TEAM_OBJECTIVE)) {
                 return getNewObjective(team);
             } else {

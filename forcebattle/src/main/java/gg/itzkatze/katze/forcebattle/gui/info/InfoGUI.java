@@ -14,15 +14,15 @@ import org.bukkit.inventory.ItemStack;
 public class InfoGUI extends KatzeGUI {
 
     public InfoGUI() {
-        super("Information", 27);
+        super(Component.translatable("katze.forcebattle.info.title"), 27);
     }
 
     @Getter
     private enum SimplifiedTasks {
-        BIOMES(10, "Simplified Biomes", Material.GRASS_BLOCK, new InfoSimplifiedBiomesGUI()),
-        STRUCTURES(12, "Simplified Structures", Material.STRUCTURE_BLOCK, new InfoSimplifiedStructuresGUI()),
-        MOBS(14, "Simplified Mobs", Material.DIAMOND_SWORD, new InfoSimplifiedMobsGUI()),
-        DEATHS(16, "Simplified Deaths", Material.SKELETON_SKULL, new InfoSimplifiedDeathsGUI()),
+        BIOMES(10, "biomes", Material.GRASS_BLOCK, new InfoSimplifiedBiomesGUI()),
+        STRUCTURES(12, "structures", Material.STRUCTURE_BLOCK, new InfoSimplifiedStructuresGUI()),
+        MOBS(14, "mobs", Material.DIAMOND_SWORD, new InfoSimplifiedMobsGUI()),
+        DEATHS(16, "deaths", Material.SKELETON_SKULL, new InfoSimplifiedDeathsGUI()),
         ;
 
         private final int slot;
@@ -51,7 +51,7 @@ public class InfoGUI extends KatzeGUI {
 
                 @Override
                 public ItemStack getItem(final KatzePlayer player) {
-                    return ItemStackCreator.getStack(Component.text(task.getName()).color(KatzeColor.BLUE), task.getMaterial(), 1);
+                    return ItemStackCreator.getStack(Component.translatable("katze.forcebattle.info." + task.getName()).color(KatzeColor.BLUE), task.getMaterial(), 1);
                 }
             });
         }

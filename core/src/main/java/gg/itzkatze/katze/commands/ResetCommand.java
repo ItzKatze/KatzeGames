@@ -28,12 +28,12 @@ public class ResetCommand extends KatzeCommand {
     @Override
     public void executeCommand(@NotNull CommandCaller caller, String[] args) {
         if (ChallengeManager.getActiveChallenges().isEmpty()) {
-            caller.sendMessage(Component.text("No challenge is enabled, nothing to reset.").color(KatzeColor.RED));
+            caller.sendMessage(Component.translatable("katze.game.reset.no_challenge").color(KatzeColor.RED));
             return;
         }
 
         GameLifecycleManager.resetGame();
-        caller.sendMessage(Component.text("The game has been reset.").color(KatzeColor.LIME));
+        caller.sendMessage(Component.translatable("katze.game.reset.success").color(KatzeColor.LIME));
     }
 
     @Override

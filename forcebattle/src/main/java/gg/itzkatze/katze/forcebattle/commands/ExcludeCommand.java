@@ -32,7 +32,7 @@ public class ExcludeCommand extends KatzeCommand {
     public void executeCommand(CommandCaller caller, String[] args) {
         if (args.length < 1) {
             if (!caller.callerType().equals(CallerType.PLAYER)) {
-                caller.sendMessage(Component.text("Only players may use this command.").color(KatzeColor.RED));
+            caller.sendMessage(Component.translatable("katze.forcebattle.command.players_only").color(KatzeColor.RED));
                 return;
             }
             @NotNull Optional<KatzePlayer> battlePlayerOpt = KatzePlayer.adapt(caller.getName());

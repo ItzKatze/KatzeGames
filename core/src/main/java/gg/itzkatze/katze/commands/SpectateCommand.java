@@ -31,18 +31,18 @@ public class SpectateCommand extends KatzeCommand {
         if (!(caller instanceof KatzePlayer player)) return;
 
         if (ChallengeManager.isGameStarted()) {
-            caller.sendMessage(Component.text("You can't switch during a battle. After /reset you can choose again.", KatzeColor.RED));
+            caller.sendMessage(Component.translatable("katze.game.spectate.cannot_switch").color(KatzeColor.RED));
             return;
         }
         if (player.isSpectator()) {
             SpectatorManager.remove(player.getUuid());
-            caller.sendMessage(Component.text("You will play in the next battle.", KatzeColor.LIME));
+            caller.sendMessage(Component.translatable("katze.game.spectate.play_next").color(KatzeColor.LIME));
             return;
         }
         SpectatorManager.choose(player.getUuid());
         player.leaveTeam();
         TeamChatManager.setTeamChatEnabled(player, false);
-        caller.sendMessage(Component.text("You will spectate the next battle. Type /spectate again to play.", KatzeColor.LIME));
+        caller.sendMessage(Component.translatable("katze.game.spectate.spectate_next").color(KatzeColor.LIME));
     }
 
     @Override

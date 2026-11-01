@@ -75,7 +75,7 @@ public class LevelCommand extends KatzeCommand {
 
     private void add(@NotNull CommandCaller caller, String @NotNull [] args) {
         if (!caller.hasPermission(PermissionDefault.OP)) {
-            caller.sendMessage(Component.text("Insufficient permission to execute this command!"));
+            caller.sendMessage(Component.translatable("katze.command.no_permission"));
             return;
         }
         if (args.length != 3) {
@@ -91,24 +91,33 @@ public class LevelCommand extends KatzeCommand {
         try {
             amount = Integer.parseInt(args[2]);
         } catch (NumberFormatException e) {
-            caller.sendMessage(Component.text("Please specify a valid number.", KatzeColor.RED));
+            caller.sendMessage(Component.translatable("katze.game.invalid_number").color(KatzeColor.RED));
             return;
         }
         int total = LevelStore.get().adjust(target.get().id(), target.get().name(), amount);
-        caller.sendMessage(Component.text(target.get().name() + " now has " + total + " XP (level " + LevelCurve.levelFor(total) + ").", KatzeColor.LIME));
+        caller.sendMessage(Component.translatable("katze.level.updated",
+                gg.itzkatze.katze.text.TextArg.text("name", target.get().name()),
+                gg.itzkatze.katze.text.TextArg.number("xp", total),
+                gg.itzkatze.katze.text.TextArg.number("level", LevelCurve.levelFor(total))).color(KatzeColor.LIME));
     }
 
     private static void show(@NotNull CommandCaller caller, @NotNull Target target) {
         LevelProgress progress = LevelStore.get().progress(target.id());
-        String next = progress.cost() == 0 ? "max level" : progress.into() + "/" + progress.cost() + " XP to level " + (progress.level() + 1);
+        Component next = progress.cost() == 0
+                ? Component.translatable("katze.level.max")
+                : Component.translatable("katze.level.next_progress",
+                        gg.itzkatze.katze.text.TextArg.number("into", progress.into()),
+                        gg.itzkatze.katze.text.TextArg.number("cost", progress.cost()),
+                        gg.itzkatze.katze.text.TextArg.number("level", progress.level() + 1));
         caller.sendMessage(Component.textOfChildren(
                 LevelTag.of(progress.level()),
-                Component.text(" " + target.name(), KatzeColor.WHITE),
-                Component.text(": " + next + ", " + LevelStore.get().xp(target.id()) + " XP in total.", KatzeColor.LIGHT_GRAY)));
+                Component.translatable("katze.level.status", gg.itzkatze.katze.text.TextArg.text("name", target.name()),
+                        gg.itzkatze.katze.text.TextArg.component("next", next),
+                        gg.itzkatze.katze.text.TextArg.number("xp", LevelStore.get().xp(target.id())))));
     }
 
     private static void unknown(@NotNull CommandCaller caller, @NotNull String name) {
-        caller.sendMessage(Component.text("No player named " + name + " has any XP yet.", KatzeColor.RED));
+        caller.sendMessage(Component.translatable("katze.level.unknown_player", gg.itzkatze.katze.text.TextArg.text("name", name)).color(KatzeColor.RED));
     }
 
     private static @NotNull Optional<Target> find(@NotNull String name) {

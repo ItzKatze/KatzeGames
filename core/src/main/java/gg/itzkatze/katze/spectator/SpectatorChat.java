@@ -24,7 +24,7 @@ public class SpectatorChat implements Listener {
 
         event.setCancelled(true);
         Component line = Component.textOfChildren(
-                Component.text("[Spectator] ", KatzeColor.LIGHT_GRAY),
+                Component.translatable("katze.spectator.chat.prefix").color(KatzeColor.LIGHT_GRAY).append(Component.text(" ")),
                 LevelTag.of(LevelStore.get().level(sender.getUniqueId())),
                 Component.text(" <" + sender.getName() + "> ", KatzeColor.WHITE),
                 event.message().colorIfAbsent(KatzeColor.WHITE));

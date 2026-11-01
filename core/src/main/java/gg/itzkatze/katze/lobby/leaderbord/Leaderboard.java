@@ -168,17 +168,17 @@ public class Leaderboard implements LobbyFeature, Listener {
 
     static @NotNull Component render(@NotNull LeaderboardMetric metric, @NotNull List<Standing> standings) {
         TextComponent.Builder text = Component.text()
-                .append(Component.text(metric.title(), KatzeColor.LIGHT_BLUE, TextDecoration.BOLD, TextDecoration.UNDERLINED)).appendNewline()
+                .append(metric.title().color(KatzeColor.LIGHT_BLUE).decorate(TextDecoration.BOLD, TextDecoration.UNDERLINED)).appendNewline()
                 .appendNewline()
                 ;
         if (standings.isEmpty()) {
-            text.append(Component.text("No entries yet", KatzeColor.LIGHT_GRAY)).appendNewline();
+            text.append(Component.translatable("katze.cosmetics.leaderboard.empty").color(KatzeColor.LIGHT_GRAY)).appendNewline();
         }
         for (int i = 0; i < standings.size(); i++) {
             Standing standing = standings.get(i);
             text.append(Component.text((i + 1) + ". " + standing.name() + "  " + standing.value(), rankColor(i))).appendNewline();
         }
-        return text.appendNewline().append(Component.text("Click to switch", KatzeColor.LIGHT_GRAY)).build();
+        return text.appendNewline().append(Component.translatable("katze.cosmetics.leaderboard.click_to_switch").color(KatzeColor.LIGHT_GRAY)).build();
     }
 
     public static @NotNull TextColor rankColor(int index) {

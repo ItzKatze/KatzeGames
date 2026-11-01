@@ -1,5 +1,6 @@
 package gg.itzkatze.katze.lobby.cosmetics;
 
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,11 +16,17 @@ import java.util.stream.Collectors;
 
 public final class CosmeticProfile {
 
+    @Getter
     private int points;
+    @Getter
     private int earned;
+    @Getter
     private int best;
+    @Getter
     private int casesOpened;
+    @Getter
     private int duplicateStreak;
+    @Getter
     private int caseCount = 1;
     private List<String> owned = new ArrayList<>();
     private List<String> equipped = new ArrayList<>();
@@ -35,30 +42,6 @@ public final class CosmeticProfile {
         profile.owned = owned == null ? null : new ArrayList<>(owned);
         profile.equipped = equipped == null ? null : new ArrayList<>(equipped);
         return profile;
-    }
-
-    int points() {
-        return points;
-    }
-
-    int earned() {
-        return earned;
-    }
-
-    int best() {
-        return best;
-    }
-
-    int casesOpened() {
-        return casesOpened;
-    }
-
-    int duplicateStreak() {
-        return duplicateStreak;
-    }
-
-    int caseCount() {
-        return caseCount;
     }
 
     void rememberCaseCount(int count) {

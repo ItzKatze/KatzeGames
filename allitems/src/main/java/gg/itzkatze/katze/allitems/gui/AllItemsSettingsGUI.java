@@ -21,19 +21,19 @@ import java.util.List;
 public class AllItemsSettingsGUI extends KatzeGUI {
 
     public AllItemsSettingsGUI() {
-        super("All Items Settings", 45);
+        super(Component.translatable("katze.allitems.settings.title"), 45);
     }
 
     private enum SettingButton {
-        MODE(10, Material.PLAYER_HEAD, "Game Mode", AllItemsSettingsGUI::toggleGameMode, null),
-        ITEMS(12, Material.CHEST, "Items", null, AllItemsSettings.AllItemsSetting.ITEMS),
-        BIOMES(13, Material.GRASS_BLOCK, "Biomes", null, AllItemsSettings.AllItemsSetting.BIOMES),
-        MOBS(14, Material.ZOMBIE_SPAWN_EGG, "Mobs", null, AllItemsSettings.AllItemsSetting.MOBS),
-        STRUCTURES(15, Material.STRUCTURE_BLOCK, "Structures", null, AllItemsSettings.AllItemsSetting.STRUCTURES),
-        ADVANCEMENTS(16, Material.BOOK, "Advancements", null, AllItemsSettings.AllItemsSetting.ADVANCEMENTS),
-        CHAIN_MODE(28, Material.IRON_CHAIN, "Chain Mode", null, AllItemsSettings.AllItemsSetting.CHAIN_MODE),
-        MISSING(30, Material.MAP, "Missing Objectives", AllItemsSettingsGUI::openMissing, null),
-        LEADERBOARD(32, Material.NAME_TAG, "Leaderboard", AllItemsSettingsGUI::openLeaderboard, null);
+        MODE(10, Material.PLAYER_HEAD, "katze.allitems.mode.title", AllItemsSettingsGUI::toggleGameMode, null),
+        ITEMS(12, Material.CHEST, "katze.allitems.category.items", null, AllItemsSettings.AllItemsSetting.ITEMS),
+        BIOMES(13, Material.GRASS_BLOCK, "katze.allitems.category.biomes", null, AllItemsSettings.AllItemsSetting.BIOMES),
+        MOBS(14, Material.ZOMBIE_SPAWN_EGG, "katze.allitems.category.mobs", null, AllItemsSettings.AllItemsSetting.MOBS),
+        STRUCTURES(15, Material.STRUCTURE_BLOCK, "katze.allitems.category.structures", null, AllItemsSettings.AllItemsSetting.STRUCTURES),
+        ADVANCEMENTS(16, Material.BOOK, "katze.allitems.category.advancements", null, AllItemsSettings.AllItemsSetting.ADVANCEMENTS),
+        CHAIN_MODE(28, Material.IRON_CHAIN, "katze.allitems.setting.chain_mode", null, AllItemsSettings.AllItemsSetting.CHAIN_MODE),
+        MISSING(30, Material.MAP, "katze.allitems.menu.missing", AllItemsSettingsGUI::openMissing, null),
+        LEADERBOARD(32, Material.NAME_TAG, "katze.allitems.menu.leaderboard", AllItemsSettingsGUI::openLeaderboard, null);
 
         private final int slot;
         private final Material material;
@@ -100,8 +100,8 @@ public class AllItemsSettingsGUI extends KatzeGUI {
 
         AllItemsSettings.setGameMode(newMode);
 
-        String modeName = newMode == AllItemsSettings.GameMode.TEAM ? "Team Mode" : "Individual Mode";
-        player.sendMessage(Component.text("All Items game mode set to: " + modeName, KatzeColor.LIME));
+        Component modeName = Component.translatable(newMode == AllItemsSettings.GameMode.TEAM ? "katze.allitems.mode.team" : "katze.allitems.mode.individual");
+        player.sendMessage(Component.translatable("katze.allitems.mode.changed", gg.itzkatze.katze.text.TextArg.component("mode", modeName)).color(KatzeColor.LIME));
 
         // Refresh the GUI
         gui.open(player);
@@ -133,64 +133,61 @@ public class AllItemsSettingsGUI extends KatzeGUI {
 
     private ItemStack buildModeItem(SettingButton button) {
         boolean isTeamMode = AllItemsSettings.isTeamMode();
-        String modeName = isTeamMode ? "Team Mode" : "Individual Mode";
+        Component modeName = Component.translatable(isTeamMode ? "katze.allitems.mode.team" : "katze.allitems.mode.individual");
         TextColor color = isTeamMode ? KatzeColor.LIME : KatzeColor.LIGHT_BLUE;
 
         return ItemStackCreator.getStack(
-                Component.text(modeName).color(color),
+                modeName.color(color),
                 button.material,
                 1,
                 List.of(
-                        Component.text("Current: ").color(KatzeColor.LIGHT_GRAY)
-                                .append(Component.text(modeName).color(color)),
+                        Component.translatable("katze.allitems.gui.current", gg.itzkatze.katze.text.TextArg.component("state", modeName.color(color))),
                         Component.empty(),
-                        Component.text("Click to toggle").color(KatzeColor.YELLOW),
+                        Component.translatable("katze.allitems.gui.toggle").color(KatzeColor.YELLOW),
                         Component.empty(),
-                        Component.text("Team Mode: ").color(KatzeColor.LIGHT_GRAY)
-                                .append(Component.text("All players collect together").color(KatzeColor.WHITE)),
-                        Component.text("Individual Mode: ").color(KatzeColor.LIGHT_GRAY)
-                                .append(Component.text("Each player collects separately").color(KatzeColor.WHITE))
+                        Component.translatable("katze.allitems.mode.team.description"),
+                        Component.translatable("katze.allitems.mode.individual.description")
                 )
         );
     }
 
     private ItemStack buildMissingItem(SettingButton button) {
         return ItemStackCreator.getStack(
-                Component.text(button.label).color(KatzeColor.LIGHT_BLUE),
+                Component.translatable(button.label).color(KatzeColor.LIGHT_BLUE),
                 button.material,
                 1,
                 List.of(
-                        Component.text("View remaining objectives.").color(KatzeColor.LIGHT_GRAY),
+                        Component.translatable("katze.allitems.menu.missing.description").color(KatzeColor.LIGHT_GRAY),
                         Component.empty(),
-                        Component.text("Click to open").color(KatzeColor.YELLOW)
+                        Component.translatable("katze.allitems.gui.open").color(KatzeColor.YELLOW)
                 )
         );
     }
 
     private ItemStack buildLeaderboardItem(SettingButton button) {
         return ItemStackCreator.getStack(
-                Component.text(button.label).color(KatzeColor.GOLD),
+                Component.translatable(button.label).color(KatzeColor.GOLD),
                 button.material,
                 1,
                 List.of(
-                        Component.text("View player progress.").color(KatzeColor.LIGHT_GRAY),
+                        Component.translatable("katze.allitems.menu.leaderboard.description").color(KatzeColor.LIGHT_GRAY),
                         Component.empty(),
-                        Component.text("Click to open").color(KatzeColor.YELLOW)
+                        Component.translatable("katze.allitems.gui.open").color(KatzeColor.YELLOW)
                 )
         );
     }
 
     private ItemStack buildToggleItem(SettingButton button) {
         SettingStateType state = SettingsManager.getSettingState(button.setting);
-        Component status = state == null ? Component.text("Unknown") : state.getDisplayName();
+        Component status = state == null ? Component.translatable("katze.allitems.gui.unknown") : state.getDisplayName();
         return ItemStackCreator.getStack(
-                Component.text(button.label).color(KatzeColor.BLUE),
+                Component.translatable(button.label).color(KatzeColor.BLUE),
                 button.material,
                 1,
                 List.of(
-                        Component.text("Current: ").color(KatzeColor.LIGHT_GRAY).append(status),
+                        Component.translatable("katze.allitems.gui.current", gg.itzkatze.katze.text.TextArg.component("state", status)),
                         Component.empty(),
-                        Component.text("Click to toggle").color(KatzeColor.YELLOW)
+                        Component.translatable("katze.allitems.gui.toggle").color(KatzeColor.YELLOW)
                 )
         );
     }
@@ -198,7 +195,7 @@ public class AllItemsSettingsGUI extends KatzeGUI {
     private ItemStack buildFallbackItem(SettingButton button) {
         return ItemStackCreator.createNamedItemStack(
                 button.material,
-                Component.text(button.label).color(KatzeColor.RED)
+                Component.translatable(button.label).color(KatzeColor.RED)
         );
     }
 

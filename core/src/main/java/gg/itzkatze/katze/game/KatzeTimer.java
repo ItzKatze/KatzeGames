@@ -99,7 +99,7 @@ public class KatzeTimer implements GameTimer {
             return Component.text(timeStr).color(KatzeColor.BLUE).style(Style.style(TextDecoration.ITALIC));
         }
 
-        return Component.text("Timer paused.").color(KatzeColor.BLUE).style(Style.style(TextDecoration.ITALIC));
+        return Component.translatable("katze.game.timer.paused").color(KatzeColor.BLUE).style(Style.style(TextDecoration.ITALIC));
     }
 
     @Override

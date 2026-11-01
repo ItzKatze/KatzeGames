@@ -68,7 +68,7 @@ public abstract class KatzeCommand {
             commandOptional.get().execute(caller, args);
         } else {
             logger.error("Error while trying to execute command: {}. Command not registered.", commandId);
-            caller.sendMessage(Component.text("This command is not available right now."));
+            caller.sendMessage(Component.translatable("katze.command.unavailable"));
         }
     }
 
@@ -87,11 +87,11 @@ public abstract class KatzeCommand {
         }
         if (!this.requiredType.allows(caller)) {
             if (message) {
-                caller.sendMessage(Component.text("This command can only be used by " + this.requiredType.name().toLowerCase() + "s."));
+                caller.sendMessage(Component.translatable(this.requiredType == CallerType.CONSOLE ? "katze.command.only_console" : "katze.command.only_player"));
             }
         } else if (!caller.hasPermission(getPermission())) {
             if (message) {
-                caller.sendMessage(Component.text("Insufficient permission to execute this command!"));
+                caller.sendMessage(Component.translatable("katze.command.no_permission"));
             }
         } else {
             return false;
@@ -104,7 +104,7 @@ public abstract class KatzeCommand {
     }
 
     public void sendUsage(@NotNull CommandCaller caller) {
-        caller.sendMessage(Component.text("Usage: " + this.usage));
+        caller.sendMessage(Component.translatable("katze.command.usage", gg.itzkatze.katze.text.TextArg.text("usage", this.usage)));
     }
 
     protected void execute(CommandCaller caller, String @NotNull [] args) {

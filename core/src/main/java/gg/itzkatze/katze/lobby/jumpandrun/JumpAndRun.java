@@ -5,7 +5,7 @@ import gg.itzkatze.katze.lobby.Lobby;
 import gg.itzkatze.katze.lobby.LobbyFeature;
 import gg.itzkatze.katze.lobby.cosmetics.CosmeticStore;
 import gg.itzkatze.katze.lobby.cosmetics.MusicManager;
-import gg.itzkatze.katze.lobby.cosmetics.PointsSidebar;
+import gg.itzkatze.katze.lobby.PointsSidebar;
 import gg.itzkatze.katze.lobby.cosmetics.PointsText;
 import gg.itzkatze.katze.lobby.cosmetics.SoundCosmetic;
 import gg.itzkatze.katze.util.KatzeColor;
@@ -48,7 +48,7 @@ public class JumpAndRun implements LobbyFeature, Listener {
     private static final Logger logger = LoggerFactory.getLogger("KatzeGames/" + JumpAndRun.class.getSimpleName());
     private static final Sound PLATE_CLICK = Sound.sound(Key.key("block.metal_pressure_plate.click_on"), Sound.Source.BLOCK, 1f, 1f);
     private static final Sound RUN_OVER = Sound.sound(Key.key("block.beacon.deactivate"), Sound.Source.PLAYER, 1f, 1f);
-    private static final Component NO_START_ROOM = Component.text("There is no room for a start block right now.", KatzeColor.RED);
+    private static final Component NO_START_ROOM = Component.translatable("katze.cosmetics.no_start_room").color(KatzeColor.RED);
 
     private enum Ending {
         FAILED,
@@ -277,17 +277,20 @@ public class JumpAndRun implements LobbyFeature, Listener {
         }
 
         musicManager.fadeOut(run.getPlayer());
-        String reason = ending == Ending.NO_ROOM ? "There is no room for another block. " : "";
+        Component reason = ending == Ending.NO_ROOM ? Component.translatable("katze.cosmetics.no_more_room") : Component.empty();
         int score = run.getScore();
-        Component message = Component.text("Jump & Run over! " + reason + "You reached ", KatzeColor.RED)
-                .append(Component.text(score, KatzeColor.WHITE))
-                .append(Component.text(score == 1 ? " block." : " blocks.", KatzeColor.RED));
+        Component message = Component.translatable("katze.cosmetics.run_over",
+                gg.itzkatze.katze.text.TextArg.component("reason", reason),
+                gg.itzkatze.katze.text.TextArg.number("score", score)).color(KatzeColor.RED);
         if (score > 0) {
-            message = message.append(Component.text(" +" + PointsText.amount(score), KatzeColor.LIME));
+            message = message.append(Component.translatable("katze.cosmetics.run_points_earned",
+                    gg.itzkatze.katze.text.TextArg.component("points", PointsText.amountComponent(score))).color(KatzeColor.LIME));
             if (run.getEventBlocks() > 0) {
-                message = message.append(Component.text(", Event Blocks " + String.format("%+d", run.getEventPoints()), KatzeColor.GOLD));
+                message = message.append(Component.translatable("katze.cosmetics.run_event_points",
+                        gg.itzkatze.katze.text.TextArg.signed("points", run.getEventPoints())).color(KatzeColor.GOLD));
             }
-            message = message.append(Component.text(" (" + CosmeticStore.get().points(run.getId()) + " total).", KatzeColor.LIGHT_GRAY));
+            message = message.append(Component.translatable("katze.cosmetics.run_total_points",
+                    gg.itzkatze.katze.text.TextArg.number("points", CosmeticStore.get().points(run.getId()))).color(KatzeColor.LIGHT_GRAY));
         }
         runMultiplier.reset(run.getId());
         run.getPlayer().sendMessage(message);

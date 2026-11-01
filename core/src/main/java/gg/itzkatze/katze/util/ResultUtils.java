@@ -13,11 +13,11 @@ public class ResultUtils {
     public static Component buildPlayerResultMessage(KatzePlayer player) {
         int place = KatzePlayer.getPlace(player);
 
-        return Component.text("Results → ")
-                .append(Component.text(player.getName()).color(KatzeColor.GOLD))
-                .append(Component.text(" | Place: " + place + " | Points: " + player.getPoints())
-                        .color(KatzeColor.YELLOW))
-                .append(Component.text(" [Open Results]")
+        return Component.translatable("katze.game.results.player",
+                        gg.itzkatze.katze.text.TextArg.text("name", player.getName()),
+                        gg.itzkatze.katze.text.TextArg.number("place", place),
+                        gg.itzkatze.katze.text.TextArg.number("points", player.getPoints()))
+                .append(Component.translatable("katze.game.results.open")
                         .color(KatzeColor.LIME)
                         .clickEvent(ClickEvent.runCommand("/result player " + player.getName()))
                 );
@@ -30,12 +30,12 @@ public class ResultUtils {
                 .map(p -> p.getName() + " (" + p.getPoints() + ")")
                 .collect(Collectors.joining(", "));
 
-        return Component.text("Results → ")
-                .append(Component.text("Team " + team.getId()).color(KatzeColor.GOLD))
-                .append(Component.text(" [" + players + "] ")).color(KatzeColor.LIGHT_GRAY)
-                .append(Component.text(" | Place: " + place + " | Points: " + team.getPoints())
-                        .color(KatzeColor.YELLOW))
-                .append(Component.text(" [Open Results]")
+        return Component.translatable("katze.game.results.team",
+                        gg.itzkatze.katze.text.TextArg.number("id", team.getId()),
+                        gg.itzkatze.katze.text.TextArg.text("players", players),
+                        gg.itzkatze.katze.text.TextArg.number("place", place),
+                        gg.itzkatze.katze.text.TextArg.number("points", team.getPoints()))
+                .append(Component.translatable("katze.game.results.open")
                         .color(KatzeColor.LIME)
                         .clickEvent(ClickEvent.runCommand("/result team " + team.getId())));
     }

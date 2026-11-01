@@ -36,14 +36,14 @@ public class JokerCommand extends KatzeCommand {
 
         Optional<ForceBattlePlayer> targetOptional = ForceBattlePlayer.from(args[1]);
         if (targetOptional.isEmpty()) {
-            caller.sendMessage(Component.text("Player couldn't be found or is not in Force Battle.").color(KatzeColor.RED));
+            caller.sendMessage(Component.translatable("katze.forcebattle.command.player_not_found_in_battle").color(KatzeColor.RED));
             return;
         }
         ForceBattlePlayer target = targetOptional.get();
 
         JokerType jokerType = JokerType.of(args[2]);
         if (jokerType == null) {
-            caller.sendMessage(Component.text("Invalid joker type. Available types: 'skip', 'swap'.").color(KatzeColor.RED));
+            caller.sendMessage(Component.translatable("katze.forcebattle.command.invalid_joker").color(KatzeColor.RED));
             return;
         }
 
@@ -52,7 +52,7 @@ public class JokerCommand extends KatzeCommand {
             try {
                 amount = Integer.parseInt(args[3]);
             } catch (NumberFormatException e) {
-                caller.sendMessage(Component.text("Please specify a valid number.").color(KatzeColor.RED));
+                caller.sendMessage(Component.translatable("katze.forcebattle.command.invalid_number").color(KatzeColor.RED));
                 return;
             }
         }

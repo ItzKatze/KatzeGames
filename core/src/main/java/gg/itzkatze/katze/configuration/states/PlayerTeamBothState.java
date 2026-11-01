@@ -5,10 +5,10 @@ import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
 public enum PlayerTeamBothState implements SettingStateType {
-    OFF(Component.text("Off").color(KatzeColor.RED)),
-    PLAYER(Component.text("Player").color(KatzeColor.LIME)),
-    TEAM(Component.text("Team").color(KatzeColor.LIGHT_BLUE)),
-    BOTH(Component.text("Both").color(KatzeColor.GOLD));
+    OFF(Component.translatable("katze.settings.state.off").color(KatzeColor.RED)),
+    PLAYER(Component.translatable("katze.settings.state.player").color(KatzeColor.LIME)),
+    TEAM(Component.translatable("katze.settings.state.team").color(KatzeColor.LIGHT_BLUE)),
+    BOTH(Component.translatable("katze.settings.state.both").color(KatzeColor.GOLD));
 
     private final Component defaultName;
 

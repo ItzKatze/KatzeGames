@@ -11,7 +11,6 @@ import gg.itzkatze.katze.data.KatzeAdvancement;
 import gg.itzkatze.katze.player.KatzePlayer;
 import gg.itzkatze.katze.forcebattle.ForceBattleType;
 import gg.itzkatze.katze.util.KatzeColor;
-import gg.itzkatze.katze.util.StringUtility;
 import gg.itzkatze.katze.util.Toast;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -48,7 +47,7 @@ public class AdvancementTask implements ForceTask {
 
         KatzeAdvancement advancement = objective.getObjectiveValue(KatzeAdvancement.class);
         if (advancement != null && hasCompletedAdvancement(player, advancement)) {
-            completeObjective(player, objective.getObjectiveString());
+            completeObjective(player, objective);
             if (SettingsManager.isEnabled(ForceBattleSettings.FORCE_ADVANCEMENT)
                     && KatzeGames.get().getConfig().getBoolean("reset-advancements-on-finish", true)) {
                 resetAdvancements(player);
@@ -65,7 +64,7 @@ public class AdvancementTask implements ForceTask {
 
         KatzeAdvancement advancement = teamObjective.getObjectiveValue(KatzeAdvancement.class);
         if (advancement != null && hasCompletedAdvancement(player, advancement)) {
-            completeObjective(player, teamObjective.getObjectiveString());
+            completeObjective(player, teamObjective);
             if (SettingsManager.isEnabled(ForceBattleSettings.FORCE_ADVANCEMENT)
                     && KatzeGames.get().getConfig().getBoolean("reset-advancements-on-finish", true)) {
                 resetAdvancements(player);
@@ -85,8 +84,8 @@ public class AdvancementTask implements ForceTask {
         return progress.isDone();
     }
 
-    private void completeObjective(KatzePlayer player, String objective) {
-        String formattedObjective = StringUtility.formatName(objective);
+    private void completeObjective(KatzePlayer player, ForceBattleObjective objective) {
+        Component formattedObjective = objective.displayName();
         Material toastIcon = Material.BREWING_STAND;
         KatzeGames plugin = KatzeGames.get();
 
@@ -95,13 +94,13 @@ public class AdvancementTask implements ForceTask {
                     .filter(teammate -> teammate != player)
                     .filter(teammate -> !teammate.isOffline())
                     .forEach(teammate -> {
-                        teammate.sendMessage(Component.text(player.getName() + " has finished " + formattedObjective + "."));
-                        Toast.display(teammate.getPlayer(), toastIcon, Component.text(formattedObjective).color(KatzeColor.BLUE), Toast.Style.GOAL, plugin);
+                        teammate.sendMessage(Component.translatable("katze.forcebattle.task.teammate_finished", gg.itzkatze.katze.text.TextArg.text("player", player.getName()), gg.itzkatze.katze.text.TextArg.component("objective", formattedObjective)));
+                        Toast.display(teammate.getPlayer(), toastIcon, formattedObjective.color(KatzeColor.BLUE), Toast.Style.GOAL, plugin);
                     });
         }
 
-        player.sendMessage(Component.text("You finished " + formattedObjective + "."));
-        Toast.display(player.getPlayer(), toastIcon, Component.text(formattedObjective).color(KatzeColor.BLUE), Toast.Style.GOAL, plugin);
+        player.sendMessage(Component.translatable("katze.forcebattle.task.personal_finished", gg.itzkatze.katze.text.TextArg.component("objective", formattedObjective)));
+        Toast.display(player.getPlayer(), toastIcon, formattedObjective.color(KatzeColor.BLUE), Toast.Style.GOAL, plugin);
     }
 
     private @NotNull Optional<Advancement> getAdvancement(NamespacedKey key) {

@@ -8,7 +8,6 @@ import gg.itzkatze.katze.configuration.SettingsManager;
 import gg.itzkatze.katze.team.KatzeTeam;
 import gg.itzkatze.katze.player.KatzePlayer;
 import gg.itzkatze.katze.util.KatzeColor;
-import gg.itzkatze.katze.util.StringUtility;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
@@ -42,17 +41,19 @@ public class ForceBattleTeamObjectiveBossbar implements BossbarContent {
         if (teamObjective == null) return Component.empty();
 
         if (SettingsManager.isEnabled(GlobalSetting.HIDE_POINTS)) {
-            return Component.text(teamObjective.getBattleType().getPrefix(), KatzeColor.LIGHT_GRAY)
+            return teamObjective.getBattleType().displayName().color(KatzeColor.LIGHT_GRAY)
                     .append(Component.text(": ", KatzeColor.GRAY))
-                    .append(Component.text(StringUtility.formatName(teamObjective.getObjectiveString()), KatzeColor.BLUE));
+                    .append(teamObjective.displayName().color(KatzeColor.BLUE));
         }
 
-        return Component.text(teamObjective.getBattleType().getPrefix(), KatzeColor.LIGHT_GRAY)
+        return teamObjective.getBattleType().displayName().color(KatzeColor.LIGHT_GRAY)
                 .append(Component.text(": ", KatzeColor.GRAY))
-                .append(Component.text(StringUtility.formatName(teamObjective.getObjectiveString()), KatzeColor.BLUE))
+                .append(teamObjective.displayName().color(KatzeColor.BLUE))
                 .append(Component.text(" | ", KatzeColor.GRAY))
-                .append(Component.text("Team-Points", KatzeColor.LIGHT_GRAY))
+                .append(Component.translatable("katze.forcebattle.team_points").color(KatzeColor.LIGHT_GRAY))
                 .append(Component.text(": ", KatzeColor.GRAY))
                 .append(Component.text(team.getPoints(), KatzeColor.BLUE));
     }
 }
+
+

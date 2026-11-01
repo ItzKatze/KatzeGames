@@ -41,15 +41,15 @@ public class ChatCommand extends KatzeCommand {
         switch (args[0].toLowerCase()) {
             case "team" -> {
                 if (!player.isInTeam()) {
-                    caller.sendMessage(Component.text("You are not currently in a team.", KatzeColor.RED));
+                    caller.sendMessage(Component.translatable("katze.team.not_in_team").color(KatzeColor.RED));
                     return;
                 }
                 TeamChatManager.setTeamChatEnabled(player, true);
-                caller.sendMessage(Component.text("You are now talking in team chat.", KatzeColor.LIME));
+                caller.sendMessage(Component.translatable("katze.team.chat.enabled").color(KatzeColor.LIME));
             }
             case "all" -> {
                 TeamChatManager.setTeamChatEnabled(player, false);
-                caller.sendMessage(Component.text("You are now talking in normal chat.", KatzeColor.LIME));
+                caller.sendMessage(Component.translatable("katze.team.chat.disabled").color(KatzeColor.LIME));
             }
             default -> sendUsage(caller);
         }

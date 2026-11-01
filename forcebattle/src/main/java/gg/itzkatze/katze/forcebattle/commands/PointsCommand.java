@@ -37,7 +37,7 @@ public class PointsCommand extends KatzeCommand {
         KatzePlayer target = KatzePlayer.adapt(args[1]).orElse(null);
 
         if (target == null) {
-            caller.sendMessage(Component.text("Player couldn't be found.").color(KatzeColor.RED));
+            caller.sendMessage(Component.translatable("katze.forcebattle.command.player_not_found").color(KatzeColor.RED));
             return;
         }
 
@@ -45,12 +45,12 @@ public class PointsCommand extends KatzeCommand {
         try {
             amount = Integer.parseInt(args[2]);
         } catch (NumberFormatException e) {
-            caller.sendMessage(Component.text("Please specify a valid number.").color(KatzeColor.RED));
+            caller.sendMessage(Component.translatable("katze.forcebattle.command.invalid_number").color(KatzeColor.RED));
             return;
         }
 
         if (amount < 0) {
-            caller.sendMessage(Component.text("Number must be positive.").color(KatzeColor.RED));
+            caller.sendMessage(Component.translatable("katze.forcebattle.command.positive_number").color(KatzeColor.RED));
             return;
         }
 

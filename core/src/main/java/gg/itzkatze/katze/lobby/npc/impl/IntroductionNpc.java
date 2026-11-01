@@ -10,50 +10,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class IntroductionNpc extends LobbyNpc {
 
-    private static final String TEXT = """
-            Die wichtigsten Commands auf einem Blick:
-
-            /bp (bzw. /backpack) -> Öffnet den Backpack (quasi eine geteilte Enderchest für alle in einem Team)
-            /chat team -> Stellt einen Chatmodus ein, in dem nur Teammitglieder deine Nachrichten sehen können
-            /chat all -> Stellt den normalen Chatmodus ein (Alle sehen deine Nachrichten)
-            /info -> Öffnet ein Menü, in dem du die verschiedenen Teamsaufgaben sehen kannst (Biome, Strukturen, Mobs, Tode)
-            /recipe [Itemname] -> öffnet eine Anleitung, wie du dein Item herstellen kannst
-
-            <-/-> Wie funktioniert das Battle? <-\\->
-            Es gibt zwei Arten von Punkten, die du sammeln kannst:
-
-            <-> Individualpunkte <->
-            Du erhältst ein Objective, welches du abschließen musst (z.B. Item/Block/Höhe)
-            Solltest du dieses Objective erfolgreich abschließen, erhältst du einen Punkt und erhältst eine weitere Aufgabe
-
-            <-> Teampunkte <->
-            Du erhältst ein Teamobjective, das jede Person deines Teams erledigen kann, um einen Teampunkt zu erreichen
-            Sollte eine Person diese Aufgabe erfolgreich absolvieren, erhält dein Team einen Punkt und erhältst eine weitere Anforderung, welche geschafft werden muss
-
-            Gewinner ist das Team mit den meisten Punkten
-
-            Mögliche Aufgaben sind folgende:
-            -Item: Du musst ein vorgegebenes Item einsammeln
-            -Mob: Du musst einen vorgegebenen Mob besiegen
-            -Biom: Du musst ein Biom aus der vorgegebenen Kategorie besuchen
-            -Errungenschaft: Du musst eine vorgegebene Errungenschaft erreichen
-            -Höhe: Du musst dich auf die vorgegebene Höhe begeben
-            -Koordinaten: Du musst die vorgegebene Koordinate(n) erreichen
-            -Struktur: Du musst eine Struktur aus der vorgegebenen Kategorie besuchen
-            -Tod: Du musst auf eine vorgegebene Art sterben (Solltest du den richtigen Tod erleiden, behältst du deine Items)
-
-            Du hast keine Lust auf dein zugewiesenes Item? Versuche es mal mit einem:
-            -Skip (Barrier): Skippt dein aktuelles Item und du erhältst eine neue Anforderung
-            -Swap (Structure Void): Swapt dein aktuelles Item mit dem Item einer anderen Person (aus einem anderen Team)
-            -Skip (Recipe Book): Skippt deine aktuelle Teamaufgabe und weist dir eine neue Aufgabe zu
-            """;
-
-    private static final List<Component> DIALOGUE = TEXT.lines()
-            .filter(line -> !line.isBlank())
-            .<Component>map(Component::text)
+    private static final List<Component> DIALOGUE = IntStream.rangeClosed(1, 28)
+            .mapToObj(line -> (Component) Component.translatable("katze.forcebattle.guide.line." + line))
             .toList();
 
     @Override
@@ -63,7 +25,7 @@ public class IntroductionNpc extends LobbyNpc {
 
     @Override
     public @NotNull Component getName() {
-        return Component.text("Guide", KatzeColor.GOLD);
+        return Component.translatable("katze.forcebattle.guide.name").color(KatzeColor.GOLD);
     }
 
     @Override

@@ -33,7 +33,7 @@ public class AllItemsProgressCommand extends KatzeCommand {
     @Override
     protected void executeCommand(@NotNull CommandCaller caller, String[] args) {
         if (!ChallengeManager.isChallengeActive(ChallengeType.ALL_ITEMS)) {
-            caller.sendMessage(Component.text("All Items challenge is not active."));
+            caller.sendMessage(Component.translatable("katze.allitems.command.not_active"));
             return;
         }
 
@@ -44,49 +44,58 @@ public class AllItemsProgressCommand extends KatzeCommand {
         int totalItems = data.getTotalAvailableItems();
         double itemPercent = data.getProgressPercentage(AllItemsObjectiveType.ITEM, playerId);
 
-        caller.sendMessage(Component.text("Items: " + foundItems + "/" + totalItems + " (" + String.format("%.1f", itemPercent) + "%)"));
+        caller.sendMessage(progress(AllItemsObjectiveType.ITEM, foundItems, totalItems, itemPercent));
 
         if (AllItemsSettings.isBiomesEnabled()) {
             int foundBiomes = data.getFoundCount(AllItemsObjectiveType.BIOME, playerId);
             int totalBiomes = data.getTotalAvailableBiomes();
             double percent = data.getProgressPercentage(AllItemsObjectiveType.BIOME, playerId);
-            caller.sendMessage(Component.text("Biomes: " + foundBiomes + "/" + totalBiomes + " (" + String.format("%.1f", percent) + "%)"));
+            caller.sendMessage(progress(AllItemsObjectiveType.BIOME, foundBiomes, totalBiomes, percent));
         }
         if (AllItemsSettings.isMobsEnabled()) {
             int foundMobs = data.getFoundCount(AllItemsObjectiveType.MOB, playerId);
             int totalMobs = data.getTotalAvailableMobs();
             double percent = data.getProgressPercentage(AllItemsObjectiveType.MOB, playerId);
-            caller.sendMessage(Component.text("Mobs: " + foundMobs + "/" + totalMobs + " (" + String.format("%.1f", percent) + "%)"));
+            caller.sendMessage(progress(AllItemsObjectiveType.MOB, foundMobs, totalMobs, percent));
         }
         if (AllItemsSettings.isStructuresEnabled()) {
             int foundStructures = data.getFoundCount(AllItemsObjectiveType.STRUCTURE, playerId);
             int totalStructures = data.getTotalAvailableStructures();
             double percent = data.getProgressPercentage(AllItemsObjectiveType.STRUCTURE, playerId);
-            caller.sendMessage(Component.text("Structures: " + foundStructures + "/" + totalStructures + " (" + String.format("%.1f", percent) + "%)"));
+            caller.sendMessage(progress(AllItemsObjectiveType.STRUCTURE, foundStructures, totalStructures, percent));
         }
         if (AllItemsSettings.isAdvancementsEnabled()) {
             int foundAdv = data.getFoundCount(AllItemsObjectiveType.ADVANCEMENT, playerId);
             int totalAdv = data.getTotalAvailableAdvancements();
             double percent = data.getProgressPercentage(AllItemsObjectiveType.ADVANCEMENT, playerId);
-            caller.sendMessage(Component.text("Advancements: " + foundAdv + "/" + totalAdv + " (" + String.format("%.1f", percent) + "%)"));
+            caller.sendMessage(progress(AllItemsObjectiveType.ADVANCEMENT, foundAdv, totalAdv, percent));
         }
 
-        String mode = AllItemsSettings.isTeamMode() ? "Team" : "Individual";
-        caller.sendMessage(Component.text("Current mode: " + mode));
+        Component mode = Component.translatable(AllItemsSettings.isTeamMode() ? "katze.allitems.mode.team" : "katze.allitems.mode.individual");
+        caller.sendMessage(Component.translatable("katze.allitems.command.current_mode", gg.itzkatze.katze.text.TextArg.component("mode", mode)));
 
         List<AllItemsData.FoundObjective> recentItems = data.getRecentFinds(5).stream()
                 .sorted((a, b) -> b.entry().foundTime().compareTo(a.entry().foundTime()))
                 .toList();
 
         if (!recentItems.isEmpty()) {
-            caller.sendMessage(Component.text("Recent discoveries:"));
+            caller.sendMessage(Component.translatable("katze.allitems.command.recent"));
 
             for (AllItemsData.FoundObjective item : recentItems) {
-                String itemName = item.displayName();
-                caller.sendMessage(Component.text("  * " + itemName + " by " + item.entry().playerName() +
-                        " at " + item.entry().getFormattedTime()));
+                caller.sendMessage(Component.translatable("katze.allitems.command.recent_item",
+                        gg.itzkatze.katze.text.TextArg.component("item", item.displayNameComponent()),
+                        gg.itzkatze.katze.text.TextArg.text("player", item.entry().playerName()),
+                        gg.itzkatze.katze.text.TextArg.text("time", item.entry().getFormattedTime())));
             }
         }
+    }
+
+    private Component progress(AllItemsObjectiveType type, int found, int total, double percent) {
+        return Component.translatable("katze.allitems.command.progress",
+                gg.itzkatze.katze.text.TextArg.component("type", Component.translatable("katze.allitems.type." + type.name().toLowerCase(java.util.Locale.ROOT))),
+                gg.itzkatze.katze.text.TextArg.number("found", found),
+                gg.itzkatze.katze.text.TextArg.number("total", total),
+                gg.itzkatze.katze.text.TextArg.decimal("percent", percent));
     }
 
     @Override

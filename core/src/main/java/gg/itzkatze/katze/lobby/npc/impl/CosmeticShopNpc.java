@@ -21,7 +21,7 @@ public class CosmeticShopNpc extends LobbyNpc {
 
     @Override
     public @NotNull Component getName() {
-        return Component.text("Cosmetics", KatzeColor.MAGENTA);
+        return Component.translatable("katze.cosmetics.npc.shop").color(KatzeColor.MAGENTA);
     }
 
     @Override

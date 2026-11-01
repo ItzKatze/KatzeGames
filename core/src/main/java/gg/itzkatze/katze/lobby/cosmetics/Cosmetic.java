@@ -13,7 +13,9 @@ public interface Cosmetic {
 
     @NotNull CosmeticCategory category();
 
-    @NotNull String displayName();
+    default @NotNull Component displayName() {
+        return Component.translatable("katze.cosmetics.cosmetic." + category().name().toLowerCase(java.util.Locale.ROOT) + "." + id());
+    }
 
     @NotNull Rarity rarity();
 
@@ -29,6 +31,6 @@ public interface Cosmetic {
     }
 
     default @NotNull Component styledName() {
-        return Component.text(displayName(), rarity().color());
+        return displayName().color(rarity().color());
     }
 }

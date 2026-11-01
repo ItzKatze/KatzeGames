@@ -25,8 +25,7 @@ import java.util.UUID;
 public class SpectatorListener implements Listener {
 
     private static final long VIEW_REFRESH_TICKS = 10;
-    private static final Component WELCOME = Component.text(
-            "A battle is running, so you are spectating. Right-click a player to see their inventory. Your chat only reaches other spectators.", KatzeColor.YELLOW);
+    private static final Component WELCOME = Component.translatable("katze.spectator.welcome").color(KatzeColor.YELLOW);
 
     // Lowest, so it runs before every listener that creates a wrapper: a player without one was not part of the started game.
     @EventHandler(priority = EventPriority.LOWEST)
@@ -63,7 +62,7 @@ public class SpectatorListener implements Listener {
             KatzePlayer wrapper = KatzePlayer.adapt(viewer);
             if (Bukkit.getPlayer(view.targetId()) == null) {
                 gui.close(wrapper, KatzeGUI.CloseReason.SERVER_EXITED);
-                viewer.sendMessage(Component.text(view.targetName() + " left the game.", KatzeColor.LIGHT_GRAY));
+                viewer.sendMessage(Component.translatable("katze.spectator.target_left", gg.itzkatze.katze.text.TextArg.text("name", view.targetName())).color(KatzeColor.LIGHT_GRAY));
             } else {
                 gui.updateInventory(wrapper);
             }

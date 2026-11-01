@@ -37,7 +37,9 @@ public class CaseFireworksCommand extends KatzeCommand {
 
         Rarity tier = args.length == 0 ? Rarity.MYTHIC : rarity(args[0]);
         if (tier == null) {
-            caller.sendMessage(Component.text("Unknown rarity \"" + args[0] + "\". Rarities: " + String.join(", ", rarities()) + ".", KatzeColor.RED));
+            caller.sendMessage(Component.translatable("katze.command.case_fireworks.unknown_rarity",
+                    gg.itzkatze.katze.text.TextArg.text("rarity", args[0]),
+                    gg.itzkatze.katze.text.TextArg.text("rarities", String.join(", ", rarities()))).color(KatzeColor.RED));
             return;
         }
         CaseFireworks.play(katzePlayer.getPlayer(), tier);

@@ -73,12 +73,12 @@ public class HeightTask implements ForceTask {
                     .filter(teammate -> teammate != player)
                     .filter(teammate -> !teammate.isOffline())
                     .forEach(teammate -> {
-                        teammate.sendMessage(Component.text(player.getName() + " has finished " + heightDisplay + "."));
+                        teammate.sendMessage(Component.translatable("katze.forcebattle.task.teammate_finished", gg.itzkatze.katze.text.TextArg.text("player", player.getName()), gg.itzkatze.katze.text.TextArg.text("objective", heightDisplay)));
                         Toast.display(teammate.getPlayer(), toastIcon, Component.text(heightDisplay).color(KatzeColor.BLUE), Toast.Style.GOAL, plugin);
                     });
         }
 
-        player.sendMessage(Component.text("You finished " + heightDisplay + "."));
+        player.sendMessage(Component.translatable("katze.forcebattle.task.personal_finished", gg.itzkatze.katze.text.TextArg.text("objective", heightDisplay)));
         Toast.display(player.getPlayer(), toastIcon, Component.text(heightDisplay).color(KatzeColor.BLUE), Toast.Style.GOAL, plugin);
     }
 }

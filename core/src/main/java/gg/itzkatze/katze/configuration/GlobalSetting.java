@@ -3,28 +3,32 @@ package gg.itzkatze.katze.configuration;
 import gg.itzkatze.katze.configuration.states.OnOffState;
 import gg.itzkatze.katze.configuration.states.SettingStateType;
 import lombok.Getter;
+import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
 @Getter
 public enum GlobalSetting implements Setting {
-    NO_HUNGER(false, "No Hunger", OnOffState.OFF),
-    NO_DAMAGE(false, "No Damage", OnOffState.OFF),
-    MOBILE_CRAFTING(false, "Mobile Crafting", OnOffState.OFF),
-    HIDE_POINTS(false, "Hide Points", OnOffState.ON),
-    HIDE_OBJECTIVES(false, "Hide Objectives", OnOffState.OFF),
-    NO_DUPLICATE_OBJECTIVES(true, "No Duplicate Objectives", OnOffState.ON),
-    SIMPLIFIED_OBJECTIVES(true, "Simplified Objectives", OnOffState.ON),
-    EXTRA_TEAM_OBJECTIVE(true, "Extra Team Objective", OnOffState.ON),
-    SHOW_SCOREBOARD(false, "Show Scoreboard", OnOffState.ON);
+    NO_HUNGER(false, OnOffState.OFF),
+    NO_DAMAGE(false, OnOffState.OFF),
+    MOBILE_CRAFTING(false, OnOffState.OFF),
+    HIDE_POINTS(false, OnOffState.ON),
+    HIDE_OBJECTIVES(false, OnOffState.OFF),
+    NO_DUPLICATE_OBJECTIVES(true, OnOffState.ON),
+    SIMPLIFIED_OBJECTIVES(true, OnOffState.ON),
+    EXTRA_TEAM_OBJECTIVE(true, OnOffState.ON),
+    SHOW_SCOREBOARD(false, OnOffState.ON);
 
     private final boolean shouldUpdateOnChange;
-    private final String displayName;
     private final SettingStateType defaultState;
 
-    GlobalSetting(boolean shouldUpdateOnChange, String displayName, SettingStateType defaultState) {
+    GlobalSetting(boolean shouldUpdateOnChange, SettingStateType defaultState) {
         this.shouldUpdateOnChange = shouldUpdateOnChange;
-        this.displayName = displayName;
         this.defaultState = defaultState;
+    }
+
+    @Override
+    public @NotNull Component getDisplayName() {
+        return Component.translatable("katze.settings.global." + name().toLowerCase(java.util.Locale.ROOT));
     }
 
     @Override

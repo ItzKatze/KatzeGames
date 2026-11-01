@@ -11,7 +11,6 @@ import gg.itzkatze.katze.forcebattle.ForceBattlePlayer;
 import gg.itzkatze.katze.forcebattle.ForceBattleType;
 import gg.itzkatze.katze.player.KatzePlayer;
 import gg.itzkatze.katze.util.KatzeColor;
-import gg.itzkatze.katze.util.StringUtility;
 import gg.itzkatze.katze.util.Toast;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
@@ -39,7 +38,7 @@ public class DeathTask {
         if (objective.getBattleType() != ForceBattleType.FORCE_DEATH) return;
 
         if (isDamageSourceMatch(objective.getObjectiveValue(), damageSource)) {
-            completeObjective(player, objective.getObjectiveString());
+            completeObjective(player, objective);
             returnItems(event);
             player.updateObjective(true, false);
         }
@@ -52,7 +51,7 @@ public class DeathTask {
         if (teamObjective.getBattleType() != ForceBattleType.FORCE_DEATH) return;
 
         if (isDamageSourceMatch(teamObjective.getObjectiveValue(), damageSource)) {
-            completeObjective(player, teamObjective.getObjectiveString());
+            completeObjective(player, teamObjective);
             returnItems(event);
             player.getTeam().updateObjective(player, true, false);
         }
@@ -72,8 +71,8 @@ public class DeathTask {
         return false;
     }
 
-    private static void completeObjective(ForceBattlePlayer player, String objective) {
-        String formattedObjective = StringUtility.formatName(objective);
+    private static void completeObjective(ForceBattlePlayer player, ForceBattleObjective objective) {
+        Component formattedObjective = objective.displayName();
         Material toastIcon = Material.SKELETON_SKULL;
         KatzeGames plugin = KatzeGames.get();
 
@@ -81,18 +80,18 @@ public class DeathTask {
             player.getTeam().getPlayers().stream()
                     .filter(teammate -> teammate != player)
                     .forEach(teammate -> {
-                        teammate.sendMessage(Component.text(player.getName() + " has finished " + formattedObjective + "."));
+                        teammate.sendMessage(Component.translatable("katze.forcebattle.task.teammate_finished", gg.itzkatze.katze.text.TextArg.text("player", player.getName()), gg.itzkatze.katze.text.TextArg.component("objective", formattedObjective)));
                         Player teammatePlayer = teammate.getPlayer();
                         if (teammatePlayer != null) {
-                            Toast.display(teammatePlayer, toastIcon, Component.text(formattedObjective).color(KatzeColor.BLUE), Toast.Style.GOAL, plugin);
+                            Toast.display(teammatePlayer, toastIcon, formattedObjective.color(KatzeColor.BLUE), Toast.Style.GOAL, plugin);
                         }
                     });
         }
 
-        player.sendMessage(Component.text("You finished " + formattedObjective + "."));
+        player.sendMessage(Component.translatable("katze.forcebattle.task.personal_finished", gg.itzkatze.katze.text.TextArg.component("objective", formattedObjective)));
         Player playerObj = player.getPlayer();
         if (playerObj != null) {
-            Toast.display(playerObj, toastIcon, Component.text(formattedObjective).color(KatzeColor.BLUE), Toast.Style.GOAL, plugin);
+            Toast.display(playerObj, toastIcon, formattedObjective.color(KatzeColor.BLUE), Toast.Style.GOAL, plugin);
         }
     }
 

@@ -1,6 +1,7 @@
 package gg.itzkatze.katze.forcebattle.gui.info;
 
 import gg.itzkatze.katze.data.KatzeStructure;
+import gg.itzkatze.katze.data.ObjectiveNames;
 import gg.itzkatze.katze.data.StructureSimplified;
 import gg.itzkatze.katze.gui.GUIClickableItem;
 import gg.itzkatze.katze.gui.GUIItem;
@@ -17,7 +18,7 @@ import java.util.ArrayList;
 public class InfoSimplifiedStructuresGUI extends KatzeGUI {
 
     public InfoSimplifiedStructuresGUI() {
-        super("Simplified Structures Info", 27);
+        super(Component.translatable("katze.forcebattle.info.structures_title"), 27);
     }
 
     @Override
@@ -34,14 +35,14 @@ public class InfoSimplifiedStructuresGUI extends KatzeGUI {
                     GUIMaterial guiMaterial = simplified.getGuiMaterial();
                     ArrayList<Component> lore = new ArrayList<>();
 
-                    for (KatzeStructure biome : simplified.getStructures()) {
-                        lore.add(Component.text(" • " + biome.getName()).color(KatzeColor.WHITE));
+                    for (KatzeStructure structure : simplified.getStructures()) {
+                        lore.add(ObjectiveNames.of(structure).color(KatzeColor.WHITE));
                     }
 
                     if (guiMaterial.hasSkull()) {
-                        return ItemStackCreator.getSkull(guiMaterial.skull(), Component.text(simplified.getName()).color(KatzeColor.GOLD), 1, lore);
+                        return ItemStackCreator.getSkull(guiMaterial.skull(), ObjectiveNames.of(simplified).color(KatzeColor.GOLD), 1, lore);
                     } else {
-                        return ItemStackCreator.getStack(Component.text(simplified.getName()).color(KatzeColor.GOLD), guiMaterial.material(), 1, lore);
+                        return ItemStackCreator.getStack(ObjectiveNames.of(simplified).color(KatzeColor.GOLD), guiMaterial.material(), 1, lore);
                     }
                 }
             });
@@ -56,3 +57,4 @@ public class InfoSimplifiedStructuresGUI extends KatzeGUI {
     }
 
 }
+

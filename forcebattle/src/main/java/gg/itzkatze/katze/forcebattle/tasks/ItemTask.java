@@ -9,7 +9,6 @@ import gg.itzkatze.katze.forcebattle.ForceBattlePlayer;
 import gg.itzkatze.katze.player.KatzePlayer;
 import gg.itzkatze.katze.forcebattle.ForceBattleType;
 import gg.itzkatze.katze.util.KatzeColor;
-import gg.itzkatze.katze.util.StringUtility;
 import gg.itzkatze.katze.util.Toast;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
@@ -60,7 +59,7 @@ public class ItemTask implements ForceTask {
     }
 
     private void completeObjective(ForceBattlePlayer player, ForceBattleObjective objective, Material material) {
-        String formattedObjective = StringUtility.formatName(objective.getObjectiveString());
+        Component formattedObjective = objective.displayName();
         Material toastIcon = material != null ? material : Material.BOOK;
         KatzeGames plugin = KatzeGames.get();
 
@@ -69,12 +68,12 @@ public class ItemTask implements ForceTask {
                     .filter(teammate -> teammate != player)
                     .filter(teammate -> !teammate.isOffline())
                     .forEach(teammate -> {
-                        teammate.sendMessage(Component.text(player.getName() + " has finished " + formattedObjective + "."));
-                        Toast.display(teammate.getPlayer(), toastIcon, Component.text(formattedObjective).color(KatzeColor.BLUE), Toast.Style.GOAL, plugin);
+                        teammate.sendMessage(Component.translatable("katze.forcebattle.task.teammate_finished", gg.itzkatze.katze.text.TextArg.text("player", player.getName()), gg.itzkatze.katze.text.TextArg.component("objective", formattedObjective)));
+                        Toast.display(teammate.getPlayer(), toastIcon, formattedObjective.color(KatzeColor.BLUE), Toast.Style.GOAL, plugin);
                     });
         }
 
-        player.sendMessage(Component.text("You finished " + formattedObjective + "."));
-        Toast.display(player.getPlayer(), toastIcon, Component.text(formattedObjective).color(KatzeColor.BLUE), Toast.Style.GOAL, plugin);
+        player.sendMessage(Component.translatable("katze.forcebattle.task.personal_finished", gg.itzkatze.katze.text.TextArg.component("objective", formattedObjective)));
+        Toast.display(player.getPlayer(), toastIcon, formattedObjective.color(KatzeColor.BLUE), Toast.Style.GOAL, plugin);
     }
 }

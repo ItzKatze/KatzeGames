@@ -1,6 +1,7 @@
 package gg.itzkatze.katze.forcebattle.gui.info;
 
 import gg.itzkatze.katze.data.MobsSimplified;
+import gg.itzkatze.katze.data.ObjectiveNames;
 import gg.itzkatze.katze.gui.GUIClickableItem;
 import gg.itzkatze.katze.gui.GUIItem;
 import gg.itzkatze.katze.gui.GUIMaterial;
@@ -8,7 +9,6 @@ import gg.itzkatze.katze.gui.KatzeGUI;
 import gg.itzkatze.katze.player.KatzePlayer;
 import gg.itzkatze.katze.util.ItemStackCreator;
 import gg.itzkatze.katze.util.KatzeColor;
-import gg.itzkatze.katze.util.StringUtility;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
@@ -18,7 +18,7 @@ import java.util.ArrayList;
 public class InfoSimplifiedMobsGUI extends KatzeGUI {
 
     public InfoSimplifiedMobsGUI() {
-        super("Simplified Mobs Info", 27);
+        super(Component.translatable("katze.forcebattle.info.mobs_title"), 27);
     }
 
     @Override
@@ -36,13 +36,13 @@ public class InfoSimplifiedMobsGUI extends KatzeGUI {
                     ArrayList<Component> lore = new ArrayList<>();
 
                     for (EntityType entityType : simplified.getMobs()) {
-                        lore.add(Component.text(" • " + StringUtility.formatName(entityType.key().value())).color(KatzeColor.WHITE));
+                        lore.add(Component.translatable("entity.minecraft." + entityType.key().value()).color(KatzeColor.WHITE));
                     }
 
                     if (guiMaterial.hasSkull()) {
-                        return ItemStackCreator.getSkull(guiMaterial.skull(), Component.text(simplified.getName()).color(KatzeColor.GOLD), 1, lore);
+                        return ItemStackCreator.getSkull(guiMaterial.skull(), ObjectiveNames.of(simplified).color(KatzeColor.GOLD), 1, lore);
                     } else {
-                        return ItemStackCreator.getStack(Component.text(simplified.getName()).color(KatzeColor.GOLD), guiMaterial.material(), 1, lore);
+                        return ItemStackCreator.getStack(ObjectiveNames.of(simplified).color(KatzeColor.GOLD), guiMaterial.material(), 1, lore);
                     }
                 }
             });
@@ -57,3 +57,4 @@ public class InfoSimplifiedMobsGUI extends KatzeGUI {
     }
 
 }
+

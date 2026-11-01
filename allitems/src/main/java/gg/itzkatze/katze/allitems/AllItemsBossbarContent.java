@@ -46,12 +46,16 @@ public class AllItemsBossbarContent implements BossbarContent {
             case ADVANCEMENT -> data.getTotalAvailableAdvancements();
         };
 
-        String label = AllItemsSettings.isTeamMode() ? "Team" : "Your";
-        String title = String.format("%s - %s: %d/%d (%.1f%%)",
-                type.getDisplayName(), label, found, total, percent);
+        Component scope = Component.translatable(AllItemsSettings.isTeamMode() ? "katze.allitems.bossbar.team" : "katze.allitems.bossbar.personal");
+        Component title = Component.translatable("katze.allitems.bossbar.progress",
+                gg.itzkatze.katze.text.TextArg.component("type", Component.translatable("katze.allitems.type." + type.name().toLowerCase(java.util.Locale.ROOT))),
+                gg.itzkatze.katze.text.TextArg.component("scope", scope),
+                gg.itzkatze.katze.text.TextArg.number("found", found),
+                gg.itzkatze.katze.text.TextArg.number("total", total),
+                gg.itzkatze.katze.text.TextArg.decimal("percent", percent));
 
         return BossBar.bossBar(
-                Component.text(title),
+                title,
                 (float) Math.clamp(percent / 100.0, 0.0, 1.0),
                 BossBar.Color.GREEN,
                 BossBar.Overlay.PROGRESS

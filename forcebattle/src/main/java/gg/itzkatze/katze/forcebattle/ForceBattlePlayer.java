@@ -13,7 +13,6 @@ import gg.itzkatze.katze.team.KatzeTeam;
 import gg.itzkatze.katze.player.KatzePlayer;
 import gg.itzkatze.katze.util.Joker;
 import gg.itzkatze.katze.util.KatzeColor;
-import gg.itzkatze.katze.util.StringUtility;
 import gg.itzkatze.katze.util.Toast;
 import lombok.Getter;
 import lombok.Setter;
@@ -109,11 +108,12 @@ public class ForceBattlePlayer extends KatzePlayer {
 
         if (KatzeGames.getTimer().isRunning() && newObjective != null) {
             Material toastIcon = newObjective.getToastIcon();
-            Component toastMessage = Component.text("New Objective: ").color(KatzeColor.LIGHT_GRAY)
-                    .append(Component.text(StringUtility.formatName(newObjective.getObjectiveString())).color(KatzeColor.BLUE));
-            sendMessage(Component.text("Next objective: ")
-                    .append(Component.text(StringUtility.formatName(newObjective.getObjectiveString())).color(KatzeColor.BLUE))
-                    .append(Component.text(" (" + newObjective.getBattleType().getPrefix() + ").")).color(KatzeColor.LIGHT_GRAY));
+            Component objectiveName = newObjective.displayName().color(KatzeColor.BLUE);
+            Component toastMessage = Component.translatable("katze.forcebattle.player.new_objective",
+                    gg.itzkatze.katze.text.TextArg.component("objective", objectiveName));
+            sendMessage(Component.translatable("katze.forcebattle.player.next_objective",
+                    gg.itzkatze.katze.text.TextArg.component("objective", objectiveName),
+                    gg.itzkatze.katze.text.TextArg.component("type", newObjective.getBattleType().displayName())));
             if (getPlayer() != null) {
                 Bukkit.getScheduler().runTaskLater(
                         KatzeGames.get(),
@@ -256,3 +256,4 @@ public class ForceBattlePlayer extends KatzePlayer {
         return super.getBackpackContents();
     }
 }
+

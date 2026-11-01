@@ -1,6 +1,6 @@
 package gg.itzkatze.katze.gui;
 
-import gg.itzkatze.katze.util.KatzeColor;
+import gg.itzkatze.katze.text.Texts;
 import lombok.Getter;
 import gg.itzkatze.katze.player.KatzePlayer;
 import net.kyori.adventure.text.Component;
@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class KatzeGUI implements Listener, InventoryHolder {
     public static final Map<UUID, KatzeGUI> GUI_MAP = new ConcurrentHashMap<>();
 
-    protected String title;
+    protected Component title;
     protected int size;
     protected final List<GUIItem> items;
     private Inventory inventory;
@@ -30,6 +30,10 @@ public abstract class KatzeGUI implements Listener, InventoryHolder {
     private boolean hasFinishedLoading = false;
 
     public KatzeGUI(String title, int size) {
+        this(Component.text(title), size);
+    }
+
+    public KatzeGUI(Component title, int size) {
         this.title = title;
         this.size = size;
         this.items = Collections.synchronizedList(new ArrayList<>());
@@ -135,7 +139,7 @@ public abstract class KatzeGUI implements Listener, InventoryHolder {
         }
 
         if (this.inventory == null) {
-            this.inventory = Bukkit.createInventory(this, size, title);
+            this.inventory = Bukkit.createInventory(this, size, Texts.render(title, p));
         }
 
         // Add to viewers
@@ -147,7 +151,7 @@ public abstract class KatzeGUI implements Listener, InventoryHolder {
             updateInventory(player);
             hasFinishedLoading = true;
         } catch (Exception e) {
-            p.sendMessage(Component.text("An error occurred while opening the GUI.").color(KatzeColor.RED));
+            p.sendMessage(Component.translatable("katze.gui.open_failed"));
             e.printStackTrace();
             return;
         }
@@ -169,10 +173,13 @@ public abstract class KatzeGUI implements Listener, InventoryHolder {
     }
 
     public void updateInventory(KatzePlayer player) {
+        Player bukkitPlayer = player.getPlayer();
+        boolean online = bukkitPlayer != null && bukkitPlayer.isOnline();
         synchronized (items) {
             Inventory inv = getInventory();
             for (GUIItem item : items) {
-                inv.setItem(item.slot, item.getItem(player));
+                ItemStack stack = item.getItem(player);
+                inv.setItem(item.slot, online ? Texts.render(stack, bukkitPlayer) : stack);
             }
         }
     }

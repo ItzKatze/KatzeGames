@@ -19,7 +19,7 @@ public final class CosmeticMenuGui extends KatzeGUI {
     private static final int CLOSE_SLOT = 22;
 
     public CosmeticMenuGui() {
-        super("Cosmetics", 27);
+        super(Component.translatable("katze.cosmetics.menu_title"), 27);
     }
 
     @Override
@@ -59,8 +59,10 @@ public final class CosmeticMenuGui extends KatzeGUI {
                 CosmeticStore store = CosmeticStore.get();
                 List<Cosmetic> cosmetics = store.catalog().in(category);
                 long collected = cosmetics.stream().filter(cosmetic -> store.owns(viewer.getUuid(), cosmetic)).count();
-                return ItemStackCreator.getStack(Component.text(category.title(), KatzeColor.YELLOW, TextDecoration.BOLD), category.icon(),
-                        List.of(Component.text("Collected: " + collected + "/" + cosmetics.size(), KatzeColor.LIGHT_GRAY), Component.text("Click to open", KatzeColor.LIGHT_GRAY)));
+                return ItemStackCreator.getStack(category.titleComponent().color(KatzeColor.YELLOW).decorate(TextDecoration.BOLD), category.icon(),
+                        List.of(Component.translatable("katze.cosmetics.collected", gg.itzkatze.katze.text.TextArg.number("collected", collected),
+                                gg.itzkatze.katze.text.TextArg.number("total", cosmetics.size())).color(KatzeColor.LIGHT_GRAY),
+                                Component.translatable("katze.cosmetics.click_to_open").color(KatzeColor.LIGHT_GRAY)));
             }
         };
     }

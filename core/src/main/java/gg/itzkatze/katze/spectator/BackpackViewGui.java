@@ -28,7 +28,7 @@ public class BackpackViewGui extends KatzeGUI implements SpectatorView {
     private int page;
 
     public BackpackViewGui(@NotNull KatzePlayer target) {
-        super(target.getName() + "'s Backpack", 54);
+        super(Component.translatable("katze.spectator.backpack.title", gg.itzkatze.katze.text.TextArg.text("name", target.getName())), 54);
         this.targetId = target.getUuid();
         this.targetName = target.getName();
     }
@@ -49,8 +49,8 @@ public class BackpackViewGui extends KatzeGUI implements SpectatorView {
         for (int slot = 0; slot < PAGE_SIZE; slot++) {
             set(entry(slot));
         }
-        set(arrow(PREVIOUS_SLOT, "Previous page", -1));
-        set(arrow(NEXT_SLOT, "Next page", 1));
+        set(arrow(PREVIOUS_SLOT, "spectatorMenu.previous_page", -1));
+        set(arrow(NEXT_SLOT, "spectatorMenu.next_page", 1));
         set(backButton());
     }
 
@@ -100,8 +100,8 @@ public class BackpackViewGui extends KatzeGUI implements SpectatorView {
             @Override
             public ItemStack getItem(KatzePlayer viewer) {
                 if (!leadsSomewhere(step)) return ItemStackCreator.fillerItem();
-                return ItemStackCreator.getStack(Component.text(name, KatzeColor.YELLOW), Material.ARROW,
-                        List.of(Component.text("Page " + (page + step + 1) + " / " + pages(), KatzeColor.LIGHT_GRAY)));
+                return ItemStackCreator.getStack(Component.translatable(name).color(KatzeColor.YELLOW), Material.ARROW,
+                        List.of(Component.translatable("book.pageIndicator", Component.text(page + step + 1), Component.text(pages())).color(KatzeColor.LIGHT_GRAY)));
             }
         };
     }
@@ -115,7 +115,7 @@ public class BackpackViewGui extends KatzeGUI implements SpectatorView {
 
             @Override
             public ItemStack getItem(KatzePlayer viewer) {
-                return ItemStackCreator.createNamedItemStack(Material.OAK_DOOR, Component.text("Back", KatzeColor.YELLOW));
+                return ItemStackCreator.createNamedItemStack(Material.OAK_DOOR, Component.translatable("katze.spectator.back").color(KatzeColor.YELLOW));
             }
         };
     }

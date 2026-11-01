@@ -7,7 +7,7 @@ import gg.itzkatze.katze.configuration.SettingsManager;
 import gg.itzkatze.katze.configuration.GlobalSetting;
 import gg.itzkatze.katze.game.GameTimer;
 import gg.itzkatze.katze.lobby.LobbyManager;
-import gg.itzkatze.katze.lobby.cosmetics.PointsSidebar;
+import gg.itzkatze.katze.lobby.PointsSidebar;
 import gg.itzkatze.katze.player.KatzePlayer;
 import gg.itzkatze.katze.util.KatzeColor;
 import io.papermc.paper.scoreboard.numbers.NumberFormat;

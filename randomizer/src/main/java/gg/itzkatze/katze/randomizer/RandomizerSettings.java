@@ -5,6 +5,7 @@ import gg.itzkatze.katze.configuration.SettingsManager;
 import gg.itzkatze.katze.configuration.states.OnOffState;
 import gg.itzkatze.katze.configuration.states.SettingStateType;
 import lombok.Getter;
+import net.kyori.adventure.text.Component;
 
 public class RandomizerSettings {
 
@@ -26,19 +27,22 @@ public class RandomizerSettings {
 
     @Getter
     public enum RandomizerSetting implements Setting {
-        BLOCK_DROPS(false, "Block Drops", OnOffState.ON),
-        MOB_DROPS(false, "Mob Drops", OnOffState.OFF),
-        CHEST_LOOT(false, "Chest Loot", OnOffState.ON),
-        SHARED_MAPPINGS(true, "Shared Mappings", OnOffState.ON);
+        BLOCK_DROPS(false, OnOffState.ON),
+        MOB_DROPS(false, OnOffState.OFF),
+        CHEST_LOOT(false, OnOffState.ON),
+        SHARED_MAPPINGS(true, OnOffState.ON);
 
         private final boolean updateOnChange;
-        private final String displayName;
         private final SettingStateType defaultState;
 
-        RandomizerSetting(boolean updateOnChange, String displayName, SettingStateType defaultState) {
+        RandomizerSetting(boolean updateOnChange, SettingStateType defaultState) {
             this.updateOnChange = updateOnChange;
-            this.displayName = displayName;
             this.defaultState = defaultState;
+        }
+
+        @Override
+        public Component getDisplayName() {
+            return Component.translatable("katze.randomizer.setting." + name().toLowerCase(java.util.Locale.ROOT));
         }
 
         @Override

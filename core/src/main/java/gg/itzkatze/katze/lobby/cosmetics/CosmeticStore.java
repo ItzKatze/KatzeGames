@@ -68,32 +68,32 @@ public final class CosmeticStore {
 
     public int points(@NotNull UUID player) {
         CosmeticProfile profile = cosmetics(player);
-        return profile == null ? 0 : profile.points();
+        return profile == null ? 0 : profile.getPoints();
     }
 
     public int earned(@NotNull UUID player) {
         CosmeticProfile profile = cosmetics(player);
-        return profile == null ? 0 : profile.earned();
+        return profile == null ? 0 : profile.getEarned();
     }
 
     public int best(@NotNull UUID player) {
         CosmeticProfile profile = cosmetics(player);
-        return profile == null ? 0 : profile.best();
+        return profile == null ? 0 : profile.getBest();
     }
 
     public int casesOpened(@NotNull UUID player) {
         CosmeticProfile profile = cosmetics(player);
-        return profile == null ? 0 : profile.casesOpened();
+        return profile == null ? 0 : profile.getCasesOpened();
     }
 
     public int duplicateStreak(@NotNull UUID player) {
         CosmeticProfile profile = cosmetics(player);
-        return profile == null ? 0 : profile.duplicateStreak();
+        return profile == null ? 0 : profile.getDuplicateStreak();
     }
 
     public int caseCount(@NotNull UUID player) {
         CosmeticProfile profile = cosmetics(player);
-        return profile == null ? 1 : profile.caseCount();
+        return profile == null ? 1 : profile.getCaseCount();
     }
 
     public boolean owns(@NotNull UUID player, @NotNull Cosmetic cosmetic) {
@@ -145,11 +145,11 @@ public final class CosmeticStore {
 
     public void recordLanding(@NotNull Player player, int runScore, int pointsToGain) {
         CosmeticProfile profile = profile(player);
-        int before = profile.points();
+        int before = profile.getPoints();
         profile.recordLanding(runScore, pointsToGain);
         data.markDirty();
 
-        if (profile.points() != before) {
+        if (profile.getPoints() != before) {
             notifyBalance(player.getUniqueId());
         }
     }
@@ -158,7 +158,7 @@ public final class CosmeticStore {
         CosmeticProfile profile = cosmetics(player.getUniqueId());
         if (profile == null) return false;
 
-        int before = profile.points();
+        int before = profile.getPoints();
         if (!profile.openCases(price, count)) return false;
 
         changed(player, profile, before);
@@ -174,14 +174,14 @@ public final class CosmeticStore {
         if (amount <= 0) return;
 
         CosmeticProfile profile = profile(player);
-        int before = profile.points();
+        int before = profile.getPoints();
         profile.addPoints(amount);
         changed(player, profile, before);
     }
 
     public boolean winCosmetic(@NotNull Player player, @NotNull Cosmetic cosmetic, int refund) {
         CosmeticProfile profile = profile(player);
-        int before = profile.points();
+        int before = profile.getPoints();
         boolean won = profile.winCosmetic(cosmetic, refund);
         changed(player, profile, before);
         return won;
@@ -189,7 +189,7 @@ public final class CosmeticStore {
 
     public int addEventPoints(@NotNull Player player, int amount) {
         CosmeticProfile profile = profile(player);
-        int before = profile.points();
+        int before = profile.getPoints();
         int applied = profile.addEventPoints(amount);
         changed(player, profile, before);
         return applied;
@@ -240,7 +240,7 @@ public final class CosmeticStore {
     private void changed(@NotNull Player player, @NotNull CosmeticProfile profile, int pointsBefore) {
         data.profile(player.getUniqueId(), player.getName());
         data.markDirty();
-        if (profile.points() != pointsBefore) {
+        if (profile.getPoints() != pointsBefore) {
             notifyBalance(player.getUniqueId());
         }
     }

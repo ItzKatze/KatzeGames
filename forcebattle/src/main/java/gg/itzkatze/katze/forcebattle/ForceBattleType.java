@@ -7,32 +7,33 @@ import lombok.Getter;
 import gg.itzkatze.katze.configuration.states.PlayerTeamBothState;
 import gg.itzkatze.katze.challenges.ChallengeRegistry;
 import gg.itzkatze.katze.configuration.ChallengeSettingsManager;
+import net.kyori.adventure.text.Component;
 
 @Getter
 public enum ForceBattleType {
 
-    FORCE_ITEM("Item", "Item", ForceBattleSettings.FORCE_ITEM),
-    FORCE_MOB("Mob", "Mob", ForceBattleSettings.FORCE_MOB),
-    FORCE_BIOME("Biome", "Biom", ForceBattleSettings.FORCE_BIOME),
-    FORCE_ADVANCEMENT("Advancement", "Advancement", ForceBattleSettings.FORCE_ADVANCEMENT),
-    FORCE_HEIGHT("Height", "Höhe", ForceBattleSettings.FORCE_HEIGHT),
-    FORCE_COORDS("Coords", "Koordinaten", ForceBattleSettings.FORCE_COORDS),
-    FORCE_STRUCTURE("Structure", "Struktur", ForceBattleSettings.FORCE_STRUCTURE),
-    FORCE_DEATH("Death", "Tod", ForceBattleSettings.FORCE_DEATH),
+    FORCE_ITEM(ForceBattleSettings.FORCE_ITEM),
+    FORCE_MOB(ForceBattleSettings.FORCE_MOB),
+    FORCE_BIOME(ForceBattleSettings.FORCE_BIOME),
+    FORCE_ADVANCEMENT(ForceBattleSettings.FORCE_ADVANCEMENT),
+    FORCE_HEIGHT(ForceBattleSettings.FORCE_HEIGHT),
+    FORCE_COORDS(ForceBattleSettings.FORCE_COORDS),
+    FORCE_STRUCTURE(ForceBattleSettings.FORCE_STRUCTURE),
+    FORCE_DEATH(ForceBattleSettings.FORCE_DEATH),
     ;
 
-    private final String englishPrefix;
-    private final String germanPrefix;
     private final ForceBattleSettings linkedSetting;
 
-    ForceBattleType(String englishPrefix, String germanPrefix, ForceBattleSettings linkedSetting) {
-        this.englishPrefix = englishPrefix;
-        this.germanPrefix = germanPrefix;
+    ForceBattleType(ForceBattleSettings linkedSetting) {
         this.linkedSetting = linkedSetting;
     }
 
     public String getPrefix() {
-        return englishPrefix;
+        return name().substring("FORCE_".length());
+    }
+
+    public Component displayName() {
+        return Component.translatable("katze.forcebattle.type." + name().toLowerCase());
     }
 
     public SettingStateType getSettingState() {

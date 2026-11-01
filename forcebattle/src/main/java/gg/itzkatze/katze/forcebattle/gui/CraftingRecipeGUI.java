@@ -1,8 +1,8 @@
 package gg.itzkatze.katze.forcebattle.gui;
 
-import gg.itzkatze.katze.gui.KatzeGUI;
 import gg.itzkatze.katze.gui.GUIClickableItem;
 import gg.itzkatze.katze.gui.GUIItem;
+import gg.itzkatze.katze.gui.KatzeGUI;
 import gg.itzkatze.katze.player.KatzePlayer;
 import gg.itzkatze.katze.util.ItemStackCreator;
 import gg.itzkatze.katze.util.KatzeColor;
@@ -12,7 +12,17 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.*;
+import org.bukkit.inventory.BlastingRecipe;
+import org.bukkit.inventory.CampfireRecipe;
+import org.bukkit.inventory.CookingRecipe;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.RecipeChoice;
+import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.ShapelessRecipe;
+import org.bukkit.inventory.SmithingTransformRecipe;
+import org.bukkit.inventory.SmokingRecipe;
+import org.bukkit.inventory.StonecuttingRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
@@ -31,7 +41,9 @@ public class CraftingRecipeGUI extends KatzeGUI {
     }
 
     private CraftingRecipeGUI(ItemStack result, int page) {
-        super("Recipe for " + StringUtility.formatName(result.getType().name()) + " | Page: " + (page + 1), 27);
+        super(Component.translatable("katze.forcebattle.recipe.title",
+                gg.itzkatze.katze.text.TextArg.text("item", StringUtility.formatName(result.getType().name())),
+                gg.itzkatze.katze.text.TextArg.number("page", page + 1)), 27);
         this.result = result;
         this.recipes = Bukkit.getRecipesFor(result);
         this.page = page;
@@ -75,7 +87,7 @@ public class CraftingRecipeGUI extends KatzeGUI {
                 public ItemStack getItem(KatzePlayer player) {
                     ItemStack barrier = new ItemStack(Material.BARRIER);
                     ItemMeta meta = barrier.getItemMeta();
-                    if (meta != null) meta.displayName(Component.text("No recipe found").color(KatzeColor.RED));
+                    if (meta != null) meta.displayName(Component.translatable("katze.forcebattle.recipe.none").color(KatzeColor.RED));
                     barrier.setItemMeta(meta);
                     return barrier;
                 }
@@ -116,7 +128,7 @@ public class CraftingRecipeGUI extends KatzeGUI {
 
         } else if (recipe instanceof StonecuttingRecipe stonecutting) {
             ItemStack input = getChoiceItem(stonecutting.getInputChoice());
-            setSimpleProcess(input, Material.STONECUTTER, Component.text("Stonecutting").color(KatzeColor.LIGHT_GRAY));
+            setSimpleProcess(input, Material.STONECUTTER, Component.translatable("katze.forcebattle.recipe.stonecutting").color(KatzeColor.LIGHT_GRAY));
 
         } else if (recipe instanceof SmithingTransformRecipe smithing) {
             try {
@@ -137,7 +149,7 @@ public class CraftingRecipeGUI extends KatzeGUI {
                     public ItemStack getItem(KatzePlayer player) {
                         ItemStack table = new ItemStack(Material.SMITHING_TABLE);
                         ItemMeta meta = table.getItemMeta();
-                        if (meta != null) meta.displayName(Component.text("Smithing").color(KatzeColor.LIGHT_GRAY));
+                        if (meta != null) meta.displayName(Component.translatable("katze.forcebattle.recipe.smithing").color(KatzeColor.LIGHT_GRAY));
                         table.setItemMeta(meta);
                         return table;
                     }

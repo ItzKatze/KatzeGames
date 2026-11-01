@@ -6,8 +6,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NonNull;
 
 public enum OnOffState implements SettingStateType {
-    OFF(Component.text("Off").color(KatzeColor.RED)),
-    ON(Component.text("On").color(KatzeColor.LIME));
+    OFF(Component.translatable("katze.settings.state.off").color(KatzeColor.RED)),
+    ON(Component.translatable("katze.settings.state.on").color(KatzeColor.LIME));
 
     private final Component displayName;
 

@@ -36,7 +36,7 @@ public class DisplayResultsCommand extends KatzeCommand {
     @Override
     protected void executeCommand(CommandCaller caller, String[] args) {
         if (!KatzeGames.getTimer().hasHitZero()) {
-            caller.sendMessage(Component.text("The challenge is not yet over.").color(KatzeColor.RED));
+            caller.sendMessage(Component.translatable("katze.forcebattle.command.challenge_not_over").color(KatzeColor.RED));
             return;
         }
 

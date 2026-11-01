@@ -1,22 +1,24 @@
 package gg.itzkatze.katze.forcebattle.gui;
 
+import gg.itzkatze.katze.KatzeGames;
+import gg.itzkatze.katze.data.BiomeSimplified;
 import gg.itzkatze.katze.data.DamageTypeSimplified;
+import gg.itzkatze.katze.data.KatzeAdvancement;
 import gg.itzkatze.katze.data.KatzeDamageType;
 import gg.itzkatze.katze.data.KatzeStructure;
 import gg.itzkatze.katze.data.MobsSimplified;
-import gg.itzkatze.katze.forcebattle.ForceBattleObjective;
-import gg.itzkatze.katze.data.BiomeSimplified;
-import gg.itzkatze.katze.data.KatzeAdvancement;
 import gg.itzkatze.katze.data.StructureSimplified;
-import gg.itzkatze.katze.team.KatzeTeam;
-import gg.itzkatze.katze.util.KatzeColor;
-import lombok.Getter;
-import gg.itzkatze.katze.KatzeGames;
-import gg.itzkatze.katze.gui.KatzeGUI;
+import gg.itzkatze.katze.forcebattle.ForceBattleObjective;
 import gg.itzkatze.katze.gui.GUIClickableItem;
 import gg.itzkatze.katze.gui.GUIItem;
+import gg.itzkatze.katze.gui.KatzeGUI;
 import gg.itzkatze.katze.player.KatzePlayer;
-import gg.itzkatze.katze.util.*;
+import gg.itzkatze.katze.team.KatzeTeam;
+import gg.itzkatze.katze.util.ItemStackCreator;
+import gg.itzkatze.katze.util.KatzeColor;
+import gg.itzkatze.katze.util.ResultUtils;
+import gg.itzkatze.katze.util.StringUtility;
+import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Location;
@@ -29,8 +31,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ResultGUI extends KatzeGUI {
 
@@ -210,8 +217,8 @@ public class ResultGUI extends KatzeGUI {
 
                     viewer.getPlayer().showTitle(Title.title(
                             Component.text(targetPlayer.getName(), KatzeColor.GOLD),
-                            Component.text("Score: ", KatzeColor.YELLOW)
-                                    .append(Component.text(targetPlayer.getPoints(), KatzeColor.LIGHT_BLUE)),
+                            Component.translatable("katze.forcebattle.results.score",
+                                    gg.itzkatze.katze.text.TextArg.number("score", targetPlayer.getPoints())).color(KatzeColor.YELLOW),
                             times
                     ));
                 }
@@ -221,17 +228,18 @@ public class ResultGUI extends KatzeGUI {
                     viewer.sendMessage(ResultUtils.buildTeamResultMessage(targetTeam));
 
                     viewer.getPlayer().showTitle(Title.title(
-                            Component.text("Team " + targetTeam.getId(), KatzeColor.GOLD),
-                            Component.text("Score: ", KatzeColor.YELLOW)
-                                    .append(Component.text(targetTeam.getPoints(), KatzeColor.LIGHT_BLUE)),
+                            Component.translatable("katze.forcebattle.results.team_title",
+                                    gg.itzkatze.katze.text.TextArg.number("team", targetTeam.getId())).color(KatzeColor.GOLD),
+                            Component.translatable("katze.forcebattle.results.score",
+                                    gg.itzkatze.katze.text.TextArg.number("score", targetTeam.getPoints())).color(KatzeColor.YELLOW),
                             times
                     ));
                 }
             }
             case ALL -> {
                 viewer.getPlayer().showTitle(Title.title(
-                        Component.text("All Results", KatzeColor.LIGHT_BLUE),
-                        Component.text("Animation complete", KatzeColor.LIGHT_GRAY),
+                        Component.translatable("katze.forcebattle.results.all_title").color(KatzeColor.LIGHT_BLUE),
+                        Component.translatable("katze.forcebattle.results.animation_complete").color(KatzeColor.LIGHT_GRAY),
                         times
                 ));
             }
@@ -251,15 +259,15 @@ public class ResultGUI extends KatzeGUI {
         playerPageCache.remove(player);
     }
 
-    private static String generateTitle(ResultType type, KatzePlayer player, KatzeTeam team, boolean animated) {
-        if (animated) {
-            return "Results";
-        }
+    private static Component generateTitle(ResultType type, KatzePlayer player, KatzeTeam team, boolean animated) {
+        if (animated) return Component.translatable("katze.forcebattle.results.animated_title");
 
         return switch (type) {
-            case PLAYER -> "Results | " + (player != null ? player.getName() : "Unknown");
-            case TEAM -> "Results | Team " + (team != null ? team.getId() : "N/A");
-            default -> "Results | All Players";
+            case PLAYER -> Component.translatable("katze.forcebattle.results.player_title",
+                    gg.itzkatze.katze.text.TextArg.text("player", player != null ? player.getName() : "Unknown"));
+            case TEAM -> Component.translatable("katze.forcebattle.results.team_title",
+                    gg.itzkatze.katze.text.TextArg.text("team", team != null ? String.valueOf(team.getId()) : "N/A"));
+            default -> Component.translatable("katze.forcebattle.results.all_title");
         };
     }
 
@@ -300,24 +308,21 @@ public class ResultGUI extends KatzeGUI {
 
             List<Component> lore = new ArrayList<>();
             lore.add(Component.empty());
-            lore.add(Component.text("Time: ").color(KatzeColor.LIGHT_GRAY)
-                    .append(Component.text(StringUtility.formatTime(objective.getTime()))
-                            .color(KatzeColor.BLUE)));
+            lore.add(Component.translatable("katze.forcebattle.results.time",
+                    gg.itzkatze.katze.text.TextArg.text("time", StringUtility.formatTime(objective.getTime()))).color(KatzeColor.LIGHT_GRAY));
 
             if (displayNames) {
-                lore.add(Component.text("Player: ").color(KatzeColor.LIGHT_GRAY)
-                        .append(Component.text(objective.getWhoFinished().getName())
-                                .color(KatzeColor.BLUE)));
+                lore.add(Component.translatable("katze.forcebattle.results.player",
+                        gg.itzkatze.katze.text.TextArg.text("player", objective.getWhoFinished().getName())).color(KatzeColor.LIGHT_GRAY));
             }
             if (objective.hasBeenSkipped()) {
                 lore.add(Component.empty());
-                lore.add(Component.text("SKIPPED").color(KatzeColor.RED));
+                lore.add(Component.translatable("katze.forcebattle.results.skipped").color(KatzeColor.RED));
             }
 
-            Component name = Component.text(objective.getBattleType().getPrefix() + ": ")
-                    .color(KatzeColor.LIGHT_GRAY)
-                    .append(Component.text(StringUtility.formatName(objective.getObjectiveString()))
-                            .color(KatzeColor.BLUE));
+            Component name = objective.getBattleType().displayName().color(KatzeColor.LIGHT_GRAY)
+                    .append(Component.text(": ", KatzeColor.GRAY))
+                    .append(objective.displayName().color(KatzeColor.BLUE));
 
             return ItemStackCreator.getStack(name, material, lore);
         }

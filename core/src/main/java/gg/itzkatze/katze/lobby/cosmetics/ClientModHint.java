@@ -15,16 +15,14 @@ public final class ClientModHint implements Listener {
 
     private static final long CHECK_DELAY_TICKS = 100;
     private static final String DOWNLOAD_URL = "https://modrinth.com/mod/katzegamesmod/versions";
-    private static final Component HINT = Component.text(
-            "You're playing without the KatzeGames client mod. Install it from Modrinth for an overall better experience! ", KatzeColor.YELLOW)
-            .append(Component.text("[Download]", KatzeColor.LIME).clickEvent(ClickEvent.openUrl(DOWNLOAD_URL)));
-
     @EventHandler
     public void onJoin(@NotNull PlayerJoinEvent event) {
         Player player = event.getPlayer();
         Bukkit.getScheduler().runTaskLater(KatzeGames.get(), () -> {
             if (player.isConnected() && !MusicChannel.isListening(player)) {
-                player.sendMessage(HINT);
+                player.sendMessage(Component.translatable("katze.cosmetics.client_mod_hint").color(KatzeColor.YELLOW)
+                        .append(Component.translatable("katze.cosmetics.download").color(KatzeColor.LIME)
+                                .clickEvent(ClickEvent.openUrl(DOWNLOAD_URL))));
             }
         }, CHECK_DELAY_TICKS);
     }

@@ -40,7 +40,7 @@ public class RecipeCommand extends KatzeCommand {
         Material material = Material.matchMaterial(input);
 
         if (material == null) {
-            caller.sendMessage(Component.text("Material couldn't be found."));
+            caller.sendMessage(Component.translatable("katze.forcebattle.command.material_not_found"));
             return;
         }
 

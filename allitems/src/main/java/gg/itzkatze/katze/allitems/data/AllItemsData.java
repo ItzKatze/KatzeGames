@@ -1,6 +1,7 @@
 package gg.itzkatze.katze.allitems.data;
 
 import gg.itzkatze.katze.KatzeGames;
+import gg.itzkatze.katze.allitems.AllItemsNames;
 import gg.itzkatze.katze.allitems.AllItemsObjective;
 import gg.itzkatze.katze.allitems.AllItemsObjectiveType;
 import gg.itzkatze.katze.allitems.AllItemsSettings;
@@ -10,6 +11,7 @@ import gg.itzkatze.katze.data.StructureSimplified;
 import gg.itzkatze.katze.game.SessionPersistence;
 import gg.itzkatze.katze.util.StringUtility;
 import gg.itzkatze.katze.util.WorldStorage;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -62,6 +64,10 @@ public class AllItemsData {
     }
 
     public record FoundObjective(AllItemsObjectiveType type, String key, String displayName, FoundEntry entry) {
+
+        public Component displayNameComponent() {
+            return AllItemsNames.of(type, key, displayName);
+        }
     }
 
     public boolean recordItemFound(@NotNull Player player, @NotNull Material material) {

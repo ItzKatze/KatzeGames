@@ -4,6 +4,7 @@ import gg.itzkatze.katze.challenges.Challenge;
 import gg.itzkatze.katze.challenges.ChallengeRegistry;
 import gg.itzkatze.katze.challenges.ChallengeType;
 import gg.itzkatze.katze.configuration.ChallengeSettingsManager;
+import gg.itzkatze.katze.text.Texts;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
@@ -15,7 +16,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
 import java.util.UUID;
 
 public final class Toast {
@@ -43,15 +43,6 @@ public final class Toast {
                 .buildAndDisplay(player);
     }
 
-    public static void display(Collection<Player> players, String icon, Component message, Style style, Plugin main) {
-        new Builder()
-                .plugin(main)
-                .icon(icon)
-                .message(message)
-                .style(style)
-                .buildAndDisplay(players);
-    }
-
     public static void display(Player player, Material icon, Component message, Style style, Plugin main) {
         new Builder()
                 .plugin(main)
@@ -61,17 +52,11 @@ public final class Toast {
                 .buildAndDisplay(player);
     }
 
-    public static void display(Collection<Player> players, Material icon, Component message, Style style, Plugin main) {
-        new Builder()
-                .plugin(main)
-                .icon(icon)
-                .message(message)
-                .style(style)
-                .buildAndDisplay(players);
-    }
-
     private void start(Player player) {
-        createAdvancement();
+        if (player == null) {
+            return;
+        }
+        createAdvancement(Texts.render(message, player));
         grantAdvancement(player);
 
         Challenge forceBattle = ChallengeRegistry.getChallenge(ChallengeType.FORCE_BATTLE);
@@ -85,23 +70,8 @@ public final class Toast {
         }
     }
 
-    private void start(@NotNull Collection<Player> players) {
-        createAdvancement();
-        players.forEach(this::grantAdvancement);
-
-        Challenge forceBattle = ChallengeRegistry.getChallenge(ChallengeType.FORCE_BATTLE);
-        if (forceBattle instanceof ChallengeSettingsManager) {
-            Bukkit.getScheduler().runTaskLater(main, () ->
-                            players.stream()
-                                    .filter(player -> player != null && player.isOnline())
-                                    .forEach(this::revokeAdvancement),
-                    10
-            );
-        }
-    }
-
-    private void createAdvancement() {
-        Component titleComponent = message.decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE);
+    private void createAdvancement(Component title) {
+        Component titleComponent = title.decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE);
         String titleJson = GsonComponentSerializer.gson().serialize(titleComponent);
         Bukkit.getUnsafe().loadAdvancement(key, "{\n" +
                 "    \"criteria\": {\n" +
@@ -199,10 +169,6 @@ public final class Toast {
 
         public void buildAndDisplay(Player player) {
             new Toast(plugin, icon, message, style).start(player);
-        }
-
-        public void buildAndDisplay(Collection<Player> players) {
-            new Toast(plugin, icon, message, style).start(players);
         }
 
     }

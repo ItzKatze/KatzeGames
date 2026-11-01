@@ -16,6 +16,8 @@ import org.bukkit.plugin.Plugin;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.List;
 import java.util.Random;
+import java.time.Duration;
+import net.kyori.adventure.title.Title;
 
 final class EventBlock {
 
@@ -75,20 +77,12 @@ final class EventBlock {
 
                 if (step < changes) {
                     int preview = payout(ThreadLocalRandom.current());
-                    player.sendTitle(
-                            "§6Event Block!",
-                            "§a" + PointsText.signed(preview),
-                            0, 10, 0
-                    );
+                    showPayout(player, preview, 10);
                     step++;
                     return;
                 }
 
-                player.sendTitle(
-                        "§6Event Block!",
-                        "§a" + PointsText.signed(applied),
-                        0, 20, 0
-                );
+                showPayout(player, applied, 20);
                 player.playSound(EventBlock.sound(applied));
                 cancel();
 
@@ -103,7 +97,13 @@ final class EventBlock {
 
     static @NotNull Component message(int applied) {
         TextColor color = applied < 0 ? KatzeColor.RED : applied >= GOLD_FROM ? KatzeColor.GOLD : KatzeColor.LIME;
-        return Component.textOfChildren(Component.text("Event Block! ", KatzeColor.GOLD, TextDecoration.BOLD), Component.text(PointsText.signed(applied), color));
+        return Component.translatable("katze.cosmetics.event_block_payout", gg.itzkatze.katze.text.TextArg.component("points", PointsText.signedComponent(applied).color(color))).color(KatzeColor.GOLD).decorate(TextDecoration.BOLD);
+    }
+
+    private static void showPayout(@NotNull Player player, int points, int stayTicks) {
+        Title.Times times = Title.Times.times(Duration.ZERO, Duration.ofMillis(stayTicks * 50L), Duration.ZERO);
+        player.showTitle(Title.title(Component.translatable("katze.cosmetics.event_block").color(KatzeColor.GOLD),
+                PointsText.signedComponent(points).color(KatzeColor.LIME), times));
     }
 
     static @NotNull Sound sound(int applied) {
@@ -111,3 +111,4 @@ final class EventBlock {
         return applied >= LEVEL_UP_FROM ? BIG_WIN : WIN;
     }
 }
+

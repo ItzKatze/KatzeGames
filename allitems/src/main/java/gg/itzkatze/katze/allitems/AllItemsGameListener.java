@@ -2,6 +2,7 @@ package gg.itzkatze.katze.allitems;
 
 import gg.itzkatze.katze.KatzeGames;
 import gg.itzkatze.katze.allitems.data.AllItemsData;
+import gg.itzkatze.katze.data.ObjectiveNames;
 import gg.itzkatze.katze.data.BiomeSimplified;
 import gg.itzkatze.katze.data.KatzeAdvancement;
 import gg.itzkatze.katze.data.KatzeStructure;
@@ -9,7 +10,6 @@ import gg.itzkatze.katze.data.StructureSimplified;
 import gg.itzkatze.katze.level.LevelStore;
 import gg.itzkatze.katze.player.KatzePlayer;
 import gg.itzkatze.katze.util.KatzeColor;
-import gg.itzkatze.katze.util.StringUtility;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -90,7 +90,7 @@ public class AllItemsGameListener implements Listener {
         }
 
         if (data.recordItemFound(player, material)) {
-            discover(player, AllItemsXp.ITEM, "item", material.name());
+            discover(player, AllItemsXp.ITEM, AllItemsObjectiveType.ITEM, ObjectiveNames.of(material));
         }
     }
 
@@ -145,7 +145,7 @@ public class AllItemsGameListener implements Listener {
         }
 
         if (data.recordItemFound(player, material)) {
-            discover(player, AllItemsXp.ITEM, "item", material.name());
+            discover(player, AllItemsXp.ITEM, AllItemsObjectiveType.ITEM, ObjectiveNames.of(material));
         }
     }
 
@@ -173,7 +173,7 @@ public class AllItemsGameListener implements Listener {
             return;
         }
         if (data.recordBiomeFound(player, simplified)) {
-            discover(player, AllItemsXp.BIOME, "biome", simplified.getName());
+            discover(player, AllItemsXp.BIOME, AllItemsObjectiveType.BIOME, ObjectiveNames.of(simplified));
         }
     }
 
@@ -200,7 +200,7 @@ public class AllItemsGameListener implements Listener {
         }
 
         if (data.recordMobFound(killer, type)) {
-            discover(killer, AllItemsXp.MOB, "mob", type.name());
+            discover(killer, AllItemsXp.MOB, AllItemsObjectiveType.MOB, ObjectiveNames.of(type));
         }
     }
 
@@ -223,7 +223,7 @@ public class AllItemsGameListener implements Listener {
         }
 
         if (data.recordAdvancementFound(player, advancement)) {
-            discover(player, AllItemsXp.ADVANCEMENT, "advancement", advancement.getName());
+            discover(player, AllItemsXp.ADVANCEMENT, AllItemsObjectiveType.ADVANCEMENT, ObjectiveNames.of(advancement));
         }
     }
 
@@ -265,7 +265,7 @@ public class AllItemsGameListener implements Listener {
                 Structure bukkitStruct = registry.get(structure.getKey());
                 if (bukkitStruct != null && checkPlayerLocationInStructure(player, structure.getKey(), bukkitStruct)) {
                     if (data.recordStructureFound(player, simplified)) {
-                        discover(player, AllItemsXp.STRUCTURE, "structure", simplified.getName());
+                        discover(player, AllItemsXp.STRUCTURE, AllItemsObjectiveType.STRUCTURE, ObjectiveNames.of(simplified));
                     }
                     return;
                 }
@@ -326,18 +326,25 @@ public class AllItemsGameListener implements Listener {
                 && z >= box.getMinZ() && z <= box.getMaxZ();
     }
 
-    private void discover(Player player, AllItemsXp reward, String type, String name) {
+    private void discover(Player player, AllItemsXp reward, AllItemsObjectiveType type, Component objective) {
         LevelStore.get().grant(player, reward.xp());
-        announceDiscovery(player, type, name);
+        announceDiscovery(player, type, objective);
     }
 
-    private void announceDiscovery(Player player, String type, String name) {
-        String formatted = StringUtility.formatName(name);
+    private void announceDiscovery(Player player, AllItemsObjectiveType type, Component objective) {
+        Component translatedType = Component.translatable("katze.allitems.discovery.type." + type.name().toLowerCase(java.util.Locale.ROOT));
         if (AllItemsSettings.isTeamMode()) {
-            KatzeGames.broadcast(Component.text(player.getName() + " discovered " + formatted + " (" + type + ") for the team!"));
+            KatzeGames.broadcast(Component.translatable("katze.allitems.discovery.team",
+                    gg.itzkatze.katze.text.TextArg.text("player", player.getName()),
+                    gg.itzkatze.katze.text.TextArg.component("objective", objective),
+                    gg.itzkatze.katze.text.TextArg.component("type", translatedType)));
         } else {
-            KatzeGames.broadcast(Component.text(player.getName() + " discovered " + formatted + " (" + type + ")!"));
+            KatzeGames.broadcast(Component.translatable("katze.allitems.discovery.player",
+                    gg.itzkatze.katze.text.TextArg.text("player", player.getName()),
+                    gg.itzkatze.katze.text.TextArg.component("objective", objective),
+                    gg.itzkatze.katze.text.TextArg.component("type", translatedType)));
         }
-        KatzePlayer.adapt(player).sendMessage(Component.text("You discovered " + formatted + "!").color(KatzeColor.LIME));
+        KatzePlayer.adapt(player).sendMessage(Component.translatable("katze.allitems.discovery.personal",
+                gg.itzkatze.katze.text.TextArg.component("objective", objective)).color(KatzeColor.LIME));
     }
 }

@@ -35,10 +35,10 @@ public class AllItemsChainBossbarContent implements BossbarContent {
             return null;
         }
 
-        String title = String.format("Chain Objective: %s (%s)",
-                objective.displayName(), objective.type().getDisplayName());
         return BossBar.bossBar(
-                Component.text(title),
+                Component.translatable("katze.allitems.bossbar.chain_objective",
+                        gg.itzkatze.katze.text.TextArg.component("objective", objective.displayNameComponent()),
+                        gg.itzkatze.katze.text.TextArg.component("type", objective.type().displayName())),
                 1.0f,
                 BossBar.Color.BLUE,
                 BossBar.Overlay.PROGRESS

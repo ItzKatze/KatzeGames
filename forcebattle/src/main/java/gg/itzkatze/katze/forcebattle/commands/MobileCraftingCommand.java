@@ -30,7 +30,7 @@ public class MobileCraftingCommand extends KatzeCommand {
     @Override
     public void executeCommand(@NotNull CommandCaller caller, String[] args) {
         if (!SettingsManager.isEnabled(GlobalSetting.MOBILE_CRAFTING)) {
-            caller.sendMessage(Component.text("Mobile Crafting is disabled.").color(KatzeColor.RED));
+            caller.sendMessage(Component.translatable("katze.forcebattle.command.mobile_crafting_disabled").color(KatzeColor.RED));
             return;
         }
         if (caller instanceof KatzePlayer katzePlayer) {

@@ -22,16 +22,19 @@ public class DeathSwapSettings {
 
     @Getter
     public enum DeathSwapSetting implements Setting {
-        SWAP_INTERVAL(true, "Swap Interval", SwapIntervalState.MIN_5);
+        SWAP_INTERVAL(true, SwapIntervalState.MIN_5);
 
         private final boolean updateOnChange;
-        private final String displayName;
         private final SettingStateType defaultState;
 
-        DeathSwapSetting(boolean updateOnChange, String displayName, SettingStateType defaultState) {
+        DeathSwapSetting(boolean updateOnChange, SettingStateType defaultState) {
             this.updateOnChange = updateOnChange;
-            this.displayName = displayName;
             this.defaultState = defaultState;
+        }
+
+        @Override
+        public Component getDisplayName() {
+            return Component.translatable("katze.deathswap.setting." + name().toLowerCase(java.util.Locale.ROOT));
         }
 
         @Override
@@ -71,8 +74,7 @@ public class DeathSwapSettings {
 
         @Override
         public @NotNull Component getDisplayName() {
-            String label = minutes == 1 ? "1 Minute" : minutes + " Minutes";
-            return Component.text(label).color(KatzeColor.LIGHT_BLUE);
+            return Component.translatable("katze.deathswap.state.interval", gg.itzkatze.katze.text.TextArg.number("minutes", minutes)).color(KatzeColor.LIGHT_BLUE);
         }
 
         @Override

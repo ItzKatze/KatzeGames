@@ -26,7 +26,7 @@ public final class CaseConfirmGui extends PurchaseConfirmGui {
     private int count;
 
     private CaseConfirmGui(int count) {
-        super("Open a Cosmetic Case?");
+        super(Component.translatable("katze.cosmetics.confirm_title"));
         this.count = count;
     }
 
@@ -37,7 +37,7 @@ public final class CaseConfirmGui extends PurchaseConfirmGui {
         CosmeticStore store = CosmeticStore.get();
         int balance = store.points(bukkit.getUniqueId());
         if (balance < CaseLoot.PRICE) {
-            bukkit.sendMessage(Component.text(PointsText.missing(CaseLoot.PRICE - balance), KatzeColor.RED));
+            bukkit.sendMessage(PointsText.missingComponent(CaseLoot.PRICE - balance).color(KatzeColor.RED));
             bukkit.playSound(ShopSounds.DENY);
             return;
         }
@@ -48,14 +48,14 @@ public final class CaseConfirmGui extends PurchaseConfirmGui {
         CosmeticStore store = CosmeticStore.get();
         List<Cosmetic> missing = CaseLoot.missing(CaseLoot.available(store.catalog(), store.today()), cosmetic -> store.owns(player, cosmetic));
         if (missing.isEmpty()) {
-            return Component.text("You own every cosmetic in the case right now.", KatzeColor.LIGHT_GRAY);
+            return Component.translatable("katze.cosmetics.own_everything").color(KatzeColor.LIGHT_GRAY);
         }
         int streak = store.duplicateStreak(player);
         if (CaseLoot.pityDue(streak, missing)) {
-            return Component.text("Your next case gives a new cosmetic!", KatzeColor.MAGENTA);
+            return Component.translatable("katze.cosmetics.next_case_new").color(KatzeColor.MAGENTA);
         }
         int left = CaseLoot.PITY_STREAK - streak;
-        return Component.text(left + (left == 1 ? " more duplicate" : " more duplicates") + " until a guaranteed new cosmetic", KatzeColor.LIGHT_GRAY);
+        return Component.translatable("katze.cosmetics.pity_progress", gg.itzkatze.katze.text.TextArg.number("count", left)).color(KatzeColor.LIGHT_GRAY);
     }
 
     @Override
@@ -63,29 +63,30 @@ public final class CaseConfirmGui extends PurchaseConfirmGui {
         int balance = CosmeticStore.get().points(viewer.getUuid());
         int price = CaseLoot.PRICE * count;
         List<Component> lore = new ArrayList<>();
-        lore.add(Component.text("Price: " + PointsText.amount(price), KatzeColor.GOLD));
-        lore.add(balance >= price ? Component.text("After opening: " + PointsText.amount(balance - price), KatzeColor.LIGHT_GRAY)
-                : Component.text(PointsText.missing(price - balance), KatzeColor.RED));
+        lore.add(Component.translatable("katze.cosmetics.price", gg.itzkatze.katze.text.TextArg.number("points", price)).color(KatzeColor.GOLD));
+        lore.add(balance >= price ? Component.translatable("katze.cosmetics.after_opening", gg.itzkatze.katze.text.TextArg.number("points", balance - price)).color(KatzeColor.LIGHT_GRAY)
+                : PointsText.missingComponent(price - balance).color(KatzeColor.RED));
         lore.add(pityLine(viewer.getUuid()));
         lore.add(Component.empty());
-        lore.add(Component.text("Contains points and cosmetics:", KatzeColor.LIGHT_GRAY));
+        lore.add(Component.translatable("katze.cosmetics.contains", KatzeColor.LIGHT_GRAY));
         lore.add(rarities());
         lore.add(Component.empty());
-        lore.add(Component.text("Left-click: one more case (up to " + CaseRollGui.MAX_CASES + ")", KatzeColor.LIGHT_GRAY));
-        lore.add(Component.text("Right-click: one fewer case", KatzeColor.LIGHT_GRAY));
-        Component name = Component.text(count == 1 ? "Cosmetic Case" : count + " Cosmetic Cases", KatzeColor.MAGENTA);
+        lore.add(Component.translatable("katze.cosmetics.add_case_hint", gg.itzkatze.katze.text.TextArg.number("max", CaseRollGui.MAX_CASES)).color(KatzeColor.LIGHT_GRAY));
+        lore.add(Component.translatable("katze.cosmetics.remove_case_hint").color(KatzeColor.LIGHT_GRAY));
+        Component name = Component.translatable(count == 1 ? "katze.cosmetics.case" : "katze.cosmetics.cases",
+                gg.itzkatze.katze.text.TextArg.number("count", count)).color(KatzeColor.MAGENTA);
         return ItemStackCreator.getStack(name, Material.ENDER_CHEST, count, lore);
     }
 
     @Override
-    protected @NotNull String acceptHint() {
-        if (count == 1) return "Open the case for " + PointsText.amount(CaseLoot.PRICE);
-        return "Open " + count + " cases for " + PointsText.amount(CaseLoot.PRICE * count);
+    protected @NotNull Component acceptHint() {
+        return Component.translatable("katze.cosmetics.open_for", gg.itzkatze.katze.text.TextArg.number("count", count),
+                gg.itzkatze.katze.text.TextArg.number("points", CaseLoot.PRICE * count));
     }
 
     @Override
-    protected @NotNull String denyHint() {
-        return "Close";
+    protected @NotNull Component denyHint() {
+        return Component.translatable("katze.cosmetics.close");
     }
 
     @Override
@@ -136,7 +137,7 @@ public final class CaseConfirmGui extends PurchaseConfirmGui {
             if (tier.ordinal() > 0) {
                 line.append(Component.text(" · ", KatzeColor.LIGHT_GRAY));
             }
-            line.append(Component.text(tier.displayName(), tier.color()));
+            line.append(tier.displayNameComponent().color(tier.color()));
         }
         return line.build();
     }

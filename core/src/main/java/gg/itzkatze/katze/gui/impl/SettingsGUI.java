@@ -28,35 +28,29 @@ import java.util.List;
 public class SettingsGUI extends KatzeGUI {
 
     public SettingsGUI() {
-        super("Settings", 54);
+        super(Component.translatable("katze.settings.gui.title"), 54);
     }
 
     @Getter
     public enum GenericSettingButton {
-        NO_HUNGER(45, Material.COOKED_BEEF, GlobalSetting.NO_HUNGER, "No Hunger", "Click to toggle no Hunger.", "No Hunger"),
-        NO_DAMAGE(46, Material.IRON_SWORD, GlobalSetting.NO_DAMAGE, "No Damage", "Click to toggle no Damage.", "No Damage"),
-        MOBILE_CRAFTING(47, Material.CRAFTING_TABLE, GlobalSetting.MOBILE_CRAFTING, "Mobile Crafting", "Click to toggle mobile crafting.", "Mobile Crafting"),
-        HIDE_POINTS(48, Material.IRON_TRAPDOOR, GlobalSetting.HIDE_POINTS, "Hide Points", "Click to toggle Hide Points.", "Hide Points"),
-        HIDE_OBJECTIVES(49, Material.DARK_OAK_DOOR, GlobalSetting.HIDE_OBJECTIVES, "Hide Objectives", "Click to toggle Hide Objectives.", "Hide Objectives"),
-        NO_DUPLICATE_OBJECTIVES(50, Material.NAME_TAG, GlobalSetting.NO_DUPLICATE_OBJECTIVES, "No Duplicate Objectives", "Click to toggle no duplicate objectives.", "No duplicate objectives"),
-        SIMPLIFIED_OBJECTIVES(51, Material.DIRT, GlobalSetting.SIMPLIFIED_OBJECTIVES, "Simplified Objectives", "Click to toggle simplified objectives.", "Simplified objectives"),
-        EXTRA_TEAM_OBJECTIVE(52, Material.ALLAY_SPAWN_EGG, GlobalSetting.EXTRA_TEAM_OBJECTIVE, "Extra Team Objective", "Click to toggle the extra team objective.", "Extra team objective"),
-        SHOW_SCOREBOARD(53, Material.ARMOR_STAND, GlobalSetting.SHOW_SCOREBOARD, "Show Scoreboard", "Click to toggle the scoreboard.", "Show scoreboard");
+        NO_HUNGER(45, Material.COOKED_BEEF, GlobalSetting.NO_HUNGER),
+        NO_DAMAGE(46, Material.IRON_SWORD, GlobalSetting.NO_DAMAGE),
+        MOBILE_CRAFTING(47, Material.CRAFTING_TABLE, GlobalSetting.MOBILE_CRAFTING),
+        HIDE_POINTS(48, Material.IRON_TRAPDOOR, GlobalSetting.HIDE_POINTS),
+        HIDE_OBJECTIVES(49, Material.DARK_OAK_DOOR, GlobalSetting.HIDE_OBJECTIVES),
+        NO_DUPLICATE_OBJECTIVES(50, Material.NAME_TAG, GlobalSetting.NO_DUPLICATE_OBJECTIVES),
+        SIMPLIFIED_OBJECTIVES(51, Material.DIRT, GlobalSetting.SIMPLIFIED_OBJECTIVES),
+        EXTRA_TEAM_OBJECTIVE(52, Material.ALLAY_SPAWN_EGG, GlobalSetting.EXTRA_TEAM_OBJECTIVE),
+        SHOW_SCOREBOARD(53, Material.ARMOR_STAND, GlobalSetting.SHOW_SCOREBOARD);
 
         private final int slot;
         private final Material material;
         private final GlobalSetting setting;
-        private final String nameText;
-        private final String toggleLine;
-        private final String changedMsg;
 
-        GenericSettingButton(int slot, Material material, GlobalSetting setting, String nameText, String toggleLine, String changedMsg) {
+        GenericSettingButton(int slot, Material material, GlobalSetting setting) {
             this.slot = slot;
             this.material = material;
             this.setting = setting;
-            this.nameText = nameText;
-            this.toggleLine = toggleLine;
-            this.changedMsg = changedMsg;
         }
     }
 
@@ -81,12 +75,10 @@ public class SettingsGUI extends KatzeGUI {
                     } else {
                         if (ChallengeManager.isChallengeActive(challenge.getType())) {
                             ChallengeManager.unloadChallenge(challenge);
-                            player.sendMessage(Component.text("Disabled challenge: ").color(KatzeColor.RED)
-                                    .append(Component.text(challenge.getType().getName()).color(KatzeColor.RED)));
+                            player.sendMessage(Component.translatable("katze.settings.gui.challenge.disabled_msg", gg.itzkatze.katze.text.TextArg.component("name", challenge.getType().displayName().color(KatzeColor.RED))));
                         } else {
                             ChallengeManager.loadChallenge(challenge);
-                            player.sendMessage(Component.text("Enabled challenge: ").color(KatzeColor.LIME)
-                                    .append(Component.text(challenge.getType().getName()).color(KatzeColor.LIME)));
+                            player.sendMessage(Component.translatable("katze.settings.gui.challenge.enabled_msg", gg.itzkatze.katze.text.TextArg.component("name", challenge.getType().displayName().color(KatzeColor.LIME))));
                         }
                         new SettingsGUI().open(player);
                     }
@@ -96,28 +88,23 @@ public class SettingsGUI extends KatzeGUI {
                 public ItemStack getItem(KatzePlayer p) {
                     boolean active = ChallengeManager.isChallengeActive(challenge.getType());
                     GUIMaterial material = challenge.getType().getMaterial();
-                    Component displayName = Component.text(challenge.getType().getName());
+                    Component displayName = challenge.getType().displayName();
 
                     List<Component> lore = new ArrayList<>();
-                    lore.add(Component.text("Status: ").color(KatzeColor.LIGHT_GRAY)
-                            .append(Component.text(active ? "Enabled" : "Disabled")
-                                    .color(active ? KatzeColor.LIME : KatzeColor.RED)));
+                    lore.add(Component.translatable("katze.settings.gui.status", gg.itzkatze.katze.text.TextArg.component("state", Component.translatable(active ? "katze.settings.gui.enabled" : "katze.settings.gui.disabled")
+                            .color(active ? KatzeColor.LIME : KatzeColor.RED))));
 
                     if (challenge.hasSettings()) {
                         lore.add(Component.empty());
-                        lore.add(Component.text("Left-click: ").color(KatzeColor.YELLOW)
-                                .append(Component.text("Enable/Disable").color(KatzeColor.WHITE)));
-                        lore.add(Component.text("Right-click: ").color(KatzeColor.YELLOW)
-                                .append(Component.text("Open Settings").color(KatzeColor.WHITE)));
+                        lore.add(Component.translatable("katze.settings.gui.left_click").color(KatzeColor.YELLOW));
+                        lore.add(Component.translatable("katze.settings.gui.right_click").color(KatzeColor.YELLOW));
                     } else {
                         lore.add(Component.empty());
-                        lore.add(Component.text("Click: ").color(KatzeColor.YELLOW)
-                                .append(Component.text("Enable/Disable").color(KatzeColor.WHITE)));
+                        lore.add(Component.translatable("katze.settings.gui.click").color(KatzeColor.YELLOW));
                     }
 
                     lore.add(Component.empty());
-                    lore.add(Component.text("Description: ").color(KatzeColor.LIGHT_GRAY)
-                            .append(Component.text(challenge.getType().getDescription()).color(KatzeColor.WHITE)));
+                    lore.add(Component.translatable("katze.settings.gui.description", gg.itzkatze.katze.text.TextArg.component("desc", challenge.getType().getDescription().color(KatzeColor.WHITE))));
 
                     if (material.hasSkull()) {
                         return ItemStackCreator.getSkull(material.skull(), displayName, 1, lore);
@@ -132,8 +119,7 @@ public class SettingsGUI extends KatzeGUI {
 
         for (GenericSettingButton button : GenericSettingButton.values()) {
             Setting setting = button.getSetting();
-            String changedMsg = button.getChangedMsg();
-            String toggleLine = button.getToggleLine();
+            Component settingName = Component.translatable("katze.settings.global." + setting.getId().toLowerCase(java.util.Locale.ROOT));
 
             set(new GUIClickableItem(button.getSlot()) {
                 @Override
@@ -142,10 +128,7 @@ public class SettingsGUI extends KatzeGUI {
                     SettingsManager.setState(setting, nextState);
 
                     KatzeGames.broadcast(
-                            Component.text(changedMsg + " ").color(KatzeColor.BLUE)
-                                    .append(Component.text("has been set to ").color(KatzeColor.LIGHT_GRAY))
-                                    .append(nextState.getDisplayName())
-                                    .append(Component.text("!").color(KatzeColor.LIGHT_GRAY)));
+                            Component.translatable("katze.settings.gui.changed", gg.itzkatze.katze.text.TextArg.component("name", settingName.color(KatzeColor.BLUE)), gg.itzkatze.katze.text.TextArg.component("state", nextState.getDisplayName())));
 
                     new SettingsGUI().open(player);
                 }
@@ -153,16 +136,12 @@ public class SettingsGUI extends KatzeGUI {
                 @Override
                 public ItemStack getItem(KatzePlayer p) {
                     List<Component> loreLines = new ArrayList<>();
-                    if (toggleLine != null && !toggleLine.isBlank()) {
-                        loreLines.add(Component.text(toggleLine).color(KatzeColor.LIGHT_GRAY));
-                    }
+                    loreLines.add(Component.translatable("katze.settings.gui.toggle_hint").color(KatzeColor.LIGHT_GRAY));
                     loreLines.add(Component.empty());
-                    loreLines.add(Component.text("Current Status").color(KatzeColor.BLUE)
-                            .append(Component.text(": ").color(KatzeColor.GRAY))
-                            .append(SettingsManager.getState(setting).getDisplayName()));
+                    loreLines.add(Component.translatable("katze.settings.gui.current_status", gg.itzkatze.katze.text.TextArg.component("state", SettingsManager.getState(setting).getDisplayName())));
 
                     return ItemStackCreator.getStack(
-                            Component.text(button.getNameText()).color(KatzeColor.BLUE),
+                            settingName.color(KatzeColor.BLUE),
                             button.getMaterial(),
                             1,
                             loreLines

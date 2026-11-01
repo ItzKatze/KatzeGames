@@ -10,7 +10,6 @@ import org.bukkit.event.Listener;
 import gg.itzkatze.katze.event.PlayerTeamJoinEvent;
 import gg.itzkatze.katze.event.PlayerTeamLeaveEvent;
 import gg.itzkatze.katze.player.KatzePlayer;
-import gg.itzkatze.katze.util.StringUtility;
 import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -75,7 +74,7 @@ public class ForceBattleGameListener implements Listener {
 
         boolean firstStartup = KatzeGames.get().getConfig().getBoolean("first-startup", true);
         if (firstStartup && PermissionDefault.OP.getValue(event.getPlayer().isOp())) {
-            katzePlayer.sendMessage(Component.text("----\nIt seems to be the first time you start the plugin.\n-> Use /menu to adjust settings and /start to start the battle.\n----"));
+            katzePlayer.sendMessage(Component.translatable("katze.forcebattle.first_startup"));
         }
     }
 
@@ -116,7 +115,7 @@ public class ForceBattleGameListener implements Listener {
     }
 
     public void handleBattleEnd() {
-        KatzeGames.broadcast(Component.text("The battle is over. /displayresults (player/team) | /result (player/team)."));
+        KatzeGames.broadcast(Component.translatable("katze.forcebattle.battle_over"));
 
         for (KatzePlayer player : KatzePlayer.getOnlinePlayers()) {
             if (player.getPlayer() == null) return;
@@ -191,11 +190,11 @@ public class ForceBattleGameListener implements Listener {
         event.setCancelled(true);
 
         if (!KatzeGames.getTimer().isRunning()) {
-            player.sendMessage(Component.text("Can't skip while timer is paused."));
+            player.sendMessage(Component.translatable("katze.forcebattle.action.timer_paused"));
             return;
         }
         if (player.getObjective() == null) {
-            player.sendMessage(Component.text("You don't have an objective to skip."));
+            player.sendMessage(Component.translatable("katze.forcebattle.action.no_objective_to_skip"));
             return;
         }
 
@@ -204,7 +203,8 @@ public class ForceBattleGameListener implements Listener {
 
         ForceBattleObjective oldObjective = player.getObjective();
 
-        player.sendMessage(Component.text("You skipped " + StringUtility.formatName(oldObjective.getObjectiveString()) + "."));
+        player.sendMessage(Component.translatable("katze.forcebattle.action.skipped_objective",
+                gg.itzkatze.katze.text.TextArg.component("objective", oldObjective.displayName())));
         player.updateObjective(true, true);
 
         player.addSkippedObjectiveToList(oldObjective);
@@ -232,11 +232,11 @@ public class ForceBattleGameListener implements Listener {
         event.setCancelled(true);
 
         if (!KatzeGames.getTimer().isRunning()) {
-            katzePlayer.sendMessage(Component.text("Can't skip while timer is paused."));
+            katzePlayer.sendMessage(Component.translatable("katze.forcebattle.action.timer_paused"));
             return;
         }
         if (team.getObjective() == null) {
-            katzePlayer.sendMessage(Component.text("You don't have an objective to skip."));
+            katzePlayer.sendMessage(Component.translatable("katze.forcebattle.action.no_objective_to_skip"));
             return;
         }
 
@@ -247,11 +247,14 @@ public class ForceBattleGameListener implements Listener {
 
         team.getPlayers().forEach(player -> {
             if (player != katzePlayer) {
-                player.sendMessage(Component.text(katzePlayer.getName() + " has skipped " + StringUtility.formatName(oldObjective.getObjectiveString()) + "."));
+                player.sendMessage(Component.translatable("katze.forcebattle.action.teammate_skipped_objective",
+                        gg.itzkatze.katze.text.TextArg.text("player", katzePlayer.getName()),
+                        gg.itzkatze.katze.text.TextArg.component("objective", oldObjective.displayName())));
             }
         });
 
-        katzePlayer.sendMessage(Component.text("You skipped " + StringUtility.formatName(oldObjective.getObjectiveString()) + "."));
+        katzePlayer.sendMessage(Component.translatable("katze.forcebattle.action.skipped_objective",
+                gg.itzkatze.katze.text.TextArg.component("objective", oldObjective.displayName())));
 
         team.updateObjective(katzePlayer, true, true);
 
@@ -278,12 +281,12 @@ public class ForceBattleGameListener implements Listener {
         event.setCancelled(true);
 
         if (!KatzeGames.getTimer().isRunning()) {
-            katzePlayer.sendMessage(Component.text("Can't swap while timer is paused."));
+            katzePlayer.sendMessage(Component.translatable("katze.forcebattle.action.timer_paused"));
             return;
         }
 
         if (katzePlayer.getObjective() == null) {
-            katzePlayer.sendMessage(Component.text("There is no player to swap your objective with."));
+            katzePlayer.sendMessage(Component.translatable("katze.forcebattle.action.no_player_to_swap"));
             return;
         }
 
@@ -298,7 +301,7 @@ public class ForceBattleGameListener implements Listener {
         }
 
         if (availablePlayers.isEmpty()) {
-            katzePlayer.sendMessage(Component.text("There is no player to swap your objective with."));
+            katzePlayer.sendMessage(Component.translatable("katze.forcebattle.action.no_player_to_swap"));
             return;
         }
 
@@ -315,9 +318,11 @@ public class ForceBattleGameListener implements Listener {
         katzePlayer.setCurrentObjective(targetObjective, false, false);
         targetPlayer.setCurrentObjective(playerObjective, false, false);
 
-        targetPlayer.sendMessage(Component.text(katzePlayer.getName() + " swapped their objective with yours."));
+        targetPlayer.sendMessage(Component.translatable("katze.forcebattle.action.objective_swapped_by",
+                gg.itzkatze.katze.text.TextArg.text("player", katzePlayer.getName())));
 
-        katzePlayer.sendMessage(Component.text("Your objective has been swapped with " + targetPlayer.getName() + "."));
+        katzePlayer.sendMessage(Component.translatable("katze.forcebattle.action.objective_swapped_with",
+                gg.itzkatze.katze.text.TextArg.text("player", targetPlayer.getName())));
 
         targetPlayer.getPlayer().playSound(targetPlayer.getPlayer(), Sound.BLOCK_NOTE_BLOCK_BASS, SoundCategory.MASTER, 1, 20);
     }

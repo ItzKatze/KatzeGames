@@ -14,20 +14,20 @@ public final class NumberSignInput {
 
     public static void open(
             KatzePlayer player,
-            String label,
+            Component label,
             int current,
             int min,
             int max,
             BiConsumer<KatzePlayer, Integer> onComplete,
-            BiConsumer<KatzePlayer, String> onError
+            BiConsumer<KatzePlayer, Component> onError
     ) {
         SignInput.open(
                 player,
                 List.of(
                         Component.empty(),
-                        Component.text(label).color(KatzeColor.LIGHT_BLUE),
-                        Component.text("Current: " + current).color(KatzeColor.LIGHT_GRAY),
-                        Component.text("Min " + min + " Max " + max).color(KatzeColor.YELLOW)
+                        label.color(KatzeColor.LIGHT_BLUE),
+                        Component.translatable("katze.settings.sign.current", gg.itzkatze.katze.text.TextArg.number("n", current)).color(KatzeColor.LIGHT_GRAY),
+                        Component.translatable("katze.settings.sign.range", gg.itzkatze.katze.text.TextArg.number("min", min), gg.itzkatze.katze.text.TextArg.number("max", max)).color(KatzeColor.YELLOW)
                 ),
                 (katzePlayer, lines) -> {
                     String raw = lines.stream()
@@ -37,7 +37,7 @@ public final class NumberSignInput {
                             .orElse("");
                     if (raw.isEmpty()) {
                         if (onError != null) {
-                            onError.accept(katzePlayer, "No value entered.");
+                            onError.accept(katzePlayer, Component.translatable("katze.settings.sign.error.empty"));
                         }
                         return;
                     }
@@ -46,14 +46,14 @@ public final class NumberSignInput {
                         value = Integer.parseInt(raw);
                     } catch (NumberFormatException e) {
                         if (onError != null) {
-                            onError.accept(katzePlayer, "Invalid number.");
+                            onError.accept(katzePlayer, Component.translatable("katze.settings.sign.error.invalid"));
                         }
                         return;
                     }
 
                     int clamped = Math.max(min, Math.min(max, value));
                     if (value != clamped && onError != null) {
-                        onError.accept(katzePlayer, "Clamped to " + clamped + ".");
+                        onError.accept(katzePlayer, Component.translatable("katze.settings.sign.error.clamped", gg.itzkatze.katze.text.TextArg.number("n", clamped)));
                     }
                     onComplete.accept(katzePlayer, clamped);
                 }

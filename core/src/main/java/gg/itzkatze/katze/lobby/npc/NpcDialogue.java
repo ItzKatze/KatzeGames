@@ -76,7 +76,8 @@ public final class NpcDialogue {
 
     static @NotNull Component format(@NotNull Component name, @NotNull Component line) {
         return Component.textOfChildren(
-                Component.text("[NPC] ", KatzeColor.YELLOW),
+                Component.translatable("katze.game.npc.prefix").color(KatzeColor.YELLOW),
+                Component.text(" ", KatzeColor.WHITE),
                 name,
                 Component.text(": ", KatzeColor.WHITE),
                 line.colorIfAbsent(KatzeColor.WHITE));

@@ -2,6 +2,7 @@ package gg.itzkatze.katze.forcebattle.gui.info;
 
 import gg.itzkatze.katze.data.DamageTypeSimplified;
 import gg.itzkatze.katze.data.KatzeDamageType;
+import gg.itzkatze.katze.data.ObjectiveNames;
 import gg.itzkatze.katze.gui.GUIClickableItem;
 import gg.itzkatze.katze.gui.GUIItem;
 import gg.itzkatze.katze.gui.GUIMaterial;
@@ -17,7 +18,7 @@ import java.util.ArrayList;
 public class InfoSimplifiedDeathsGUI extends KatzeGUI {
 
     public InfoSimplifiedDeathsGUI() {
-        super("Simplified Deaths Info", 27);
+        super(Component.translatable("katze.forcebattle.info.deaths_title"), 27);
     }
 
     @Override
@@ -35,13 +36,13 @@ public class InfoSimplifiedDeathsGUI extends KatzeGUI {
                     ArrayList<Component> lore = new ArrayList<>();
 
                     for (KatzeDamageType damageType : simplified.getDamageTypes()) {
-                        lore.add(Component.text(" • " + damageType.getName()).color(KatzeColor.WHITE));
+                        lore.add(ObjectiveNames.of(damageType).color(KatzeColor.WHITE));
                     }
 
                     if (guiMaterial.hasSkull()) {
-                        return ItemStackCreator.getSkull(guiMaterial.skull(), Component.text(simplified.getName()).color(KatzeColor.GOLD), 1, lore);
+                        return ItemStackCreator.getSkull(guiMaterial.skull(), ObjectiveNames.of(simplified).color(KatzeColor.GOLD), 1, lore);
                     } else {
-                        return ItemStackCreator.getStack(Component.text(simplified.getName()).color(KatzeColor.GOLD), guiMaterial.material(), 1, lore);
+                        return ItemStackCreator.getStack(ObjectiveNames.of(simplified).color(KatzeColor.GOLD), guiMaterial.material(), 1, lore);
                     }
                 }
             });
@@ -56,3 +57,4 @@ public class InfoSimplifiedDeathsGUI extends KatzeGUI {
     }
 
 }
+

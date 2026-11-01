@@ -45,11 +45,11 @@ public class TeamCommand extends KatzeCommand {
         KatzePlayer katzePlayer = battlePlayerOpt.get();
 
         if (!args[0].equalsIgnoreCase("list") && ChallengeManager.isGameStarted()) {
-            caller.sendMessage(Component.text("Teams cannot be changed until the game is reset.").color(KatzeColor.RED));
+            caller.sendMessage(Component.translatable("katze.team.game_started").color(KatzeColor.RED));
             return;
         }
         if ((args[0].equals("create") || args[0].equals("join")) && katzePlayer.isSpectator()) {
-            caller.sendMessage(Component.text("Spectators can't join teams. Type /spectate to play.").color(KatzeColor.RED));
+            caller.sendMessage(Component.translatable("katze.team.spectator_cannot_join").color(KatzeColor.RED));
             return;
         }
 
@@ -57,25 +57,25 @@ public class TeamCommand extends KatzeCommand {
             case "create" -> {
                 katzePlayer.leaveTeam();
                 KatzeTeam team = KatzeTeam.create(List.of(katzePlayer));
-                caller.sendMessage(Component.text("New team has been created. Team ID: " + team.getId()));
+                caller.sendMessage(Component.translatable("katze.team.created", gg.itzkatze.katze.text.TextArg.number("id", team.getId())));
             }
             case "join" -> {
                 if (args.length < 2) {
-                    caller.sendMessage(Component.text("Please specify a valid team ID.").color(KatzeColor.RED));
+                    caller.sendMessage(Component.translatable("katze.team.invalid_id").color(KatzeColor.RED));
                     return;
                 }
                 int teamId;
                 try {
                     teamId = Integer.parseInt(args[1]);
                 } catch (NumberFormatException e) {
-                    caller.sendMessage(Component.text("Please specify a valid team ID.").color(KatzeColor.RED));
+                    caller.sendMessage(Component.translatable("katze.team.invalid_id").color(KatzeColor.RED));
                     return;
                 }
 
                 Optional<KatzeTeam> teamOpt = KatzeTeam.ofId(teamId);
                 teamOpt.ifPresentOrElse(
                         team -> team.sendJoinRequest(katzePlayer),
-                        () -> caller.sendMessage(Component.text("Please specify a valid team ID.").color(KatzeColor.RED))
+                        () -> caller.sendMessage(Component.translatable("katze.team.invalid_id").color(KatzeColor.RED))
                 );
             }
             case "leave" -> {
@@ -84,13 +84,13 @@ public class TeamCommand extends KatzeCommand {
             case "accept" -> {
                 KatzeTeam team = katzePlayer.getTeam();
                 if (team == null) {
-                    caller.sendMessage(Component.text("You are not currently in a team.").color(KatzeColor.LIGHT_GRAY));
+                    caller.sendMessage(Component.translatable("katze.team.not_in_team").color(KatzeColor.LIGHT_GRAY));
                     return;
                 }
                 if (team.getLastJoinRequest() != null) {
                     KatzePlayer requester = team.getLastJoinRequest().katzePlayer();
                     if (requester.isSpectator()) {
-                        caller.sendMessage(Component.text(requester.getName() + " is spectating and can't join teams.").color(KatzeColor.RED));
+                        caller.sendMessage(Component.translatable("katze.team.requester_spectating", gg.itzkatze.katze.text.TextArg.text("name", requester.getName())).color(KatzeColor.RED));
                         team.finishLastJoinRequest(false);
                         return;
                     }
@@ -100,7 +100,7 @@ public class TeamCommand extends KatzeCommand {
             case "reject" -> {
                 KatzeTeam team = katzePlayer.getTeam();
                 if (team == null) {
-                    caller.sendMessage(Component.text("You are not currently in a team.").color(KatzeColor.LIGHT_GRAY));
+                    caller.sendMessage(Component.translatable("katze.team.not_in_team").color(KatzeColor.LIGHT_GRAY));
                     return;
                 }
                 if (team.getLastJoinRequest() != null) {
@@ -108,7 +108,7 @@ public class TeamCommand extends KatzeCommand {
                 }
             }
             case "list" -> {
-                Component teamList = Component.text("Teams:", KatzeColor.BLUE).decorate(TextDecoration.BOLD);
+                Component teamList = Component.translatable("katze.team.list.title").color(KatzeColor.BLUE).decorate(TextDecoration.BOLD);
                 for (KatzeTeam team : KatzeTeam.teams) {
                     teamList = teamList.append(Component.text("\n"))
                             .append(Component.text(team.getId() + ":", KatzeColor.YELLOW));

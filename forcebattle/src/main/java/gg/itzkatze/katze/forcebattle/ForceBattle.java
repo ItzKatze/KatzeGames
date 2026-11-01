@@ -167,11 +167,11 @@ public class ForceBattle implements Challenge {
 
         List<Component> lines = new ArrayList<>();
         ForceBattleObjective objective = player.getObjective();
-        lines.add(PlayerViewGui.infoLine("Objective", objective == null ? Component.text("none") : ForceBattleNametag.objectiveText(objective)));
+        lines.add(PlayerViewGui.infoLine("katze.forcebattle.spectator.objective", objective == null ? Component.translatable("katze.forcebattle.scoreboard.none") : ForceBattleNametag.objectiveText(objective)));
         if (SettingsManager.isEnabled(GlobalSetting.EXTRA_TEAM_OBJECTIVE) && player.getTeam() instanceof ForceBattleTeam team && team.getObjective() != null) {
-            lines.add(PlayerViewGui.infoLine("Team objective", ForceBattleNametag.objectiveText(team.getObjective())));
+            lines.add(PlayerViewGui.infoLine("katze.forcebattle.spectator.team_objective", ForceBattleNametag.objectiveText(team.getObjective())));
         }
-        lines.add(PlayerViewGui.infoLine("Points", Component.text(player.getPoints())));
+        lines.add(PlayerViewGui.infoLine("katze.forcebattle.spectator.points", Component.text(player.getPoints())));
         return lines;
     }
 

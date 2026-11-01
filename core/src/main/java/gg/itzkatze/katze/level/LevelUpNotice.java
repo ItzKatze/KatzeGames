@@ -32,11 +32,9 @@ public final class LevelUpNotice {
                 Component.text(oldLevel, LevelTag.colorOf(oldLevel)),
                 Component.text(" → ", KatzeColor.LIGHT_GRAY),
                 Component.text(newLevel, LevelTag.colorOf(newLevel)));
-        player.showTitle(Title.title(Component.text("Level Up!", KatzeColor.GOLD), subtitle, TIMES));
+        player.showTitle(Title.title(Component.translatable("katze.level.level_up").color(KatzeColor.GOLD), subtitle, TIMES));
         player.playSound(LEVEL_UP);
-        player.sendMessage(Component.textOfChildren(
-                Component.text("You reached level ", KatzeColor.GOLD),
-                Component.text(newLevel, LevelTag.colorOf(newLevel)),
-                Component.text("!", KatzeColor.GOLD)));
+        player.sendMessage(Component.translatable("katze.level.reached",
+                gg.itzkatze.katze.text.TextArg.number("level", newLevel)).color(KatzeColor.GOLD));
     }
 }

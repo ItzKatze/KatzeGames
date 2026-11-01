@@ -1,17 +1,18 @@
 package gg.itzkatze.katze.forcebattle.gui;
 
 import gg.itzkatze.katze.forcebattle.ForceBattleTeam;
-import gg.itzkatze.katze.gui.KatzeGUI;
 import gg.itzkatze.katze.gui.GUIClickableItem;
 import gg.itzkatze.katze.gui.GUIItem;
+import gg.itzkatze.katze.gui.KatzeGUI;
 import gg.itzkatze.katze.player.KatzePlayer;
+import net.kyori.adventure.text.Component;
 
 public class TeamBackpackGUI extends KatzeGUI {
     private final int index;
     private final ForceBattleTeam team;
 
     public TeamBackpackGUI(int index, int size, ForceBattleTeam team) {
-        super("Team Backpack | Page: " + (index + 1), size);
+        super(Component.translatable("katze.forcebattle.backpack.title", gg.itzkatze.katze.text.TextArg.number("page", index + 1)), size);
         this.index = index;
         this.team = team;
     }

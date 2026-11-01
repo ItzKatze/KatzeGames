@@ -43,13 +43,13 @@ public class PlayerViewGui extends KatzeGUI implements SpectatorView {
     private final String targetName;
 
     public PlayerViewGui(@NotNull KatzePlayer target) {
-        super("Spectating " + target.getName(), 54);
+        super(Component.translatable("katze.spectator.player_view.title", gg.itzkatze.katze.text.TextArg.text("name", target.getName())), 54);
         this.targetId = target.getUuid();
         this.targetName = target.getName();
     }
 
     public static @NotNull Component infoLine(@NotNull String label, @NotNull Component value) {
-        return Component.text(label + ": ", KatzeColor.LIGHT_GRAY).append(value.colorIfAbsent(KatzeColor.WHITE));
+        return Component.translatable(label, gg.itzkatze.katze.text.TextArg.component("value", value.colorIfAbsent(KatzeColor.WHITE)));
     }
 
     @Override
@@ -65,11 +65,11 @@ public class PlayerViewGui extends KatzeGUI implements SpectatorView {
     @Override
     public void setItems(KatzePlayer viewer) {
         fill(ItemStackCreator.fillerItem());
-        set(equipment(0, PlayerInventory::getHelmet, "No helmet"));
-        set(equipment(1, PlayerInventory::getChestplate, "No chestplate"));
-        set(equipment(2, PlayerInventory::getLeggings, "No leggings"));
-        set(equipment(3, PlayerInventory::getBoots, "No boots"));
-        set(equipment(OFFHAND_SLOT, PlayerInventory::getItemInOffHand, "No offhand item"));
+        set(equipment(0, PlayerInventory::getHelmet, "katze.spectator.player_view.no_helmet"));
+        set(equipment(1, PlayerInventory::getChestplate, "katze.spectator.player_view.no_chestplate"));
+        set(equipment(2, PlayerInventory::getLeggings, "katze.spectator.player_view.no_leggings"));
+        set(equipment(3, PlayerInventory::getBoots, "katze.spectator.player_view.no_boots"));
+        set(equipment(OFFHAND_SLOT, PlayerInventory::getItemInOffHand, "katze.spectator.player_view.no_offhand"));
         for (int slot = STORAGE_START; slot < HOTBAR_START; slot++) {
             set(mirror(slot, slot));
         }
@@ -106,7 +106,7 @@ public class PlayerViewGui extends KatzeGUI implements SpectatorView {
             public ItemStack getItem(KatzePlayer viewer) {
                 Player target = target();
                 ItemStack worn = target == null ? null : copy(piece.apply(target.getInventory()));
-                return worn != null ? worn : ItemStackCreator.createNamedItemStack(Material.GRAY_STAINED_GLASS_PANE, Component.text(emptyName, KatzeColor.LIGHT_GRAY));
+                return worn != null ? worn : ItemStackCreator.createNamedItemStack(Material.GRAY_STAINED_GLASS_PANE, Component.translatable(emptyName).color(KatzeColor.LIGHT_GRAY));
             }
         };
     }
@@ -125,9 +125,9 @@ public class PlayerViewGui extends KatzeGUI implements SpectatorView {
             public ItemStack getItem(KatzePlayer viewer) {
                 KatzePlayer target = KatzePlayer.adapt(targetId).orElse(null);
                 if (target == null || target.getBackpackContents() == null) {
-                    return ItemStackCreator.createNamedItemStack(Material.GRAY_DYE, Component.text("No backpack", KatzeColor.LIGHT_GRAY));
+                    return ItemStackCreator.createNamedItemStack(Material.GRAY_DYE, Component.translatable("katze.spectator.player_view.no_backpack").color(KatzeColor.LIGHT_GRAY));
                 }
-                return ItemStackCreator.createNamedItemStack(Material.CHEST, Component.text("Backpack", KatzeColor.YELLOW));
+                return ItemStackCreator.createNamedItemStack(Material.CHEST, Component.translatable("katze.spectator.player_view.backpack").color(KatzeColor.YELLOW));
             }
         };
     }
@@ -148,12 +148,12 @@ public class PlayerViewGui extends KatzeGUI implements SpectatorView {
         KatzeTeam team = wrapper == null ? null : wrapper.getTeam();
         Location location = target.getLocation();
         List<Component> lines = new ArrayList<>(List.of(
-                infoLine("Team", Component.text(team == null ? "none" : String.valueOf(team.getId()))),
-                infoLine("Health", Component.text(decimal(target.getHealth()) + " / " + decimal(maxHealth(target)))),
-                infoLine("Food", Component.text(target.getFoodLevel() + " / 20")),
-                infoLine("Level", Component.text(target.getLevel())),
-                infoLine("World", Component.text(target.getWorld().getName())),
-                infoLine("Position", Component.text(location.getBlockX() + ", " + location.getBlockY() + ", " + location.getBlockZ()))));
+                infoLine("katze.spectator.player_view.info.team", Component.text(team == null ? "none" : String.valueOf(team.getId()))),
+                infoLine("katze.spectator.player_view.info.health", Component.text(decimal(target.getHealth()) + " / " + decimal(maxHealth(target)))),
+                infoLine("katze.spectator.player_view.info.food", Component.text(target.getFoodLevel() + " / 20")),
+                infoLine("katze.spectator.player_view.info.level", Component.text(target.getLevel())),
+                infoLine("katze.spectator.player_view.info.world", Component.text(target.getWorld().getName())),
+                infoLine("katze.spectator.player_view.info.position", Component.text(location.getBlockX() + ", " + location.getBlockY() + ", " + location.getBlockZ()))));
         if (wrapper != null) {
             ChallengeManager.getActiveChallenges().stream()
                     .sorted(Comparator.comparing(Challenge::getType))
@@ -176,8 +176,8 @@ public class PlayerViewGui extends KatzeGUI implements SpectatorView {
 
             @Override
             public ItemStack getItem(KatzePlayer viewer) {
-                return ItemStackCreator.getStack(Component.text("View through their eyes", KatzeColor.YELLOW), Material.ENDER_EYE,
-                        List.of(Component.text("Sneak to leave", KatzeColor.LIGHT_GRAY)));
+                return ItemStackCreator.getStack(Component.translatable("katze.spectator.player_view.camera").color(KatzeColor.YELLOW), Material.ENDER_EYE,
+                        List.of(Component.translatable("katze.spectator.player_view.camera_hint").color(KatzeColor.LIGHT_GRAY)));
             }
         };
     }

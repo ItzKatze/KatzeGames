@@ -36,11 +36,11 @@ public final class CaseSpot implements LobbyFeature, Listener {
     private static final float HITBOX_SIZE = 1.0f;
     private static final BlockFace[] FACINGS = {BlockFace.SOUTH, BlockFace.WEST, BlockFace.NORTH, BlockFace.EAST};
     private static final Component LABEL = Component.textOfChildren(
-            Component.text("Cosmetic Case", KatzeColor.MAGENTA, TextDecoration.BOLD),
+            Component.translatable("katze.cosmetics.case_spot.title").color(KatzeColor.MAGENTA).decorate(TextDecoration.BOLD),
             Component.newline(),
             Component.text(PointsText.amount(CaseLoot.PRICE), KatzeColor.GOLD),
             Component.newline(),
-            Component.text("CLICK", KatzeColor.YELLOW, TextDecoration.BOLD));
+            Component.translatable("katze.cosmetics.case_spot.prompt").color(KatzeColor.YELLOW).decorate(TextDecoration.BOLD));
 
     private record Placed(World world, Block chest, TextDisplay label, Interaction hitbox) {
     }

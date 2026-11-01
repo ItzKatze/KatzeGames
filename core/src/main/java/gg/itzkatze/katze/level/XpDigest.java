@@ -21,7 +21,8 @@ public final class XpDigest {
         LevelStore.get().drainRecentGains().forEach((id, gained) -> {
             Player player = Bukkit.getPlayer(id);
             if (player != null) {
-                player.sendMessage(Component.text("You gained " + gained + " XP in the last 10 minutes.", KatzeColor.LIGHT_BLUE));
+                player.sendMessage(Component.translatable("katze.level.xp_digest",
+                        gg.itzkatze.katze.text.TextArg.number("xp", gained)).color(KatzeColor.LIGHT_BLUE));
             }
         });
     }

@@ -22,7 +22,7 @@ public abstract class LobbyNpc {
     }
 
     public @Nullable Component getDescription() {
-        return Component.text("CLICK", KatzeColor.YELLOW, TextDecoration.BOLD);
+        return Component.translatable("katze.cosmetics.npc.click").color(KatzeColor.YELLOW).decorate(TextDecoration.BOLD);
     }
 
     public @NotNull List<Component> getDialogue(@NotNull KatzePlayer player) {

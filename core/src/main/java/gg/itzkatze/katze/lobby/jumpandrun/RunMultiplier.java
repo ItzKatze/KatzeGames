@@ -31,12 +31,9 @@ public final class RunMultiplier {
             state.announcedLevel = level;
 
             player.sendMessage(
-                    Component.text("Multiplier increased to ", KatzeColor.LIME)
-                            .append(Component.text(
-                                    String.format(java.util.Locale.US, "%.1f", multiplier) + "x",
-                                    KatzeColor.GOLD
-                            ))
-                            .append(Component.text("!", KatzeColor.LIME))
+                    Component.translatable("katze.cosmetics.multiplier_increased",
+                                    gg.itzkatze.katze.text.TextArg.decimal("multiplier", multiplier))
+                            .color(KatzeColor.LIME)
             );
         }
 

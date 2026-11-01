@@ -27,7 +27,7 @@ public class AllItemsLeaderboardGUI extends KatzeGUI {
     }
 
     public AllItemsLeaderboardGUI(int page) {
-        super("All Items Leaderboard", 54);
+        super(Component.translatable("katze.allitems.leaderboard.title"), 54);
         this.page = page;
     }
 
@@ -86,8 +86,8 @@ public class AllItemsLeaderboardGUI extends KatzeGUI {
 
     private Component[] buildLore(AllItemsData data, UUID uuid) {
         List<Component> lore = new ArrayList<>();
-        lore.add(Component.text("Total: ").color(KatzeColor.LIGHT_GRAY)
-                .append(Component.text(getTotalProgress(data, uuid)).color(KatzeColor.WHITE)));
+        lore.add(Component.translatable("katze.allitems.leaderboard.total",
+                gg.itzkatze.katze.text.TextArg.number("value", getTotalProgress(data, uuid))).color(KatzeColor.LIGHT_GRAY));
         lore.add(Component.empty());
         for (AllItemsObjectiveType type : AllItemsObjectiveType.values()) {
             int found = data.getFoundCount(type, uuid);
@@ -98,8 +98,10 @@ public class AllItemsLeaderboardGUI extends KatzeGUI {
                 case STRUCTURE -> data.getTotalAvailableStructures();
                 case ADVANCEMENT -> data.getTotalAvailableAdvancements();
             };
-            lore.add(Component.text(type.getDisplayName() + ": ").color(KatzeColor.LIGHT_GRAY)
-                    .append(Component.text(found + "/" + total).color(KatzeColor.WHITE)));
+            lore.add(Component.translatable("katze.allitems.leaderboard.progress",
+                    gg.itzkatze.katze.text.TextArg.component("type", Component.translatable("katze.allitems.type." + type.name().toLowerCase(java.util.Locale.ROOT))),
+                    gg.itzkatze.katze.text.TextArg.number("found", found),
+                    gg.itzkatze.katze.text.TextArg.number("total", total)).color(KatzeColor.LIGHT_GRAY));
         }
         return lore.toArray(new Component[0]);
     }

@@ -39,16 +39,16 @@ public class TimerCommand extends KatzeCommand {
         switch (args[0].toLowerCase()) {
             case "pause" -> {
                 timer.pause();
-                caller.sendMessage(Component.text("The timer has been paused.").color(KatzeColor.BLUE));
+                caller.sendMessage(Component.translatable("katze.game.timer.pause").color(KatzeColor.BLUE));
                 return;
             }
             case "resume" -> {
                 if (!ChallengeManager.isGameStarted()) {
-                    caller.sendMessage(Component.text("The game has not been started yet. Use /start first.").color(KatzeColor.RED));
+                    caller.sendMessage(Component.translatable("katze.game.timer.not_started").color(KatzeColor.RED));
                     return;
                 }
                 timer.start();
-                caller.sendMessage(Component.text("The timer has been resumed.").color(KatzeColor.LIME));
+                caller.sendMessage(Component.translatable("katze.game.timer.resume").color(KatzeColor.LIME));
                 return;
             }
             case "set" -> {
@@ -61,7 +61,7 @@ public class TimerCommand extends KatzeCommand {
                     return;
                 }
                 timer.setRemainingSeconds(newTime);
-                caller.sendMessage(Component.text("The timer has been set to " + StringUtility.formatTime(newTime) + ".").color(KatzeColor.BLUE));
+                caller.sendMessage(Component.translatable("katze.game.timer.set", gg.itzkatze.katze.text.TextArg.text("time", StringUtility.formatTime(newTime))).color(KatzeColor.BLUE));
                 return;
             }
         }
@@ -73,7 +73,7 @@ public class TimerCommand extends KatzeCommand {
         try {
             number = Integer.parseInt(input);
         } catch (NumberFormatException e) {
-            caller.sendMessage(Component.text("Please specify a valid number.").color(KatzeColor.RED));
+            caller.sendMessage(Component.translatable("katze.game.invalid_number").color(KatzeColor.RED));
             return null;
         }
         return number;

@@ -5,6 +5,7 @@ import gg.itzkatze.katze.configuration.SettingsManager;
 import gg.itzkatze.katze.configuration.states.OnOffState;
 import gg.itzkatze.katze.configuration.states.SettingStateType;
 import lombok.Getter;
+import net.kyori.adventure.text.Component;
 import lombok.Setter;
 
 public class AllItemsSettings {
@@ -52,21 +53,24 @@ public class AllItemsSettings {
 
     @Getter
     public enum AllItemsSetting implements Setting {
-        ITEMS(false, "Items", OnOffState.ON),
-        BIOMES(false, "Biomes", OnOffState.OFF),
-        MOBS(false, "Mobs", OnOffState.OFF),
-        STRUCTURES(false, "Structures", OnOffState.OFF),
-        ADVANCEMENTS(false, "Advancements", OnOffState.OFF),
-        CHAIN_MODE(false, "Chain Mode", OnOffState.OFF);
+        ITEMS(false, OnOffState.ON),
+        BIOMES(false, OnOffState.OFF),
+        MOBS(false, OnOffState.OFF),
+        STRUCTURES(false, OnOffState.OFF),
+        ADVANCEMENTS(false, OnOffState.OFF),
+        CHAIN_MODE(false, OnOffState.OFF);
 
         private final boolean updateOnChange;
-        private final String displayName;
         private final SettingStateType defaultState;
 
-        AllItemsSetting(boolean updateOnChange, String displayName, SettingStateType defaultState) {
+        AllItemsSetting(boolean updateOnChange, SettingStateType defaultState) {
             this.updateOnChange = updateOnChange;
-            this.displayName = displayName;
             this.defaultState = defaultState;
+        }
+
+        @Override
+        public Component getDisplayName() {
+            return Component.translatable("katze.allitems.setting." + name().toLowerCase(java.util.Locale.ROOT));
         }
 
         @Override

@@ -34,11 +34,12 @@ public class TeamChatManager implements Listener {
     public static void sendTeamMessage(@NotNull KatzePlayer sender, @NotNull Component message) {
         KatzeTeam team = sender.getTeam();
         if (team == null) {
-            sender.sendMessage(Component.text("You are not currently in a team.", KatzeColor.RED));
+            sender.sendMessage(Component.translatable("katze.team.not_in_team").color(KatzeColor.RED));
             return;
         }
 
-        Component formattedMessage = Component.text("[Team] ", KatzeColor.LIGHT_BLUE)
+        Component formattedMessage = Component.translatable("katze.team.chat.prefix").color(KatzeColor.LIGHT_BLUE)
+                .append(Component.text(" "))
                 .append(LevelTag.of(LevelStore.get().level(sender.getUuid())))
                 .append(Component.text(" <" + sender.getName() + "> ", KatzeColor.WHITE))
                 .append(message);

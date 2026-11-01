@@ -5,13 +5,13 @@ import gg.itzkatze.katze.allitems.AllItemsObjectiveType;
 import gg.itzkatze.katze.allitems.data.AllItemsData;
 import gg.itzkatze.katze.data.BiomeSimplified;
 import gg.itzkatze.katze.data.KatzeAdvancement;
+import gg.itzkatze.katze.data.ObjectiveNames;
 import gg.itzkatze.katze.data.StructureSimplified;
 import gg.itzkatze.katze.gui.GUIClickableItem;
 import gg.itzkatze.katze.gui.KatzeGUI;
 import gg.itzkatze.katze.player.KatzePlayer;
 import gg.itzkatze.katze.util.ItemStackCreator;
 import gg.itzkatze.katze.util.KatzeColor;
-import gg.itzkatze.katze.util.StringUtility;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
@@ -30,7 +30,7 @@ public class AllItemsMissingObjectivesListGUI extends KatzeGUI {
     private final int page;
 
     public AllItemsMissingObjectivesListGUI(AllItemsObjectiveType type, int page) {
-        super(type.getDisplayName() + " Missing", 54);
+        super(Component.translatable("katze.allitems.missing.list_title", gg.itzkatze.katze.text.TextArg.component("type", Component.translatable("katze.allitems.type." + type.name().toLowerCase(java.util.Locale.ROOT)))), 54);
         this.type = type;
         this.page = page;
     }
@@ -93,10 +93,10 @@ public class AllItemsMissingObjectivesListGUI extends KatzeGUI {
         List<ItemStack> items = new ArrayList<>();
         for (Material material : materials) {
             items.add(ItemStackCreator.getStack(
-                    Component.text(StringUtility.formatName(material.name())).color(KatzeColor.LIGHT_BLUE),
+                    ObjectiveNames.of(material).color(KatzeColor.LIGHT_BLUE),
                     material.isItem() ? material : fallback,
                     1,
-                    List.of(Component.text("Missing item").color(KatzeColor.LIGHT_GRAY))
+                    List.of(Component.translatable("katze.allitems.missing.item").color(KatzeColor.LIGHT_GRAY))
             ));
         }
         return items;
@@ -106,10 +106,10 @@ public class AllItemsMissingObjectivesListGUI extends KatzeGUI {
         List<ItemStack> items = new ArrayList<>();
         for (BiomeSimplified biome : biomes) {
             items.add(ItemStackCreator.getStack(
-                    Component.text(biome.getName()).color(KatzeColor.LIGHT_BLUE),
+                    ObjectiveNames.of(biome).color(KatzeColor.LIGHT_BLUE),
                     Material.GRASS_BLOCK,
                     1,
-                    List.of(Component.text("Missing biome").color(KatzeColor.LIGHT_GRAY))
+                    List.of(Component.translatable("katze.allitems.missing.biome").color(KatzeColor.LIGHT_GRAY))
             ));
         }
         return items;
@@ -123,10 +123,10 @@ public class AllItemsMissingObjectivesListGUI extends KatzeGUI {
                 icon = Material.ZOMBIE_SPAWN_EGG;
             }
             items.add(ItemStackCreator.getStack(
-                    Component.text(StringUtility.formatName(type.name())).color(KatzeColor.LIGHT_BLUE),
+                    ObjectiveNames.of(type).color(KatzeColor.LIGHT_BLUE),
                     icon,
                     1,
-                    List.of(Component.text("Missing mob").color(KatzeColor.LIGHT_GRAY))
+                    List.of(Component.translatable("katze.allitems.missing.mob").color(KatzeColor.LIGHT_GRAY))
             ));
         }
         return items;
@@ -136,10 +136,10 @@ public class AllItemsMissingObjectivesListGUI extends KatzeGUI {
         List<ItemStack> items = new ArrayList<>();
         for (StructureSimplified structure : structures) {
             items.add(ItemStackCreator.getStack(
-                    Component.text(structure.getName()).color(KatzeColor.LIGHT_BLUE),
+                    ObjectiveNames.of(structure).color(KatzeColor.LIGHT_BLUE),
                     Material.STRUCTURE_BLOCK,
                     1,
-                    List.of(Component.text("Missing structure").color(KatzeColor.LIGHT_GRAY))
+                    List.of(Component.translatable("katze.allitems.missing.structure").color(KatzeColor.LIGHT_GRAY))
             ));
         }
         return items;
@@ -149,10 +149,10 @@ public class AllItemsMissingObjectivesListGUI extends KatzeGUI {
         List<ItemStack> items = new ArrayList<>();
         for (KatzeAdvancement advancement : advancements) {
             items.add(ItemStackCreator.getStack(
-                    Component.text(advancement.getName()).color(KatzeColor.LIGHT_BLUE),
+                    ObjectiveNames.of(advancement).color(KatzeColor.LIGHT_BLUE),
                     Material.BOOK,
                     1,
-                    List.of(Component.text(advancement.getDescription()).color(KatzeColor.LIGHT_GRAY))
+                    List.of(Component.translatable("advancements." + advancement.getKey().getKey().replace('/', '.') + ".description").color(KatzeColor.LIGHT_GRAY))
             ));
         }
         return items;

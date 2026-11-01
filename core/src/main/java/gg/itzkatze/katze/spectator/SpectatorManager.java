@@ -24,9 +24,8 @@ public final class SpectatorManager {
     private static final Map<UUID, SpectatorReason> REASONS = new ConcurrentHashMap<>();
     private static final NamespacedKey REACH_KEY = new NamespacedKey("katzegames", "spectator_reach");
     private static final double REACH_BONUS = 7;
-    private static final Component ELIMINATED = Component.text(
-            "You are out, so you are spectating now. Right-click a player to see their inventory. Your chat only reaches other spectators.", KatzeColor.YELLOW);
-    private static final Component STILL_SPECTATING = Component.text("You are still spectating. Type /spectate to play the next battle.", KatzeColor.YELLOW);
+    private static final Component ELIMINATED = Component.translatable("katze.spectator.eliminated").color(KatzeColor.YELLOW);
+    private static final Component STILL_SPECTATING = Component.translatable("katze.spectator.still_spectating").color(KatzeColor.YELLOW);
 
     private SpectatorManager() {
     }

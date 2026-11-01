@@ -31,7 +31,7 @@ public class GameLifecycleManager implements Listener {
     public void onPlayerJoin(@NotNull PlayerJoinEvent event) {
         if (ChallengeManager.isGameStarted()) {
             if (event.getPlayer().isOp() && SessionPersistence.isAwaitingResume()) {
-                event.getPlayer().sendMessage(Component.text("The game was restored after a server restart and is paused. Use /timer resume to continue.")
+                event.getPlayer().sendMessage(Component.translatable("katze.game.restored")
                         .color(KatzeColor.YELLOW));
             }
             return;

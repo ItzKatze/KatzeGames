@@ -25,7 +25,7 @@ public class ConfigSettingsGUI extends KatzeGUI {
     private static final int[] TOGGLE_SLOTS = {10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25};
 
     public ConfigSettingsGUI() {
-        super("Config Settings", 27);
+        super(Component.translatable("katze.forcebattle.gui.config_title"), 27);
     }
 
     static @NotNull Map<Integer, ObjectiveExclusion> layout() {
@@ -42,25 +42,23 @@ public class ConfigSettingsGUI extends KatzeGUI {
         SettingStateType nextState = SettingsManager.getSettingState(setting).next();
         SettingsManager.setState(setting, nextState);
 
-        KatzeGames.broadcast(
-                Component.text(setting.getDisplayName() + " ").color(KatzeColor.BLUE)
-                        .append(Component.text("has been set to ").color(KatzeColor.LIGHT_GRAY))
-                        .append(nextState.getDisplayName())
-                        .append(Component.text("!").color(KatzeColor.LIGHT_GRAY)));
+        KatzeGames.broadcast(Component.translatable("katze.forcebattle.gui.setting_changed",
+                gg.itzkatze.katze.text.TextArg.component("name", exclusion.getDisplayName().color(KatzeColor.BLUE)),
+                gg.itzkatze.katze.text.TextArg.component("state", nextState.getDisplayName())));
     }
 
     private static @NotNull ItemStack createItem(@NotNull ObjectiveExclusion exclusion) {
         ForceBattleSettings setting = Objects.requireNonNull(exclusion.getSetting());
         List<Component> loreLines = List.of(
-                Component.text("Click to toggle.").color(KatzeColor.LIGHT_GRAY),
-                Component.text(exclusion.getDescription()).color(KatzeColor.LIGHT_GRAY),
+                Component.translatable("katze.forcebattle.gui.toggle_hint").color(KatzeColor.LIGHT_GRAY),
+                exclusion.getDescription().color(KatzeColor.LIGHT_GRAY),
                 Component.empty(),
-                Component.text("Current Status").color(KatzeColor.BLUE)
+                Component.translatable("katze.forcebattle.gui.config_current_status").color(KatzeColor.BLUE)
                         .append(Component.text(": ").color(KatzeColor.GRAY))
                         .append(SettingsManager.getSettingState(setting).getDisplayName()));
 
         return ItemStackCreator.getStack(
-                Component.text(setting.getDisplayName()).color(KatzeColor.BLUE),
+                exclusion.getDisplayName().color(KatzeColor.BLUE),
                 exclusion.getIcon(),
                 1,
                 loreLines

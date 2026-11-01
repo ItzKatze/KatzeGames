@@ -10,7 +10,6 @@ import gg.itzkatze.katze.data.BiomeSimplified;
 import gg.itzkatze.katze.player.KatzePlayer;
 import gg.itzkatze.katze.forcebattle.ForceBattleType;
 import gg.itzkatze.katze.util.KatzeColor;
-import gg.itzkatze.katze.util.StringUtility;
 import gg.itzkatze.katze.util.Toast;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
@@ -43,7 +42,7 @@ public class BiomeTask implements ForceTask {
         if (objective.getBattleType() != ForceBattleType.FORCE_BIOME) return;
 
         if (isBiomeMatch(objective.getObjectiveValue(), currentBiome)) {
-            completeObjective(player, objective.getObjectiveString());
+            completeObjective(player, objective);
             player.updateObjective(true, false);
         }
     }
@@ -55,7 +54,7 @@ public class BiomeTask implements ForceTask {
         if (teamObjective.getBattleType() != ForceBattleType.FORCE_BIOME) return;
 
         if (isBiomeMatch(teamObjective.getObjectiveValue(), currentBiome)) {
-            completeObjective(player, teamObjective.getObjectiveString());
+            completeObjective(player, teamObjective);
             player.getTeam().updateObjective(player, true, false);
         }
     }
@@ -72,8 +71,8 @@ public class BiomeTask implements ForceTask {
         return false;
     }
 
-    private void completeObjective(ForceBattlePlayer player, String objective) {
-        String formattedObjective = StringUtility.formatName(objective);
+    private void completeObjective(ForceBattlePlayer player, ForceBattleObjective objective) {
+        Component formattedObjective = objective.displayName();
         Material toastIcon = Material.GRASS_BLOCK;
         KatzeGames plugin = KatzeGames.get();
 
@@ -82,12 +81,12 @@ public class BiomeTask implements ForceTask {
                     .filter(teammate -> teammate != player)
                     .filter(teammate -> !teammate.isOffline())
                     .forEach(teammate -> {
-                        teammate.sendMessage(Component.text(player.getName() + " has finished " + formattedObjective + "."));
-                        Toast.display(teammate.getPlayer(), toastIcon, Component.text(formattedObjective).color(KatzeColor.BLUE), Toast.Style.GOAL, plugin);
+                        teammate.sendMessage(Component.translatable("katze.forcebattle.task.teammate_finished", gg.itzkatze.katze.text.TextArg.text("player", player.getName()), gg.itzkatze.katze.text.TextArg.component("objective", formattedObjective)));
+                        Toast.display(teammate.getPlayer(), toastIcon, formattedObjective.color(KatzeColor.BLUE), Toast.Style.GOAL, plugin);
                     });
         }
 
-        player.sendMessage(Component.text("You finished " + formattedObjective + "."));
-        Toast.display(player.getPlayer(), toastIcon, Component.text(formattedObjective).color(KatzeColor.BLUE), Toast.Style.GOAL, plugin);
+        player.sendMessage(Component.translatable("katze.forcebattle.task.personal_finished", gg.itzkatze.katze.text.TextArg.component("objective", formattedObjective)));
+        Toast.display(player.getPlayer(), toastIcon, formattedObjective.color(KatzeColor.BLUE), Toast.Style.GOAL, plugin);
     }
 }

@@ -1,16 +1,16 @@
-package gg.itzkatze.katze.lobby.cosmetics;
+package gg.itzkatze.katze.lobby;
 
 import gg.itzkatze.katze.level.LevelProgress;
 import gg.itzkatze.katze.level.LevelStore;
 import gg.itzkatze.katze.level.LevelTag;
-import gg.itzkatze.katze.lobby.Lobby;
-import gg.itzkatze.katze.lobby.LobbyManager;
+import gg.itzkatze.katze.lobby.cosmetics.CosmeticStore;
 import gg.itzkatze.katze.lobby.jumpandrun.JumpAndRun;
 import gg.itzkatze.katze.lobby.leaderbord.Leaderboard;
 import gg.itzkatze.katze.lobby.leaderbord.LeaderboardMetric;
 import gg.itzkatze.katze.player.KatzePlayer;
 import gg.itzkatze.katze.scoreboard.ScoreboardContent;
 import gg.itzkatze.katze.scoreboard.ScoreboardManager;
+import gg.itzkatze.katze.text.TextArg;
 import gg.itzkatze.katze.util.KatzeColor;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +31,7 @@ public final class PointsSidebar implements ScoreboardContent {
 
     @Override
     public @NotNull Component getTitle() {
-        return Component.text("Jump & Run");
+        return Component.translatable("katze.cosmetics.run_title");
     }
 
     @Override
@@ -42,15 +42,15 @@ public final class PointsSidebar implements ScoreboardContent {
         LevelProgress level = LevelStore.get().progress(id);
         return new Component[]{
                 Component.text(" "),
-                stat("Level: ", Component.text(level.level(), LevelTag.colorOf(level.level()))),
-                stat("XP: ", Component.text(level.cost() == 0 ? "max" : level.into() + "/" + level.cost(), KatzeColor.WHITE)),
+                stat("katze.cosmetics.stat.level", Component.text(level.level(), LevelTag.colorOf(level.level()))),
+                stat("katze.cosmetics.stat.xp", level.cost() == 0 ? Component.translatable("katze.level.max") : Component.text(level.into() + "/" + level.cost(), KatzeColor.WHITE)),
                 Component.text(" "),
-                stat("Current Run: ", score.isPresent() ? Component.text(score.getAsInt(), KatzeColor.WHITE) : Component.text("-", KatzeColor.GRAY)),
-                ranked("Best Run: ", Component.text(store.best(id), KatzeColor.WHITE), store.rank(LeaderboardMetric.BEST_RUN, id)),
+                stat("katze.cosmetics.stat.current_run", score.isPresent() ? Component.text(score.getAsInt(), KatzeColor.WHITE) : Component.text("-", KatzeColor.GRAY)),
+                ranked("katze.cosmetics.stat.best_run", Component.text(store.best(id), KatzeColor.WHITE), store.rank(LeaderboardMetric.BEST_RUN, id)),
                 Component.text(" "),
-                ranked("Points: ", Component.text(store.points(id), KatzeColor.GOLD), store.rank(LeaderboardMetric.CURRENT_POINTS, id)),
-                ranked("Lifetime Points: ", Component.text(store.earned(id), KatzeColor.GOLD), store.rank(LeaderboardMetric.LIFETIME_POINTS, id)),
-                ranked("Cases Opened: ", Component.text(store.casesOpened(id), KatzeColor.WHITE), store.rank(LeaderboardMetric.CASES_OPENED, id))
+                ranked("katze.cosmetics.stat.points", Component.text(store.points(id), KatzeColor.GOLD), store.rank(LeaderboardMetric.CURRENT_POINTS, id)),
+                ranked("katze.cosmetics.stat.lifetime_points", Component.text(store.earned(id), KatzeColor.GOLD), store.rank(LeaderboardMetric.LIFETIME_POINTS, id)),
+                ranked("katze.cosmetics.stat.cases_opened", Component.text(store.casesOpened(id), KatzeColor.WHITE), store.rank(LeaderboardMetric.CASES_OPENED, id))
         };
     }
 
@@ -66,11 +66,12 @@ public final class PointsSidebar implements ScoreboardContent {
     }
 
     private static @NotNull Component stat(@NotNull String label, @NotNull Component value) {
-        return Component.text(label, KatzeColor.LIGHT_GRAY).append(value);
+        return Component.translatable(label).color(KatzeColor.LIGHT_GRAY).append(Component.text(" ")).append(value);
     }
 
     private static @NotNull Component ranked(@NotNull String label, @NotNull Component value, @NotNull OptionalInt position) {
         Component line = stat(label, value);
-        return position.isEmpty() ? line : line.append(Component.text(" (#" + position.getAsInt() + ")", Leaderboard.rankColor(position.getAsInt() - 1)));
+        return position.isEmpty() ? line : line.append(Component.text(" ")).append(Component.translatable("katze.cosmetics.rank_suffix",
+                TextArg.number("rank", position.getAsInt())).color(Leaderboard.rankColor(position.getAsInt() - 1)));
     }
 }

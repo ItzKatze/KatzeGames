@@ -11,8 +11,8 @@ import java.util.function.Predicate;
 
 public final class WhisperFilter {
 
-    public static final Component ONLY_SPECTATORS = Component.text("During the battle you can only message other spectators.", KatzeColor.RED);
-    public static final Component ONLY_SPECTATOR_CHAT = Component.text("During the battle spectators can only write in the spectator chat.", KatzeColor.RED);
+    public static final Component ONLY_SPECTATORS = Component.translatable("katze.spectator.whisper.only_spectators").color(KatzeColor.RED);
+    public static final Component ONLY_SPECTATOR_CHAT = Component.translatable("katze.spectator.whisper.only_spectator_chat").color(KatzeColor.RED);
 
     private static final String NAMESPACE = "minecraft:";
     private static final Set<String> WHISPERS = Set.of("msg", "tell", "w");

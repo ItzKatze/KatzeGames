@@ -29,7 +29,7 @@ public class AllItemsLeaderboardCommand extends KatzeCommand {
         if (caller instanceof KatzePlayer player) {
             new AllItemsLeaderboardGUI().open(player);
         } else {
-            caller.sendMessage(Component.text("This command can only be used by players."));
+            caller.sendMessage(Component.translatable("katze.allitems.command.players_only"));
         }
     }
 

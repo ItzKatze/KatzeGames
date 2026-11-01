@@ -35,14 +35,14 @@ public class AllItemsSettingsCommand extends KatzeCommand {
         switch (mode) {
             case "team" -> {
                 AllItemsSettings.setGameMode(AllItemsSettings.GameMode.TEAM);
-                caller.sendMessage(Component.text("All Items mode set to Team mode."));
+                caller.sendMessage(Component.translatable("katze.allitems.command.mode_set", gg.itzkatze.katze.text.TextArg.component("mode", Component.translatable("katze.allitems.mode.team"))));
             }
             case "individual" -> {
                 AllItemsSettings.setGameMode(AllItemsSettings.GameMode.INDIVIDUAL);
-                caller.sendMessage(Component.text("All Items mode set to Individual mode."));
+                caller.sendMessage(Component.translatable("katze.allitems.command.mode_set", gg.itzkatze.katze.text.TextArg.component("mode", Component.translatable("katze.allitems.mode.individual"))));
             }
             default -> {
-                caller.sendMessage(Component.text("Invalid mode. Use 'team' or 'individual'."));
+                caller.sendMessage(Component.translatable("katze.allitems.command.invalid_mode"));
                 sendUsage(caller);
             }
         }

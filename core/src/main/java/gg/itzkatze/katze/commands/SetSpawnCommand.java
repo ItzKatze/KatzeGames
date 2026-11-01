@@ -38,26 +38,28 @@ public class SetSpawnCommand extends KatzeCommand {
         }
         Lobby lobby = LobbyManager.getActiveLobby();
         if (lobby == null) {
-            fail(caller, "No lobby is active.");
+            fail(caller, Component.translatable("katze.command.setspawn.no_lobby"));
             return;
         }
 
         LobbyIsland target = args.length == 0 ? LobbyManager.pickOtherIsland(ThreadLocalRandom.current()) : findIsland(args[0]);
         if (target == null) {
             fail(caller, args.length == 0
-                    ? "There is no other island to switch to."
-                    : "Unknown island \"" + args[0] + "\". Available islands: " + String.join(", ", islandIds()) + ".");
+                    ? Component.translatable("katze.command.setspawn.no_other_island")
+                    : Component.translatable("katze.command.setspawn.unknown_island",
+                            gg.itzkatze.katze.text.TextArg.text("island", args[0]),
+                            gg.itzkatze.katze.text.TextArg.text("islands", String.join(", ", islandIds()))));
             return;
         }
         if (target.getId().equals(lobby.getIsland().getId())) {
-            fail(caller, "Island " + target.getId() + " is already active.");
+            fail(caller, Component.translatable("katze.command.setspawn.already_active", gg.itzkatze.katze.text.TextArg.text("island", target.getId())));
             return;
         }
         if (!LobbyManager.switchIsland(target)) {
-            fail(caller, "Island " + target.getId() + " could not be loaded, the lobby was not changed.");
+            fail(caller, Component.translatable("katze.command.setspawn.load_failed", gg.itzkatze.katze.text.TextArg.text("island", target.getId())));
             return;
         }
-        caller.sendMessage(Component.text("Switched the lobby island to " + target.getId() + ".").color(KatzeColor.LIME));
+        caller.sendMessage(Component.translatable("katze.command.setspawn.success", gg.itzkatze.katze.text.TextArg.text("island", target.getId())).color(KatzeColor.LIME));
     }
 
     @Override
@@ -79,7 +81,7 @@ public class SetSpawnCommand extends KatzeCommand {
         return LobbyManager.getIslands().stream().map(LobbyIsland::getId).toList();
     }
 
-    private static void fail(@NotNull CommandCaller caller, @NotNull String message) {
-        caller.sendMessage(Component.text(message).color(KatzeColor.RED));
+    private static void fail(@NotNull CommandCaller caller, @NotNull Component message) {
+        caller.sendMessage(message.color(KatzeColor.RED));
     }
 }

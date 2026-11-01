@@ -22,9 +22,10 @@ final class CosmeticGuiItems {
         return new GUIItem(slot) {
             @Override
             public ItemStack getItem(KatzePlayer viewer) {
-                return ItemStackCreator.getStack(Component.text("Points: " + CosmeticStore.get().points(viewer.getUuid()), KatzeColor.GOLD), Material.GOLD_NUGGET,
-                        List.of(Component.text("Every block you land on in the Jump & Run earns one point.", KatzeColor.LIGHT_GRAY),
-                                Component.text("Spend them on the Cosmetic Case.", KatzeColor.LIGHT_GRAY)));
+                return ItemStackCreator.getStack(Component.translatable("katze.cosmetics.points",
+                                gg.itzkatze.katze.text.TextArg.number("points", CosmeticStore.get().points(viewer.getUuid()))).color(KatzeColor.GOLD), Material.GOLD_NUGGET,
+                        List.of(Component.translatable("katze.cosmetics.points_earned").color(KatzeColor.LIGHT_GRAY),
+                                Component.translatable("katze.cosmetics.points_spent").color(KatzeColor.LIGHT_GRAY)));
             }
         };
     }

@@ -35,18 +35,21 @@ public class ItemRainSettings {
 
     @Getter
     public enum ItemRainSetting implements Setting {
-        ITEM_INTERVAL(true, "Item Interval", ItemIntervalState.SEC_10),
-        SKY_DROP_MODE(false, "Sky Drop Mode", OnOffState.OFF),
-        SKY_DROP_RADIUS(true, "Sky Drop Radius", DropRadiusState.BLOCKS_5);
+        ITEM_INTERVAL(true, ItemIntervalState.SEC_10),
+        SKY_DROP_MODE(false, OnOffState.OFF),
+        SKY_DROP_RADIUS(true, DropRadiusState.BLOCKS_5);
 
         private final boolean updateOnChange;
-        private final String displayName;
         private final SettingStateType defaultState;
 
-        ItemRainSetting(boolean updateOnChange, String displayName, SettingStateType defaultState) {
+        ItemRainSetting(boolean updateOnChange, SettingStateType defaultState) {
             this.updateOnChange = updateOnChange;
-            this.displayName = displayName;
             this.defaultState = defaultState;
+        }
+
+        @Override
+        public Component getDisplayName() {
+            return Component.translatable("katze.itemrain.setting." + name().toLowerCase(java.util.Locale.ROOT));
         }
 
         @Override
@@ -86,8 +89,7 @@ public class ItemRainSettings {
 
         @Override
         public @NotNull Component getDisplayName() {
-            String label = seconds == 1 ? "1 Second" : seconds + " Seconds";
-            return Component.text(label).color(KatzeColor.LIGHT_BLUE);
+            return Component.translatable("katze.itemrain.state.interval", gg.itzkatze.katze.text.TextArg.number("seconds", seconds)).color(KatzeColor.LIGHT_BLUE);
         }
 
         @Override
@@ -139,8 +141,7 @@ public class ItemRainSettings {
 
         @Override
         public @NotNull Component getDisplayName() {
-            String label = radius == 1 ? "1 Block" : radius + " Blocks";
-            return Component.text(label).color(KatzeColor.LIGHT_BLUE);
+            return Component.translatable("katze.itemrain.state.radius", gg.itzkatze.katze.text.TextArg.number("radius", radius)).color(KatzeColor.LIGHT_BLUE);
         }
 
         @Override

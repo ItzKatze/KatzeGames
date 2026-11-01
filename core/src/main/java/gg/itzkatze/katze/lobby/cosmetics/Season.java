@@ -51,11 +51,21 @@ public enum Season {
     }
 
     public @NotNull Component availability(@NotNull LocalDate today) {
-        return Component.text(displayName + " · " + (isActive(today) ? "until " + lastDay() : "returns " + firstDay()), color);
+        String season = "katze.cosmetics.season." + name().toLowerCase(Locale.ROOT);
+        return isActive(today)
+                ? Component.translatable("katze.cosmetics.season.until",
+                        gg.itzkatze.katze.text.TextArg.component("season", Component.translatable(season)),
+                        gg.itzkatze.katze.text.TextArg.day("day", last)).color(color)
+                : Component.translatable("katze.cosmetics.season.returns",
+                        gg.itzkatze.katze.text.TextArg.component("season", Component.translatable(season)),
+                        gg.itzkatze.katze.text.TextArg.day("day", first)).color(color);
     }
 
     public @NotNull Component returnsMessage(@NotNull Cosmetic cosmetic) {
-        return Component.text(cosmetic.displayName() + " returns to the Cosmetic Case for " + displayName + " on " + firstDay() + ".", KatzeColor.RED);
+        return Component.translatable("katze.cosmetics.season.cosmetic_returns",
+                gg.itzkatze.katze.text.TextArg.component("cosmetic", cosmetic.styledName()),
+                gg.itzkatze.katze.text.TextArg.component("season", Component.translatable("katze.cosmetics.season." + name().toLowerCase(Locale.ROOT))),
+                gg.itzkatze.katze.text.TextArg.day("day", first)).color(KatzeColor.RED);
     }
 
     // A window whose first day comes after its last day runs over New Year.

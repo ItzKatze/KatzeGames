@@ -38,11 +38,11 @@ public class LobbyPosCommand extends KatzeCommand {
 
         Lobby lobby = LobbyManager.getActiveLobby();
         if (lobby == null) {
-            caller.sendMessage(Component.text("No lobby is active.").color(KatzeColor.RED));
+            caller.sendMessage(Component.translatable("katze.command.lobbypos.no_lobby").color(KatzeColor.RED));
             return;
         }
         if (!player.getWorld().equals(lobby.getWorld())) {
-            caller.sendMessage(Component.text("You are not in the lobby.").color(KatzeColor.RED));
+            caller.sendMessage(Component.translatable("katze.command.lobbypos.not_in_lobby").color(KatzeColor.RED));
             return;
         }
 
@@ -67,9 +67,14 @@ public class LobbyPosCommand extends KatzeCommand {
 
         String arguments = "new Vector(" + x + ", " + y + ", " + z + "), " + yaw;
 
-        return Component.text("Island " + islandId + ": " + x + " " + y + " " + z + ", yaw " + yaw + " ", KatzeColor.YELLOW)
-                .append(Component.text("[Copy]", KatzeColor.LIME)
+        return Component.translatable("katze.command.lobbypos.position",
+                        gg.itzkatze.katze.text.TextArg.text("island", islandId),
+                        gg.itzkatze.katze.text.TextArg.decimal("x", x),
+                        gg.itzkatze.katze.text.TextArg.number("y", (long) y),
+                        gg.itzkatze.katze.text.TextArg.decimal("z", z),
+                        gg.itzkatze.katze.text.TextArg.number("yaw", yaw)).color(KatzeColor.YELLOW)
+                .append(Component.translatable("katze.command.lobbypos.copy").color(KatzeColor.LIME)
                         .clickEvent(ClickEvent.copyToClipboard(arguments))
-                        .hoverEvent(HoverEvent.showText(Component.text("Click to copy"))));
+                        .hoverEvent(HoverEvent.showText(Component.translatable("katze.command.lobbypos.copy_hint"))));
     }
 }

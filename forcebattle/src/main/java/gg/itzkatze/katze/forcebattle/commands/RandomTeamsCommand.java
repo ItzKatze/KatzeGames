@@ -31,7 +31,7 @@ public class RandomTeamsCommand extends KatzeCommand {
     @Override
     protected void executeCommand(final CommandCaller caller, final String[] args) {
         if (KatzeGames.getTimer().isRunning()) {
-            caller.sendMessage(Component.text("The game has already started.").color(KatzeColor.RED));
+            caller.sendMessage(Component.translatable("katze.forcebattle.command.game_started").color(KatzeColor.RED));
             return;
         }
 
@@ -44,7 +44,7 @@ public class RandomTeamsCommand extends KatzeCommand {
         try {
             size = Integer.parseInt(args[0]);
         } catch (NumberFormatException e) {
-            caller.sendMessage(Component.text("Please specify a valid number.").color(KatzeColor.RED));
+            caller.sendMessage(Component.translatable("katze.forcebattle.command.invalid_number").color(KatzeColor.RED));
             return;
         }
 
@@ -52,7 +52,7 @@ public class RandomTeamsCommand extends KatzeCommand {
         int playerAmount = players.size();
 
         if (playerAmount % size != 0) {
-            caller.sendMessage(Component.text("No equal teams can be created.").color(KatzeColor.RED));
+            caller.sendMessage(Component.translatable("katze.forcebattle.command.no_equal_teams").color(KatzeColor.RED));
             return;
         }
 
@@ -107,7 +107,7 @@ public class RandomTeamsCommand extends KatzeCommand {
             }
         }
 
-        caller.sendMessage(Component.text("Successfully created " + amountOfTeams + " Teams.").color(KatzeColor.LIME));
+        caller.sendMessage(Component.translatable("katze.forcebattle.command.teams_created", gg.itzkatze.katze.text.TextArg.number("amount", amountOfTeams)).color(KatzeColor.LIME));
     }
 
     @Override

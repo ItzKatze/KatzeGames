@@ -23,14 +23,18 @@ public abstract class PurchaseConfirmGui extends KatzeGUI {
     private static final int DENY_SLOT = 5;
 
     protected PurchaseConfirmGui(@NotNull String title) {
+        this(Component.text(title));
+    }
+
+    protected PurchaseConfirmGui(@NotNull Component title) {
         super(title, 9);
     }
 
     protected abstract @NotNull ItemStack summary(@NotNull KatzePlayer viewer);
 
-    protected abstract @NotNull String acceptHint();
+    protected abstract @NotNull Component acceptHint();
 
-    protected abstract @NotNull String denyHint();
+    protected abstract @NotNull Component denyHint();
 
     protected abstract void accept(@NotNull KatzePlayer clicker);
 
@@ -43,7 +47,7 @@ public abstract class PurchaseConfirmGui extends KatzeGUI {
     public final void setItems(KatzePlayer player) {
         clear();
         fill(ItemStackCreator.fillerItem());
-        set(button(ACCEPT_SLOT, Component.text("Accept", KatzeColor.LIME, TextDecoration.BOLD), Material.LIME_STAINED_GLASS_PANE, acceptHint(), this::accept));
+        set(button(ACCEPT_SLOT, Component.translatable("katze.cosmetics.accept").color(KatzeColor.LIME).decorate(TextDecoration.BOLD), Material.LIME_STAINED_GLASS_PANE, acceptHint(), this::accept));
         set(new GUIClickableItem(SUMMARY_SLOT) {
             @Override
             public void run(InventoryClickEvent event, KatzePlayer clicker) {
@@ -55,7 +59,7 @@ public abstract class PurchaseConfirmGui extends KatzeGUI {
                 return summary(viewer);
             }
         });
-        set(button(DENY_SLOT, Component.text("Deny", KatzeColor.RED, TextDecoration.BOLD), Material.RED_STAINED_GLASS_PANE, denyHint(), this::deny));
+        set(button(DENY_SLOT, Component.translatable("katze.cosmetics.deny").color(KatzeColor.RED).decorate(TextDecoration.BOLD), Material.RED_STAINED_GLASS_PANE, denyHint(), this::deny));
     }
 
     @Override
@@ -63,7 +67,7 @@ public abstract class PurchaseConfirmGui extends KatzeGUI {
         return false;
     }
 
-    private static @NotNull GUIClickableItem button(int slot, @NotNull Component name, @NotNull Material icon, @NotNull String hint, @NotNull Consumer<KatzePlayer> action) {
+    private static @NotNull GUIClickableItem button(int slot, @NotNull Component name, @NotNull Material icon, @NotNull Component hint, @NotNull Consumer<KatzePlayer> action) {
         return new GUIClickableItem(slot) {
             @Override
             public void run(InventoryClickEvent event, KatzePlayer clicker) {
@@ -72,7 +76,7 @@ public abstract class PurchaseConfirmGui extends KatzeGUI {
 
             @Override
             public ItemStack getItem(KatzePlayer viewer) {
-                return ItemStackCreator.getStack(name, icon, List.of(Component.text(hint, KatzeColor.LIGHT_GRAY)));
+                return ItemStackCreator.getStack(name, icon, List.of(hint.color(KatzeColor.LIGHT_GRAY)));
             }
         };
     }
