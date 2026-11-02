@@ -118,6 +118,7 @@ public final class ForceBattlePersistence {
         player.setPoints(data.points);
         player.setChainProgress(data.chainProgress);
         player.setObjective(objectiveAt(objectives, data.current));
+        player.setLastObjective(objectiveAt(objectives, data.last));
 
         List<ForceBattleObjective> skippedObjectives = new ArrayList<>();
         for (Integer index : nonNull(data.skipped)) {
@@ -139,6 +140,7 @@ public final class ForceBattlePersistence {
 
         team.setChainProgress(data.chainProgress);
         team.setObjective(objectiveAt(objectives, data.current));
+        team.setLastObjective(objectiveAt(objectives, data.last));
 
         List<String> pages = nonNull(data.backpack);
         if (pages.isEmpty()) {
@@ -291,6 +293,7 @@ public final class ForceBattlePersistence {
         int points;
         int chainProgress;
         Integer current;
+        Integer last;
         List<Integer> skipped = new ArrayList<>();
         String backpack;
 
@@ -300,6 +303,7 @@ public final class ForceBattlePersistence {
             data.points = player.getPoints();
             data.chainProgress = player.getChainProgress();
             data.current = table.indexOf(player.getObjective());
+            data.last = table.indexOf(player.getLastObjective());
             for (ForceBattleObjective objective : player.getSkippedObjectives()) {
                 data.skipped.add(table.indexOf(objective));
             }
@@ -312,6 +316,7 @@ public final class ForceBattlePersistence {
         int id;
         int chainProgress;
         Integer current;
+        Integer last;
         List<String> backpack = new ArrayList<>();
 
         static TeamData of(@NotNull ForceBattleTeam team, @NotNull ObjectiveTable table) {
@@ -319,6 +324,7 @@ public final class ForceBattlePersistence {
             data.id = team.getId();
             data.chainProgress = team.getChainProgress();
             data.current = table.indexOf(team.getObjective());
+            data.last = table.indexOf(team.getLastObjective());
             for (TeamBackpackGUI page : team.getBACKPACK_INVENTORIES()) {
                 ItemStack[] contents = page.getInventory().getContents();
                 for (int slot = 0; slot < contents.length; slot++) {

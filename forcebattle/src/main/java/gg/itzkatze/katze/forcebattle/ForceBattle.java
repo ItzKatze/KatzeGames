@@ -100,7 +100,14 @@ public class ForceBattle implements Challenge {
         KatzeTeam.teams.stream()
                 .filter(ForceBattleTeam.class::isInstance)
                 .map(ForceBattleTeam.class::cast)
-                .forEach(team -> team.setObjective(null));
+                .forEach(team -> {
+                    team.setObjective(null);
+                    team.setLastObjective(null);
+                });
+        KatzePlayer.PLAYERS.stream()
+                .filter(ForceBattlePlayer.class::isInstance)
+                .map(ForceBattlePlayer.class::cast)
+                .forEach(player -> player.setLastObjective(null));
         KatzePlayer.PLAYERS.stream()
                 .filter(ForceBattlePlayer.class::isInstance)
                 .map(ForceBattlePlayer.class::cast)

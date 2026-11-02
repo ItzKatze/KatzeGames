@@ -44,6 +44,9 @@ public class ForceBattlePlayer extends KatzePlayer {
     private ForceBattleObjective objective;
     @Getter
     @Setter
+    private ForceBattleObjective lastObjective;
+    @Getter
+    @Setter
     private List<ForceBattleObjective> skippedObjectives = new ArrayList<>();
     @Getter
     @Setter

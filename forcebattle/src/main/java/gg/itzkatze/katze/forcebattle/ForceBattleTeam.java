@@ -36,6 +36,9 @@ public class ForceBattleTeam extends KatzeTeam {
     @Getter
     @Setter
     private ForceBattleObjective objective;
+    @Getter
+    @Setter
+    private ForceBattleObjective lastObjective;
 
     public ForceBattleTeam(List<KatzePlayer> players) {
         super(players);

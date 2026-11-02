@@ -9,6 +9,8 @@ import gg.itzkatze.katze.data.KatzeStructure;
 import gg.itzkatze.katze.data.MobsSimplified;
 import gg.itzkatze.katze.data.StructureSimplified;
 import gg.itzkatze.katze.forcebattle.ForceBattleObjective;
+import gg.itzkatze.katze.forcebattle.ForceBattlePlayer;
+import gg.itzkatze.katze.forcebattle.ForceBattleTeam;
 import gg.itzkatze.katze.gui.GUIClickableItem;
 import gg.itzkatze.katze.gui.GUIItem;
 import gg.itzkatze.katze.gui.KatzeGUI;
@@ -95,9 +97,9 @@ public class ResultGUI extends KatzeGUI {
         }
 
         Collection<ForceBattleObjective> collection = switch (resultType) {
-            case PLAYER -> ForceBattleObjective.finishedBy(targetPlayer);
-            case TEAM -> ResultCommandUtils.combineTeamObjectives(targetTeam);
-            case ALL -> ForceBattleObjective.finished();
+            case PLAYER -> playerObjectives(targetPlayer);
+            case TEAM -> teamObjectives(targetTeam);
+            case ALL -> allObjectives();
         };
 
         List<ForceBattleObjective> objectives = new ArrayList<>(collection);
@@ -108,6 +110,54 @@ public class ResultGUI extends KatzeGUI {
 
         if (animated) startAnimation(viewer, objectives, 0);
         else setItems(viewer);
+    }
+
+    private static @NotNull List<ForceBattleObjective> playerObjectives(@NotNull KatzePlayer player) {
+        List<ForceBattleObjective> objectives = new ArrayList<>(ForceBattleObjective.finishedBy(player));
+        if (player instanceof ForceBattlePlayer forceBattlePlayer) {
+            ForceBattleObjective current = forceBattlePlayer.getObjective() != null
+                    ? forceBattlePlayer.getObjective()
+                    : forceBattlePlayer.getLastObjective();
+            if (current != null && !current.isFinished()) {
+                objectives.add(current);
+            }
+        }
+        return objectives;
+    }
+
+    private static @NotNull List<ForceBattleObjective> teamObjectives(@NotNull KatzeTeam team) {
+        List<ForceBattleObjective> objectives = ResultCommandUtils.combineTeamObjectives(team);
+        for (KatzePlayer member : team.getPlayers()) {
+            playerObjectives(member).stream()
+                    .filter(objective -> !objective.isFinished() && !objectives.contains(objective))
+                    .forEach(objectives::add);
+        }
+        if (team instanceof ForceBattleTeam forceBattleTeam) {
+            ForceBattleObjective current = forceBattleTeam.getObjective() != null
+                    ? forceBattleTeam.getObjective()
+                    : forceBattleTeam.getLastObjective();
+            if (current != null && !current.isFinished()) {
+                objectives.add(current);
+            }
+        }
+        return objectives;
+    }
+
+    private static @NotNull List<ForceBattleObjective> allObjectives() {
+        List<ForceBattleObjective> objectives = new ArrayList<>(ForceBattleObjective.finished());
+        KatzePlayer.PLAYERS.stream()
+                .filter(ForceBattlePlayer.class::isInstance)
+                .map(ForceBattlePlayer.class::cast)
+                .map(player -> player.getObjective() != null ? player.getObjective() : player.getLastObjective())
+                .filter(objective -> objective != null && !objective.isFinished() && !objectives.contains(objective))
+                .forEach(objectives::add);
+        KatzeTeam.teams.stream()
+                .filter(ForceBattleTeam.class::isInstance)
+                .map(ForceBattleTeam.class::cast)
+                .map(team -> team.getObjective() != null ? team.getObjective() : team.getLastObjective())
+                .filter(objective -> objective != null && !objective.isFinished() && !objectives.contains(objective))
+                .forEach(objectives::add);
+        return objectives;
     }
 
     private void startAnimation(KatzePlayer viewer, List<ForceBattleObjective> objectives, int startIndex) {
@@ -309,12 +359,16 @@ public class ResultGUI extends KatzeGUI {
 
             List<Component> lore = new ArrayList<>();
             lore.add(Component.empty());
-            lore.add(Component.translatable("katze.forcebattle.results.time",
-                    TextArg.text("time", StringUtility.formatTime(objective.getTime()))).color(KatzeColor.LIGHT_GRAY));
+            if (objective.isFinished()) {
+                lore.add(Component.translatable("katze.forcebattle.results.time",
+                        TextArg.text("time", StringUtility.formatTime(objective.getTime()))).color(KatzeColor.LIGHT_GRAY));
 
-            if (displayNames) {
-                lore.add(Component.translatable("katze.forcebattle.results.player",
-                        TextArg.text("player", objective.getWhoFinished().getName())).color(KatzeColor.LIGHT_GRAY));
+                if (displayNames) {
+                    lore.add(Component.translatable("katze.forcebattle.results.player",
+                            TextArg.text("player", objective.getWhoFinished().getName())).color(KatzeColor.LIGHT_GRAY));
+                }
+            } else {
+                lore.add(Component.translatable("katze.forcebattle.results.unfinished").color(KatzeColor.YELLOW));
             }
             if (objective.hasBeenSkipped()) {
                 lore.add(Component.empty());

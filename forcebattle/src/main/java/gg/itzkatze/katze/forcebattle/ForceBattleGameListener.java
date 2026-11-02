@@ -86,6 +86,15 @@ public class ForceBattleGameListener implements Listener {
     public void startGame() {
         startPhase = false;
 
+        KatzePlayer.PLAYERS.stream()
+                .filter(ForceBattlePlayer.class::isInstance)
+                .map(ForceBattlePlayer.class::cast)
+                .forEach(player -> player.setLastObjective(null));
+        KatzeTeam.teams.stream()
+                .filter(ForceBattleTeam.class::isInstance)
+                .map(ForceBattleTeam.class::cast)
+                .forEach(team -> team.setLastObjective(null));
+
         updateAllTablists();
 
         for (KatzePlayer katzePlayer : KatzePlayer.getOnlinePlayers()) {
@@ -117,10 +126,21 @@ public class ForceBattleGameListener implements Listener {
     public void handleBattleEnd() {
         KatzeGames.broadcast(Component.translatable("katze.forcebattle.battle_over"));
 
-        for (KatzePlayer player : KatzePlayer.getOnlinePlayers()) {
-            if (player.getPlayer() == null) return;
+        KatzePlayer.PLAYERS.stream()
+                .filter(ForceBattlePlayer.class::isInstance)
+                .map(ForceBattlePlayer.class::cast)
+                .forEach(player -> player.setLastObjective(player.getObjective()));
+        KatzeTeam.teams.stream()
+                .filter(ForceBattleTeam.class::isInstance)
+                .map(ForceBattleTeam.class::cast)
+                .forEach(team -> team.setLastObjective(team.getObjective()));
 
-            if (player.isInTeam()) ((ForceBattleTeam) player.getTeam()).setObjective(null);
+        for (KatzePlayer player : KatzePlayer.getOnlinePlayers()) {
+            if (player.getPlayer() == null) continue;
+
+            if (player.getTeam() instanceof ForceBattleTeam team) {
+                team.setObjective(null);
+            }
             player.setCurrentObjective(null, false, false);
             player.getPlayer().teleport(Bukkit.getWorld("world").getSpawnLocation());
             player.getPlayer().setHealth(20);
