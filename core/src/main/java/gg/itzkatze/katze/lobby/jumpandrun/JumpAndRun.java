@@ -8,6 +8,7 @@ import gg.itzkatze.katze.lobby.cosmetics.MusicManager;
 import gg.itzkatze.katze.lobby.PointsSidebar;
 import gg.itzkatze.katze.lobby.cosmetics.PointsText;
 import gg.itzkatze.katze.lobby.cosmetics.SoundCosmetic;
+import gg.itzkatze.katze.text.TextArg;
 import gg.itzkatze.katze.util.KatzeColor;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
@@ -280,17 +281,17 @@ public class JumpAndRun implements LobbyFeature, Listener {
         Component reason = ending == Ending.NO_ROOM ? Component.translatable("katze.cosmetics.no_more_room") : Component.empty();
         int score = run.getScore();
         Component message = Component.translatable("katze.cosmetics.run_over",
-                gg.itzkatze.katze.text.TextArg.component("reason", reason),
-                gg.itzkatze.katze.text.TextArg.number("score", score)).color(KatzeColor.RED);
+                TextArg.component("reason", reason),
+                TextArg.number("score", score)).color(KatzeColor.RED);
         if (score > 0) {
-            message = message.append(Component.translatable("katze.cosmetics.run_points_earned",
-                    gg.itzkatze.katze.text.TextArg.component("points", PointsText.amountComponent(score))).color(KatzeColor.LIME));
+            message = message.append(Component.text(" ")).append(Component.translatable("katze.cosmetics.run_points_earned",
+                    TextArg.component("points", PointsText.amountComponent(score))).color(KatzeColor.LIME));
             if (run.getEventBlocks() > 0) {
                 message = message.append(Component.translatable("katze.cosmetics.run_event_points",
-                        gg.itzkatze.katze.text.TextArg.signed("points", run.getEventPoints())).color(KatzeColor.GOLD));
+                        TextArg.signed("points", run.getEventPoints())).color(KatzeColor.GOLD));
             }
-            message = message.append(Component.translatable("katze.cosmetics.run_total_points",
-                    gg.itzkatze.katze.text.TextArg.number("points", CosmeticStore.get().points(run.getId()))).color(KatzeColor.LIGHT_GRAY));
+            message = message.append(Component.text(" ")).append(Component.translatable("katze.cosmetics.run_total_points",
+                    TextArg.number("points", CosmeticStore.get().points(run.getId()))).color(KatzeColor.LIGHT_GRAY));
         }
         runMultiplier.reset(run.getId());
         run.getPlayer().sendMessage(message);

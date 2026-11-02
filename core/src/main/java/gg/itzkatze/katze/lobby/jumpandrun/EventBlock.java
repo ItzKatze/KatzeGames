@@ -64,9 +64,12 @@ final class EventBlock {
 
     static void animatePayout(Plugin plugin, Player player, int applied) {
         int changes = 5;
+        int durationTicks = ThreadLocalRandom.current().nextInt(24, 37);
 
         new BukkitRunnable() {
             private int step = 0;
+            private int ticks = 0;
+            private int nextChange = 0;
 
             @Override
             public void run() {
@@ -75,10 +78,14 @@ final class EventBlock {
                     return;
                 }
 
+                int elapsed = ticks++;
+                if (elapsed < nextChange) return;
+
                 if (step < changes) {
+                    double progress = ++step / (double) changes;
+                    nextChange = (int) Math.round(durationTicks * progress * progress);
                     int preview = payout(ThreadLocalRandom.current());
-                    showPayout(player, preview, 10);
-                    step++;
+                    showPayout(player, preview, nextChange - elapsed + 1);
                     return;
                 }
 
@@ -92,7 +99,7 @@ final class EventBlock {
                     }
                 }, 20L);
             }
-        }.runTaskTimer(plugin, 0L, 6L);
+        }.runTaskTimer(plugin, 0L, 1L);
     }
 
     static @NotNull Component message(int applied) {
