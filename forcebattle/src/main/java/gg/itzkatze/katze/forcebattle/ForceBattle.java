@@ -19,8 +19,6 @@ import gg.itzkatze.katze.forcebattle.gui.ForceBattleSettingsGUI;
 import gg.itzkatze.katze.forcebattle.tasks.StructureTask;
 import gg.itzkatze.katze.commands.framework.KatzeCommand;
 import gg.itzkatze.katze.configuration.ChallengeSettingsManager;
-import gg.itzkatze.katze.configuration.GlobalSetting;
-import gg.itzkatze.katze.configuration.SettingsManager;
 import gg.itzkatze.katze.gui.KatzeGUI;
 import gg.itzkatze.katze.scoreboard.ScoreboardContent;
 import gg.itzkatze.katze.spectator.PlayerViewGui;
@@ -168,7 +166,7 @@ public class ForceBattle implements Challenge {
         List<Component> lines = new ArrayList<>();
         ForceBattleObjective objective = player.getObjective();
         lines.add(PlayerViewGui.infoLine("katze.forcebattle.spectator.objective", objective == null ? Component.translatable("katze.forcebattle.scoreboard.none") : ForceBattleNametag.objectiveText(objective)));
-        if (SettingsManager.isEnabled(GlobalSetting.EXTRA_TEAM_OBJECTIVE) && player.getTeam() instanceof ForceBattleTeam team && team.getObjective() != null) {
+        if (player.getTeam() instanceof ForceBattleTeam team && team.getObjective() != null) {
             lines.add(PlayerViewGui.infoLine("katze.forcebattle.spectator.team_objective", ForceBattleNametag.objectiveText(team.getObjective())));
         }
         lines.add(PlayerViewGui.infoLine("katze.forcebattle.spectator.points", Component.text(player.getPoints())));
