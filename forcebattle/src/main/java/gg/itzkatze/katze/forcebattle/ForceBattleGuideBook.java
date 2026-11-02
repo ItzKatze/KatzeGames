@@ -18,7 +18,7 @@ import java.util.stream.IntStream;
 public final class ForceBattleGuideBook {
 
     private static final NamespacedKey KEY = new NamespacedKey("katzegames", "forcebattle_guide_book");
-    private static final int PAGE_COUNT = 8;
+    private static final int PAGE_COUNT = 15;
 
     private ForceBattleGuideBook() {
     }
