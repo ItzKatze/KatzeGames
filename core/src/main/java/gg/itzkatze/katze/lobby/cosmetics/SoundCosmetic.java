@@ -19,7 +19,6 @@ public enum SoundCosmetic implements Cosmetic {
     IRON_XYLOPHONE("iron_xylophone", "block.note_block.iron_xylophone", Rarity.COMMON, Material.IRON_INGOT),
     PLING_LOW("pling_low", "block.note_block.pling", Rarity.COMMON, Material.NOTE_BLOCK),
 
-    AMETHYST_CHIME("amethyst_chime", "block.amethyst_block.chime", Rarity.UNCOMMON, Material.AMETHYST_SHARD),
     AMETHYST_HIT("amethyst_hit", "block.amethyst_block.hit", Rarity.UNCOMMON, Material.AMETHYST_SHARD),
     EXPERIENCE_ORB("experience_orb", "entity.experience_orb.pickup", Rarity.UNCOMMON, Material.EXPERIENCE_BOTTLE),
     ITEM_PICKUP("item_pickup", "entity.item.pickup", Rarity.UNCOMMON, Material.HOPPER),
