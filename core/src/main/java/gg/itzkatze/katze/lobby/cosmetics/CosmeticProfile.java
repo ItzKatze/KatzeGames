@@ -30,6 +30,7 @@ public final class CosmeticProfile {
     private int caseCount = 1;
     private List<String> owned = new ArrayList<>();
     private List<String> equipped = new ArrayList<>();
+    private Set<CosmeticCategory> randomCategories = EnumSet.noneOf(CosmeticCategory.class);
 
     public CosmeticProfile() {
     }
@@ -117,7 +118,17 @@ public final class CosmeticProfile {
     }
 
     void unequip(@NotNull CosmeticCategory category, @NotNull CosmeticCatalog catalog) {
+        randomCategories.remove(category);
         equipped.removeIf(id -> catalog.find(id).map(Cosmetic::category).orElse(null) == category);
+    }
+
+    boolean isRandom(@NotNull CosmeticCategory category) {
+        return randomCategories.contains(category);
+    }
+
+    void equipRandom(@NotNull CosmeticCategory category, @NotNull CosmeticCatalog catalog) {
+        unequip(category, catalog);
+        randomCategories.add(category);
     }
 
     @NotNull Optional<Cosmetic> equipped(@NotNull CosmeticCategory category, @NotNull CosmeticCatalog catalog) {
@@ -129,6 +140,8 @@ public final class CosmeticProfile {
     }
 
     void normalize(@NotNull CosmeticCatalog catalog) {
+        randomCategories = randomCategories == null ? EnumSet.noneOf(CosmeticCategory.class)
+                : randomCategories.stream().filter(Objects::nonNull).collect(Collectors.toCollection(() -> EnumSet.noneOf(CosmeticCategory.class)));
         points = Math.max(points, 0);
         earned = Math.max(earned, 0);
         best = Math.max(best, 0);

@@ -27,11 +27,11 @@ public final class CosmeticCategoryGui extends KatzeGUI {
     private static final int PREVIOUS_SLOT = 45;
     private static final int BACK_SLOT = 48;
     private static final int CLOSE_SLOT = 49;
+    private static final int RANDOM_SLOT = 50;
     private static final int NEXT_SLOT = 53;
     private static final int[] ENTRY_SLOTS = entrySlots();
 
-    // A null cosmetic is the free Default entry of the category.
-    private record Entry(@Nullable Cosmetic cosmetic) {
+    private record Entry(@Nullable Cosmetic cosmetic, boolean random) {
     }
 
     private final CosmeticCategory category;
@@ -74,6 +74,7 @@ public final class CosmeticCategoryGui extends KatzeGUI {
             set(arrow(NEXT_SLOT, "next_page", 1, pages));
         }
         set(GUIClickableItem.getCloseItem(CLOSE_SLOT));
+        set(entry(RANDOM_SLOT, new Entry(null, true)));
     }
 
     @Override
@@ -89,10 +90,10 @@ public final class CosmeticCategoryGui extends KatzeGUI {
 
     private @NotNull List<Entry> entries() {
         List<Entry> entries = new ArrayList<>();
-        entries.add(new Entry(null));
+        entries.add(new Entry(null, false));
         CosmeticStore.get().catalog().in(category).stream()
                 .sorted(Comparator.comparing(Cosmetic::rarity))
-                .forEach(cosmetic -> entries.add(new Entry(cosmetic)));
+                .forEach(cosmetic -> entries.add(new Entry(cosmetic, false)));
         return entries;
     }
 
@@ -152,9 +153,14 @@ public final class CosmeticCategoryGui extends KatzeGUI {
         UUID id = viewer.getUuid();
         Cosmetic cosmetic = entry.cosmetic();
         boolean owned = cosmetic == null || store.owns(id, cosmetic);
-        boolean equipped = cosmetic == null ? store.equipped(id, category).isEmpty() : owned && isEquipped(store, id, cosmetic);
+        boolean equipped = entry.random() ? store.isRandom(id, category)
+                : cosmetic == null ? !store.isRandom(id, category) && store.equipped(id, category).isEmpty()
+                : owned && isEquipped(store, id, cosmetic);
 
         List<Component> lore = new ArrayList<>();
+        if (entry.random()) {
+            lore.add(Component.translatable("katze.cosmetics.random_hint").color(KatzeColor.LIGHT_GRAY));
+        }
         if (cosmetic != null) {
             lore.add(Component.translatable("katze.cosmetics.rarity_label", gg.itzkatze.katze.text.TextArg.component("rarity", cosmetic.rarity().displayNameComponent())).color(cosmetic.rarity().color()));
         }
@@ -176,11 +182,11 @@ public final class CosmeticCategoryGui extends KatzeGUI {
             lore.add(Component.translatable("katze.cosmetics.preview_hint").color(KatzeColor.LIGHT_GRAY));
         }
 
-        Component name = cosmetic != null
+        Component name = entry.random() ? Component.translatable("katze.cosmetics.random").color(KatzeColor.WHITE) : cosmetic != null
                 ? cosmetic.styledName()
                 : Component.translatable("katze.cosmetics.default." + category.name().toLowerCase(java.util.Locale.ROOT)).color(KatzeColor.WHITE);
 
-        Material icon = cosmetic != null
+        Material icon = entry.random() ? Material.HOPPER : cosmetic != null
                 ? owned ? cosmetic.icon() : Material.GRAY_DYE
                 : switch (category) {
                     case BLOCK -> Material.LIME_CONCRETE;
@@ -199,8 +205,14 @@ public final class CosmeticCategoryGui extends KatzeGUI {
         CosmeticStore store = CosmeticStore.get();
         UUID id = player.getUniqueId();
         Cosmetic cosmetic = entry.cosmetic();
-        if (cosmetic == null) {
-            if (store.equipped(id, category).isPresent()) {
+        if (entry.random()) {
+            if (!store.isRandom(id, category)) {
+                store.equipRandom(player, category);
+                CosmeticGuiItems.play(clicker, ShopSounds.CLICK);
+                redraw(clicker);
+            }
+        } else if (cosmetic == null) {
+            if (store.isRandom(id, category) || store.equipped(id, category).isPresent()) {
                 store.unequip(player, category);
                 CosmeticGuiItems.play(clicker, ShopSounds.CLICK);
                 redraw(clicker);
@@ -228,6 +240,7 @@ public final class CosmeticCategoryGui extends KatzeGUI {
     }
 
     private @Nullable Sound previewOf(@NotNull Entry entry) {
+        if (entry.random()) return null;
         Cosmetic cosmetic = entry.cosmetic();
         if (cosmetic == null) {
             return category == CosmeticCategory.SOUND ? SoundCosmetic.DEFAULT : null;

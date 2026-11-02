@@ -18,7 +18,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public final class CosmeticStore {
 
@@ -104,6 +106,29 @@ public final class CosmeticStore {
     public @NotNull Optional<Cosmetic> equipped(@NotNull UUID player, @NotNull CosmeticCategory category) {
         CosmeticProfile profile = cosmetics(player);
         return profile == null ? Optional.empty() : profile.equipped(category, catalog);
+    }
+
+    public boolean isRandom(@NotNull UUID player, @NotNull CosmeticCategory category) {
+        CosmeticProfile profile = cosmetics(player);
+        return profile != null && profile.isRandom(category);
+    }
+
+    public void equipRandom(@NotNull Player player, @NotNull CosmeticCategory category) {
+        profile(player).equipRandom(category, catalog);
+        data.markDirty();
+    }
+
+    public @NotNull Optional<Cosmetic> selectForRun(@NotNull UUID player, @NotNull CosmeticCategory category) {
+        return selectForRun(player, category, cosmetic -> true);
+    }
+
+    public @NotNull Optional<Cosmetic> selectForRun(@NotNull UUID player, @NotNull CosmeticCategory category,
+                                                 @NotNull Predicate<Cosmetic> eligible) {
+        if (!isRandom(player, category)) return equipped(player, category).filter(eligible);
+
+        List<Cosmetic> unlocked = catalog.in(category).stream().filter(cosmetic -> owns(player, cosmetic)).filter(eligible).toList();
+        return unlocked.isEmpty() ? Optional.empty()
+                : Optional.of(unlocked.get(ThreadLocalRandom.current().nextInt(unlocked.size())));
     }
 
     public @NotNull Optional<BlockCosmetic> equippedBlock(@NotNull UUID player) {
@@ -206,7 +231,7 @@ public final class CosmeticStore {
 
     public void unequip(@NotNull Player player, @NotNull CosmeticCategory category) {
         CosmeticProfile profile = cosmetics(player.getUniqueId());
-        if (profile == null || profile.equipped(category, catalog).isEmpty()) return;
+        if (profile == null || (profile.equipped(category, catalog).isEmpty() && !profile.isRandom(category))) return;
 
         profile.unequip(category, catalog);
         data.profile(player.getUniqueId(), player.getName());

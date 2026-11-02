@@ -57,8 +57,9 @@ public final class MusicManager {
         UUID id = player.getUniqueId();
         boolean mod = MusicChannel.isListening(player);
 
-        CosmeticStore.get().equippedMusic(id)
-                .filter(music -> mod || !music.isSong())
+        CosmeticStore.get().selectForRun(id, CosmeticCategory.MUSIC,
+                        cosmetic -> mod || !((MusicCosmetic) cosmetic).isSong())
+                .map(MusicCosmetic.class::cast)
                 .ifPresent(music -> {
                     if (mod) {
                         MusicChannel.play(plugin, player, music);

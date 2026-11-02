@@ -3,11 +3,12 @@ package gg.itzkatze.katze.lobby.jumpandrun;
 import gg.itzkatze.katze.KatzeGames;
 import gg.itzkatze.katze.lobby.Lobby;
 import gg.itzkatze.katze.lobby.LobbyFeature;
+import gg.itzkatze.katze.lobby.cosmetics.BlockCosmetic;
+import gg.itzkatze.katze.lobby.cosmetics.CosmeticCategory;
 import gg.itzkatze.katze.lobby.cosmetics.CosmeticStore;
 import gg.itzkatze.katze.lobby.cosmetics.MusicManager;
 import gg.itzkatze.katze.lobby.PointsSidebar;
 import gg.itzkatze.katze.lobby.cosmetics.PointsText;
-import gg.itzkatze.katze.lobby.cosmetics.SoundCosmetic;
 import gg.itzkatze.katze.text.TextArg;
 import gg.itzkatze.katze.util.KatzeColor;
 import net.kyori.adventure.key.Key;
@@ -201,7 +202,8 @@ public class JumpAndRun implements LobbyFeature, Listener {
     }
 
     private @NotNull RunLook lookFor(@NotNull UUID id) {
-        return CosmeticStore.get().equippedBlock(id).map(RunLook::of).orElseGet(() -> {
+        return CosmeticStore.get().selectForRun(id, CosmeticCategory.BLOCK)
+                .map(BlockCosmetic.class::cast).map(RunLook::of).orElseGet(() -> {
             List<RunColor> inUse = runs.values().stream().map(run -> run.getLook().color()).filter(Objects::nonNull).toList();
             return RunColor.pick(inUse, lastColors.get(id)).look();
         });
@@ -235,7 +237,7 @@ public class JumpAndRun implements LobbyFeature, Listener {
         if (onEvent) {
             payEvent(arena, run, store, random);
         } else {
-            run.getPlayer().playSound(store.equippedSound(run.getId()).map(SoundCosmetic::sound).orElse(SoundCosmetic.DEFAULT));
+            run.getPlayer().playSound(run.getLandingSound());
         }
         removeBlock(arena, previous, run.getLook().block());
 

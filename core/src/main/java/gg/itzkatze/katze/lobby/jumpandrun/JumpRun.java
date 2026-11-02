@@ -1,6 +1,10 @@
 package gg.itzkatze.katze.lobby.jumpandrun;
 
+import gg.itzkatze.katze.lobby.cosmetics.CosmeticCategory;
+import gg.itzkatze.katze.lobby.cosmetics.CosmeticStore;
+import gg.itzkatze.katze.lobby.cosmetics.SoundCosmetic;
 import lombok.Getter;
+import net.kyori.adventure.sound.Sound;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -15,6 +19,7 @@ final class JumpRun {
     private final Player player;
     private final UUID id;
     private final RunLook look;
+    private final Sound landingSound;
     private final BitSet visited = new BitSet();
     private Cell current;
     private @Nullable Cell next;
@@ -29,6 +34,8 @@ final class JumpRun {
         this.player = player;
         this.id = player.getUniqueId();
         this.look = look;
+        this.landingSound = CosmeticStore.get().selectForRun(id, CosmeticCategory.SOUND)
+                .map(SoundCosmetic.class::cast).map(SoundCosmetic::sound).orElse(SoundCosmetic.DEFAULT);
         this.current = start;
         this.next = next;
     }
