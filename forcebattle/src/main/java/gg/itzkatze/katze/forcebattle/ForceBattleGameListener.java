@@ -27,6 +27,7 @@ import org.bukkit.permissions.PermissionDefault;
 import org.jetbrains.annotations.NotNull;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerLocaleChangeEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -354,7 +355,15 @@ public class ForceBattleGameListener implements Listener {
         ItemStack item = event.getItem();
         if (item == null || !ForceBattleGuideBook.isGuideBook(item)) return;
 
-        event.getPlayer().openBook(item);
+        event.getPlayer().openBook(ForceBattleGuideBook.create(event.getPlayer()));
+    }
+
+    @EventHandler
+    public void onLocaleChange(@NotNull PlayerLocaleChangeEvent event) {
+        Player player = event.getPlayer();
+        Bukkit.getScheduler().runTask(KatzeGames.get(), () -> {
+            if (player.isOnline()) ForceBattleGuideBook.refresh(player);
+        });
     }
 
     @EventHandler

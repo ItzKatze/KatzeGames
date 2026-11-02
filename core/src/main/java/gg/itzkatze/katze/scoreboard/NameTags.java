@@ -6,6 +6,7 @@ import gg.itzkatze.katze.challenges.ChallengeManager;
 import gg.itzkatze.katze.level.LevelStore;
 import gg.itzkatze.katze.level.LevelTag;
 import gg.itzkatze.katze.player.KatzePlayer;
+import gg.itzkatze.katze.text.Texts;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -46,7 +47,7 @@ public final class NameTags {
 
             Scoreboard board = ScoreboardManager.getOrCreateScoreboard(viewer);
             for (KatzePlayer target : online) {
-                decorate(board, target);
+                decorate(board, target, player);
             }
             for (Team team : List.copyOf(board.getTeams())) {
                 if (isUuid(team.getName()) && !onlineTeams.contains(team.getName())) {
@@ -59,7 +60,7 @@ public final class NameTags {
         }
     }
 
-    private static void decorate(@NotNull Scoreboard board, @NotNull KatzePlayer target) {
+    private static void decorate(@NotNull Scoreboard board, @NotNull KatzePlayer target, @NotNull Player viewer) {
         String name = target.getUuid().toString();
         Team team = board.getTeam(name);
         if (team == null) {
@@ -69,11 +70,11 @@ public final class NameTags {
             team.addEntry(target.getName());
         }
 
-        Component prefix = LevelTag.of(LevelStore.get().level(target.getUuid())).append(Component.space());
+        Component prefix = Texts.render(LevelTag.of(LevelStore.get().level(target.getUuid())).append(Component.space()), viewer);
         if (!prefix.equals(team.prefix())) {
             team.prefix(prefix);
         }
-        Component suffix = suffix(target);
+        Component suffix = Texts.render(suffix(target), viewer);
         if (!suffix.equals(team.suffix())) {
             team.suffix(suffix);
         }

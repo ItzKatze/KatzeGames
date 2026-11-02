@@ -9,6 +9,7 @@ import gg.itzkatze.katze.util.KatzeColor;
 import io.papermc.paper.event.player.PrePlayerAttackEntityEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -18,10 +19,12 @@ import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Interaction;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.TextDisplay;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerLocaleChangeEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -98,6 +101,18 @@ public final class CaseSpot implements LobbyFeature, Listener {
         placed.label().remove();
         placed.hitbox().remove();
         placed.world().removePluginChunkTicket(placed.chest().getX() >> 4, placed.chest().getZ() >> 4, KatzeGames.get());
+    }
+
+    @EventHandler
+    public void onLocaleChange(@NotNull PlayerLocaleChangeEvent event) {
+        Player player = event.getPlayer();
+        Bukkit.getScheduler().runTask(KatzeGames.get(), () -> {
+            Placed placed = this.placed;
+            if (!player.isOnline() || placed == null || !placed.label().isValid() || !player.canSee(placed.label())) return;
+
+            player.hideEntity(KatzeGames.get(), placed.label());
+            player.showEntity(KatzeGames.get(), placed.label());
+        });
     }
 
     @EventHandler

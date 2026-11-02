@@ -7,6 +7,7 @@ import gg.itzkatze.katze.lobby.cosmetics.CosmeticStore;
 import gg.itzkatze.katze.lobby.cosmetics.ShopSounds;
 import gg.itzkatze.katze.lobby.cosmetics.Standing;
 import gg.itzkatze.katze.player.KatzePlayer;
+import gg.itzkatze.katze.text.Texts;
 import gg.itzkatze.katze.util.KatzeColor;
 import io.papermc.paper.event.player.PrePlayerAttackEntityEvent;
 import net.kyori.adventure.text.Component;
@@ -195,7 +196,7 @@ public class Leaderboard implements LobbyFeature, Listener {
     }
 
     private @NotNull Board spawn(@NotNull Spot spot, @NotNull Player owner) {
-        Component text = render(LeaderboardMetric.LIFETIME_POINTS, CosmeticStore.get().top(LeaderboardMetric.LIFETIME_POINTS, ENTRIES));
+        Component text = Texts.render(render(LeaderboardMetric.LIFETIME_POINTS, CosmeticStore.get().top(LeaderboardMetric.LIFETIME_POINTS, ENTRIES)), owner);
         TextDisplay display = spot.world().spawn(spot.location(), TextDisplay.class, entity -> {
             entity.setVisibleByDefault(false);
             entity.setPersistent(false);
@@ -228,15 +229,18 @@ public class Leaderboard implements LobbyFeature, Listener {
     private void cycle(@NotNull Player player) {
         Board board = boards.get(player.getUniqueId());
         board.metric = board.metric.next();
-        board.show(render(board.metric, CosmeticStore.get().top(board.metric, ENTRIES)));
+        board.show(Texts.render(render(board.metric, CosmeticStore.get().top(board.metric, ENTRIES)), player));
         player.playSound(ShopSounds.CLICK);
     }
 
     private void refresh() {
         CosmeticStore store = CosmeticStore.get();
         Map<LeaderboardMetric, Component> rendered = new EnumMap<>(LeaderboardMetric.class);
-        for (Board board : boards.values()) {
-            board.show(rendered.computeIfAbsent(board.metric, metric -> render(metric, store.top(metric, ENTRIES))));
-        }
+        boards.forEach((owner, board) -> {
+            Player player = Bukkit.getPlayer(owner);
+            if (player != null) {
+                board.show(Texts.render(rendered.computeIfAbsent(board.metric, metric -> render(metric, store.top(metric, ENTRIES))), player));
+            }
+        });
     }
 }

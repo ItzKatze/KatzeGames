@@ -20,6 +20,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerLocaleChangeEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.BoundingBox;
@@ -143,6 +144,18 @@ public class NpcSpot implements LobbyFeature, Listener {
         } else if (copy.getYaw() != location.getYaw() || copy.getPitch() != 0) {
             copy.setRotation(location.getYaw(), 0);
         }
+    }
+
+    @EventHandler
+    public void onLocaleChange(@NotNull PlayerLocaleChangeEvent event) {
+        Player player = event.getPlayer();
+        Bukkit.getScheduler().runTask(KatzeGames.get(), () -> {
+            Mannequin copy = copies.get(player.getUniqueId());
+            if (!player.isOnline() || copy == null || !copy.isValid()) return;
+
+            player.hideEntity(KatzeGames.get(), copy);
+            player.showEntity(KatzeGames.get(), copy);
+        });
     }
 
     @EventHandler

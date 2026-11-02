@@ -26,6 +26,7 @@ public abstract class KatzeGUI implements Listener, InventoryHolder {
     private Inventory inventory;
 
     private final Set<UUID> currentViewers = ConcurrentHashMap.newKeySet();
+    private final Set<UUID> refreshingViewers = ConcurrentHashMap.newKeySet();
 
     private boolean hasFinishedLoading = false;
 
@@ -139,7 +140,7 @@ public abstract class KatzeGUI implements Listener, InventoryHolder {
         }
 
         if (this.inventory == null) {
-            this.inventory = Bukkit.createInventory(this, size, Texts.render(title, p));
+            this.inventory = Bukkit.createInventory(this, size, title);
         }
 
         // Add to viewers
@@ -189,6 +190,23 @@ public abstract class KatzeGUI implements Listener, InventoryHolder {
         if (bukkitPlayer.getOpenInventory().getTopInventory().getHolder() == this) {
             updateInventory(player);
         }
+    }
+
+    public void refreshLanguage(KatzePlayer player) {
+        Player viewer = player.getPlayer();
+        if (viewer == null || viewer.getOpenInventory().getTopInventory().getHolder() != this) return;
+
+        updateInventory(player);
+        refreshingViewers.add(viewer.getUniqueId());
+        try {
+            viewer.openInventory(getInventory());
+        } finally {
+            refreshingViewers.remove(viewer.getUniqueId());
+        }
+    }
+
+    public boolean isRefreshing(UUID playerId) {
+        return refreshingViewers.contains(playerId);
     }
 
     public abstract void setItems(KatzePlayer player);

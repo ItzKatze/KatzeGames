@@ -9,6 +9,7 @@ import gg.itzkatze.katze.game.GameTimer;
 import gg.itzkatze.katze.lobby.LobbyManager;
 import gg.itzkatze.katze.lobby.PointsSidebar;
 import gg.itzkatze.katze.player.KatzePlayer;
+import gg.itzkatze.katze.text.Texts;
 import gg.itzkatze.katze.util.KatzeColor;
 import io.papermc.paper.scoreboard.numbers.NumberFormat;
 import net.kyori.adventure.text.Component;
@@ -96,7 +97,7 @@ public class ScoreboardManager {
     private static void render(@NotNull KatzePlayer player, @NotNull ScoreboardContent content) {
         Scoreboard scoreboard = getOrCreateScoreboard(player);
 
-        Component title = styleTitle(content.getTitle());
+        Component title = Texts.render(styleTitle(content.getTitle()), player.getPlayer());
         Objective obj = scoreboard.getObjective(SIDEBAR_OBJECTIVE);
         if (obj == null) {
             obj = scoreboard.registerNewObjective(SIDEBAR_OBJECTIVE, "dummy", title);
@@ -115,7 +116,7 @@ public class ScoreboardManager {
         int lineNumber = 15;
         for (int i = 0; i < lines.length && lineNumber > 0; i++) {
             if (lines[i] != null && !lines[i].equals(Component.empty())) {
-                newLines.put(lineNumber--, lines[i]);
+                newLines.put(lineNumber--, Texts.render(lines[i], player.getPlayer()));
             }
         }
 

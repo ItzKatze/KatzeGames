@@ -36,6 +36,7 @@ import gg.itzkatze.katze.scoreboard.ScoreboardManager;
 import gg.itzkatze.katze.spectator.SpectatorChat;
 import gg.itzkatze.katze.spectator.SpectatorListener;
 import gg.itzkatze.katze.text.Texts;
+import gg.itzkatze.katze.text.LanguageListener;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -91,6 +92,7 @@ public final class KatzeGames extends JavaPlugin {
         CommandHandler.registerAll(loopThroughPackage("gg.itzkatze.katze.commands", KatzeCommand.class).toList());
         getServer().getPluginManager().registerEvents(new CommandVisibilityListener(), this);
         getServer().getPluginManager().registerEvents(new GUIListener(), this);
+        getServer().getPluginManager().registerEvents(new LanguageListener(), this);
         getServer().getPluginManager().registerEvents(new SignInput(), this);
         BossbarManager.runTask();
         ScoreboardManager.startUpdater();

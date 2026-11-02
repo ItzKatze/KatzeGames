@@ -13,6 +13,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.stream.IntStream;
 
 public final class ForceBattleGuideBook {
 
@@ -27,7 +28,7 @@ public final class ForceBattleGuideBook {
         BookMeta meta = (BookMeta) book.getItemMeta();
         meta.title(Texts.render(Component.translatable("katze.forcebattle.guidebook.title"), player));
         meta.author(Texts.render(Component.translatable("katze.forcebattle.guidebook.author"), player));
-        Component[] pages = java.util.stream.IntStream.rangeClosed(1, PAGE_COUNT)
+        Component[] pages = IntStream.rangeClosed(1, PAGE_COUNT)
                 .mapToObj(page -> Texts.render(Component.translatable("katze.forcebattle.guidebook.page." + page), player))
                 .toArray(Component[]::new);
         meta.addPages(pages);
@@ -45,6 +46,18 @@ public final class ForceBattleGuideBook {
         boolean owned = Arrays.stream(inventory.getContents()).anyMatch(stack -> stack != null && isGuideBook(stack));
         if (!owned) {
             inventory.addItem(create(player));
+        }
+    }
+
+    public static void refresh(@NotNull Player player) {
+        PlayerInventory inventory = player.getInventory();
+        for (int slot = 0; slot < inventory.getSize(); slot++) {
+            ItemStack item = inventory.getItem(slot);
+            if (item == null || !isGuideBook(item)) continue;
+
+            ItemStack translated = create(player);
+            item.setItemMeta(translated.getItemMeta());
+            inventory.setItem(slot, item);
         }
     }
 }
