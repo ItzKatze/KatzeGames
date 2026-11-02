@@ -27,30 +27,26 @@ public class ForceBattleScoreboardContent implements ScoreboardContent {
         ForceBattlePlayer player = (ForceBattlePlayer) katzePlayer;
         List<Component> lines = new ArrayList<>();
 
-        // Player's objective
         ForceBattleObjective selfObjective = player.getObjective();
         if (selfObjective != null) {
             lines.add(Component.translatable("katze.forcebattle.scoreboard.your_objective").color(KatzeColor.YELLOW));
-            lines.add(truncate(selfObjective.displayName(), KatzeColor.WHITE));
+            lines.add(truncate(objectiveText(selfObjective), KatzeColor.WHITE));
         } else {
             lines.add(Component.translatable("katze.forcebattle.scoreboard.no_objective").color(KatzeColor.LIGHT_GRAY));
         }
 
-        lines.add(Component.text(" ")); // Spacer
+        lines.add(Component.text(" "));
 
-        // Team information
         if (player.isInTeam()) {
             KatzeTeam team = player.getTeam();
 
-            // Team objective (if enabled)
             ForceBattleObjective teamObjective = (ForceBattleObjective) team.getObjective();
             if (teamObjective != null && SettingsManager.isEnabled(GlobalSetting.EXTRA_TEAM_OBJECTIVE)) {
                 lines.add(Component.translatable("katze.forcebattle.scoreboard.team_objective").color(KatzeColor.YELLOW));
-                lines.add(truncate(teamObjective.displayName(), KatzeColor.WHITE));
-                lines.add(Component.text("  ")); // Spacer
+                lines.add(truncate(objectiveText(teamObjective), KatzeColor.WHITE));
+                lines.add(Component.text("  "));
             }
 
-            // Teammates
             if (team.getPlayers().size() > 1) {
                 lines.add(Component.translatable("katze.forcebattle.scoreboard.teammates").color(KatzeColor.YELLOW));
 
@@ -64,7 +60,7 @@ public class ForceBattleScoreboardContent implements ScoreboardContent {
                     ForceBattleObjective teammateObjective = teammatePlayer.getObjective();
                     lines.add(teammateObjective == null
                             ? Component.translatable("katze.forcebattle.scoreboard.none").color(KatzeColor.WHITE)
-                            : Component.text("  ").append(truncate(teammateObjective.displayName(), KatzeColor.WHITE)));
+                            : Component.text("  ").append(truncate(objectiveText(teammateObjective), KatzeColor.WHITE)));
                 }
             }
         }
@@ -80,9 +76,9 @@ public class ForceBattleScoreboardContent implements ScoreboardContent {
         return Component.text(plain.substring(0, 21) + "...").color(color);
     }
 
-    @Override
-    public int getPriority() {
-        return 0; // Default priority for ForceBattle
+    private Component objectiveText(ForceBattleObjective objective) {
+        return objective.displayIcon().append(Component.text(" ")).append(objective.displayName());
     }
+
 }
 

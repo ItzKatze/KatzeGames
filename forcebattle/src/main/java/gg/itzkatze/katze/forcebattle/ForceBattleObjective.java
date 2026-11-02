@@ -11,6 +11,8 @@ import gg.itzkatze.katze.data.MobsSimplified;
 import gg.itzkatze.katze.data.ObjectiveNames;
 import gg.itzkatze.katze.data.StructureSimplified;
 import gg.itzkatze.katze.player.KatzePlayer;
+import gg.itzkatze.katze.util.KatzeColor;
+import gg.itzkatze.katze.util.StringUtility;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Location;
@@ -119,7 +121,21 @@ public class ForceBattleObjective implements ChallengeObjective {
         if (objectiveValue instanceof KatzeAdvancement value) return ObjectiveNames.of(value);
         if (objectiveValue instanceof KatzeStructure value) return ObjectiveNames.of(value);
         if (objectiveValue instanceof KatzeDamageType value) return ObjectiveNames.of(value);
-        return Component.text(gg.itzkatze.katze.util.StringUtility.formatName(objectiveString));
+        return Component.text(StringUtility.formatName(objectiveString));
+    }
+
+    public @NotNull Component displayIcon() {
+        String icon = switch (battleType) {
+            case FORCE_ITEM -> "✦";
+            case FORCE_MOB -> "☮";
+            case FORCE_ADVANCEMENT -> "★";
+            case FORCE_HEIGHT -> "⛰";
+            case FORCE_COORDS -> "⚑";
+            case FORCE_STRUCTURE -> "⌂";
+            case FORCE_BIOME -> "☀";
+            case FORCE_DEATH -> "☠";
+        };
+        return Component.text("[" + icon + "]", KatzeColor.LIGHT_GRAY);
     }
 
     public @Nullable <T> T getObjectiveValue(@NotNull Class<T> type) {

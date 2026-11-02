@@ -27,7 +27,7 @@ public enum MobsSimplified {
     HUMANOID("Humanoid", new GUIMaterial(Material.PLAYER_HEAD), List.of(EntityType.EVOKER, EntityType.ILLUSIONER, EntityType.PILLAGER, EntityType.VILLAGER, EntityType.VINDICATOR,
             EntityType.WANDERING_TRADER, EntityType.WITCH)),
     INFERNAL("Infernal", new GUIMaterial(Material.BLAZE_ROD), List.of(EntityType.HOGLIN, EntityType.PIGLIN, EntityType.PIGLIN_BRUTE, EntityType.STRIDER,
-            EntityType.ZOGLIN, EntityType.ZOMBIFIED_PIGLIN, EntityType.BLAZE, EntityType.GHAST)),
+            EntityType.ZOGLIN, EntityType.ZOMBIFIED_PIGLIN, EntityType.BLAZE, EntityType.GHAST, EntityType.MAGMA_CUBE)),
     MYTHICAL("Mythical", new GUIMaterial(Material.BREEZE_ROD), List.of(EntityType.BREEZE, EntityType.RAVAGER, EntityType.WARDEN, EntityType.WITHER, EntityType.GIANT)),
     SKELETAL("Skeletal", new GUIMaterial(Material.SKELETON_SKULL), List.of(EntityType.SKELETON, EntityType.SKELETON_HORSE, EntityType.WITHER_SKELETON, EntityType.BOGGED, EntityType.STRAY,
             EntityType.PARCHED)),

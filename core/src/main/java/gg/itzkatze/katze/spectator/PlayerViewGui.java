@@ -7,6 +7,7 @@ import gg.itzkatze.katze.gui.GUIItem;
 import gg.itzkatze.katze.gui.KatzeGUI;
 import gg.itzkatze.katze.player.KatzePlayer;
 import gg.itzkatze.katze.team.KatzeTeam;
+import gg.itzkatze.katze.text.TextArg;
 import gg.itzkatze.katze.util.ItemStackCreator;
 import gg.itzkatze.katze.util.KatzeColor;
 import net.kyori.adventure.text.Component;
@@ -49,7 +50,7 @@ public class PlayerViewGui extends KatzeGUI implements SpectatorView {
     }
 
     public static @NotNull Component infoLine(@NotNull String label, @NotNull Component value) {
-        return Component.translatable(label, gg.itzkatze.katze.text.TextArg.component("value", value.colorIfAbsent(KatzeColor.WHITE)));
+        return Component.translatable(label, TextArg.component("value", value.colorIfAbsent(KatzeColor.WHITE)));
     }
 
     @Override

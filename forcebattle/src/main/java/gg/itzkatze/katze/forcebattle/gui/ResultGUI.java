@@ -14,6 +14,7 @@ import gg.itzkatze.katze.gui.GUIItem;
 import gg.itzkatze.katze.gui.KatzeGUI;
 import gg.itzkatze.katze.player.KatzePlayer;
 import gg.itzkatze.katze.team.KatzeTeam;
+import gg.itzkatze.katze.text.TextArg;
 import gg.itzkatze.katze.util.ItemStackCreator;
 import gg.itzkatze.katze.util.KatzeColor;
 import gg.itzkatze.katze.util.ResultUtils;
@@ -309,11 +310,11 @@ public class ResultGUI extends KatzeGUI {
             List<Component> lore = new ArrayList<>();
             lore.add(Component.empty());
             lore.add(Component.translatable("katze.forcebattle.results.time",
-                    gg.itzkatze.katze.text.TextArg.text("time", StringUtility.formatTime(objective.getTime()))).color(KatzeColor.LIGHT_GRAY));
+                    TextArg.text("time", StringUtility.formatTime(objective.getTime()))).color(KatzeColor.LIGHT_GRAY));
 
             if (displayNames) {
                 lore.add(Component.translatable("katze.forcebattle.results.player",
-                        gg.itzkatze.katze.text.TextArg.text("player", objective.getWhoFinished().getName())).color(KatzeColor.LIGHT_GRAY));
+                        TextArg.text("player", objective.getWhoFinished().getName())).color(KatzeColor.LIGHT_GRAY));
             }
             if (objective.hasBeenSkipped()) {
                 lore.add(Component.empty());
