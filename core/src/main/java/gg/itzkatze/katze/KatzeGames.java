@@ -25,6 +25,7 @@ import gg.itzkatze.katze.lobby.cosmetics.MusicChannel;
 import gg.itzkatze.katze.lobby.cosmetics.MusicManager;
 import gg.itzkatze.katze.lobby.cosmetics.cases.CaseFireworkGuard;
 import gg.itzkatze.katze.lobby.cosmetics.cases.CaseRollGui;
+import gg.itzkatze.katze.lobby.jumpandrun.EventBlock;
 import gg.itzkatze.katze.lobby.PointsSidebar;
 import gg.itzkatze.katze.player.data.PlayerDataStore;
 import gg.itzkatze.katze.gui.sign.SignInput;
@@ -131,6 +132,7 @@ public final class KatzeGames extends JavaPlugin {
         StructureScanner.clear();
         MusicManager.releaseAll();
         CaseRollGui.finishAllSilently();
+        EventBlock.finishAllSilently();
         PlayerDataStore.flushInstalled();
         BossbarManager.stopTask();
         SessionPersistence.saveNow();

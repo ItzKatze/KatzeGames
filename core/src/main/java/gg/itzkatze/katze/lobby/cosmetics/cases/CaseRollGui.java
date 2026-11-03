@@ -11,6 +11,7 @@ import gg.itzkatze.katze.lobby.cosmetics.Rarity;
 import gg.itzkatze.katze.lobby.cosmetics.ShopSounds;
 import gg.itzkatze.katze.player.KatzePlayer;
 import gg.itzkatze.katze.player.data.PlayerDataStore;
+import gg.itzkatze.katze.text.TextArg;
 import gg.itzkatze.katze.util.ItemStackCreator;
 import gg.itzkatze.katze.util.KatzeColor;
 import net.kyori.adventure.key.Key;
@@ -49,7 +50,6 @@ public final class CaseRollGui extends KatzeGUI {
 
     private final Player player;
     private final List<CaseSpin> spins;
-    private final Map<CaseSpin, List<Component>> rewards = new HashMap<>();
     private boolean reopenPending;
     private @Nullable BukkitTask task;
 
@@ -85,9 +85,6 @@ public final class CaseRollGui extends KatzeGUI {
         if (!PlayerDataStore.get().transaction(id, () -> {
             if (!store.openCases(player, CaseLoot.PRICE, count)) {
                 throw new IllegalStateException("The case balance changed before purchase");
-            }
-            for (CaseSpin spin : spins) {
-                roll.rewards.put(spin, roll.award(store, spin));
             }
         })) {
             player.sendMessage(Component.translatable("katze.cosmetics.purchase_save_failed").color(KatzeColor.RED));
@@ -250,7 +247,7 @@ public final class CaseRollGui extends KatzeGUI {
     private void pay(@NotNull CaseSpin spin, boolean silent) {
         if (!spin.settle()) return;
 
-        List<Component> messages = rewards.getOrDefault(spin, List.of());
+        List<Component> messages = award(CosmeticStore.get(), spin);
         if (silent) return;
 
         messages.forEach(player::sendMessage);
@@ -262,18 +259,18 @@ public final class CaseRollGui extends KatzeGUI {
         if (spin.prize() instanceof CasePrize.Points(int amount, Rarity tier)) {
             store.addPoints(player, amount);
             return List.of(Component.translatable("katze.cosmetics.won_points",
-                    gg.itzkatze.katze.text.TextArg.component("points", PointsText.signedComponent(amount).color(tier.color()))).color(KatzeColor.LIME));
+                    TextArg.component("points", PointsText.signedComponent(amount).color(tier.color()))).color(KatzeColor.LIME));
         }
         Cosmetic cosmetic = ((CasePrize.Item) spin.prize()).cosmetic();
         int refund = CaseLoot.refund(cosmetic.rarity());
         if (store.winCosmetic(player, cosmetic, refund)) {
             Component won = Component.translatable("katze.cosmetics.won_cosmetic",
-                    gg.itzkatze.katze.text.TextArg.component("cosmetic", cosmetic.styledName())).color(KatzeColor.LIME);
+                    TextArg.component("cosmetic", cosmetic.styledName())).color(KatzeColor.LIME);
             return spin.pity() ? List.of(won, Component.translatable("katze.cosmetics.pity_won").color(KatzeColor.MAGENTA)) : List.of(won);
         }
         return List.of(Component.translatable("katze.cosmetics.duplicate_refund",
-                gg.itzkatze.katze.text.TextArg.component("cosmetic", cosmetic.styledName()),
-                gg.itzkatze.katze.text.TextArg.component("points", PointsText.signedComponent(refund))).color(KatzeColor.YELLOW));
+                TextArg.component("cosmetic", cosmetic.styledName()),
+                TextArg.component("points", PointsText.signedComponent(refund))).color(KatzeColor.YELLOW));
     }
 
     private void redraw() {
@@ -293,8 +290,8 @@ public final class CaseRollGui extends KatzeGUI {
             public ItemStack getItem(KatzePlayer viewer) {
                 int balance = CosmeticStore.get().points(viewer.getUuid());
                 return ItemStackCreator.getStack(Component.translatable("katze.cosmetics.open_another_case").color(KatzeColor.MAGENTA), Material.ENDER_CHEST,
-                        List.of(Component.translatable("katze.cosmetics.price", gg.itzkatze.katze.text.TextArg.number("points", CaseLoot.PRICE)).color(KatzeColor.GOLD),
-                                Component.translatable("katze.cosmetics.you_have", gg.itzkatze.katze.text.TextArg.number("points", balance)).color(KatzeColor.LIGHT_GRAY),
+                        List.of(Component.translatable("katze.cosmetics.price", TextArg.number("points", CaseLoot.PRICE)).color(KatzeColor.GOLD),
+                                Component.translatable("katze.cosmetics.you_have", TextArg.number("points", balance)).color(KatzeColor.LIGHT_GRAY),
                                 CaseConfirmGui.pityLine(viewer.getUuid())));
             }
         };
@@ -312,7 +309,7 @@ public final class CaseRollGui extends KatzeGUI {
     private static @NotNull ItemStack render(@NotNull CasePrize prize, boolean glint) {
         Rarity tier = prize.rarity();
         Component rarity = Component.translatable("katze.cosmetics.rarity_label",
-                gg.itzkatze.katze.text.TextArg.component("rarity", tier.displayNameComponent())).color(tier.color());
+                TextArg.component("rarity", tier.displayNameComponent())).color(tier.color());
         ItemStack stack = switch (prize) {
             case CasePrize.Points points -> ItemStackCreator.getStack(PointsText.signedComponent(points.amount()).color(tier.color()), pointsIcon(points.amount()), List.of(rarity));
             case CasePrize.Item item -> ItemStackCreator.getStack(item.cosmetic().styledName(), item.cosmetic().icon(),

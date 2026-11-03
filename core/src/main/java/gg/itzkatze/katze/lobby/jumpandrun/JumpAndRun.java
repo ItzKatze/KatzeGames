@@ -145,6 +145,7 @@ public class JumpAndRun implements LobbyFeature, Listener {
     // A failed run's music may still be fading, and its silent flag has to go before the game saves the player.
     @EventHandler
     public void onQuit(@NotNull PlayerQuitEvent event) {
+        EventBlock.finishSilently(event.getPlayer());
         endSilently(event.getPlayer().getUniqueId());
         musicManager.stop(event.getPlayer());
     }
@@ -258,12 +259,14 @@ public class JumpAndRun implements LobbyFeature, Listener {
         reservations.set(run.getId(), HopPlanner.reservation(standing, hop));
     }
 
-    // The landing point is already banked, so a loss never takes the balance below 0; the used Event Block turns into a normal block of the run.
     private void payEvent(@NotNull Arena arena, @NotNull JumpRun run, @NotNull CosmeticStore store, @NotNull Random random) {
-        int applied = store.addEventPoints(run.getPlayer(), EventBlock.payout(random));
-        run.recordEvent(applied);
+        int payout = EventBlock.payout(random);
         place(arena, run.getCurrent(), run.getLook().block());
-        EventBlock.animatePayout(plugin, run.getPlayer(), applied);
+        EventBlock.animatePayout(plugin, run.getPlayer(), () -> {
+            int applied = store.addEventPoints(run.getPlayer(), payout);
+            run.recordEvent(applied);
+            return applied;
+        });
     }
 
     private void end(@NotNull Arena arena, @NotNull JumpRun run, @NotNull Ending ending) {
@@ -280,6 +283,14 @@ public class JumpAndRun implements LobbyFeature, Listener {
         }
 
         musicManager.fadeOut(run.getPlayer());
+        runMultiplier.reset(run.getId());
+        run.getPlayer().playSound(RUN_OVER);
+        EventBlock.afterPayouts(run.getPlayer(), () -> {
+            if (run.getPlayer().isOnline()) sendEndMessage(run, ending);
+        });
+    }
+
+    private void sendEndMessage(@NotNull JumpRun run, @NotNull Ending ending) {
         Component reason = ending == Ending.NO_ROOM ? Component.translatable("katze.cosmetics.no_more_room") : Component.empty();
         int score = run.getScore();
         Component message = Component.translatable("katze.cosmetics.run_over",
@@ -295,9 +306,7 @@ public class JumpAndRun implements LobbyFeature, Listener {
             message = message.append(Component.text(" ")).append(Component.translatable("katze.cosmetics.run_total_points",
                     TextArg.number("points", CosmeticStore.get().points(run.getId()))).color(KatzeColor.LIGHT_GRAY));
         }
-        runMultiplier.reset(run.getId());
         run.getPlayer().sendMessage(message);
-        run.getPlayer().playSound(RUN_OVER);
     }
 
     private void place(@NotNull Arena arena, @NotNull Cell cell, @NotNull Material material) {
