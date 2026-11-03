@@ -1,84 +1,64 @@
 package gg.itzkatze.katze.configuration;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import gg.itzkatze.katze.challenges.Challenge;
 import gg.itzkatze.katze.challenges.ChallengeRegistry;
+import gg.itzkatze.katze.util.JsonFiles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 
-public class SettingsFile {
+public final class SettingsFile {
 
-    private static final Logger logger = LoggerFactory.getLogger("ForceBattle/" + SettingsFile.class.getSimpleName());
-    private static final Gson GSON = new GsonBuilder()
-            .disableHtmlEscaping()
-            .setPrettyPrinting()
-            .create();
+    private static final Logger logger = LoggerFactory.getLogger("KatzeGames/SettingsFile");
 
-    public static void loadSettingsFromFile(File jsonFile) throws IOException {
-        try (FileReader reader = new FileReader(jsonFile)) {
-            JsonObject settingsObject = JsonParser.parseReader(reader).getAsJsonObject();
+    private SettingsFile() {}
 
-            for (Challenge challenge : ChallengeRegistry.getAllChallenges()) {
-                loadChallengeSettings(challenge, settingsObject);
-            }
-        }
-    }
-
-    private static void loadChallengeSettings(Challenge challenge, JsonObject settingsObject) {
-        ChallengeSettingsManager settingsManager = challenge.getSettingsManager();
-        String challengeKey = challenge.getType().name().toLowerCase();
-        if (settingsManager == null) return;
-
-        try {
-            for (Setting setting : settingsManager.getAllSettings()) {
-                JsonElement value = settingsObject.get(setting.getId());
-                if (value == null) {
-                    continue;
-                }
-                String stateStr = value.getAsString();
-                if (!settingsManager.importState(setting, stateStr)) {
-                    logger.warn(
-                            "Invalid state '{}' for setting {} in {}, using default state",
-                            stateStr, setting.getId(), challengeKey
-                    );
-                }
-            }
-        } catch (Exception e) {
-            logger.warn("Failed to load settings for challenge {}: {}", challengeKey, e.getMessage());
-        }
-    }
-
-    public static void saveToFile(File jsonFile) throws IOException {
-        JsonObject settingsObject = new JsonObject();
-
+    public static void loadSettingsFromFile(File file) throws IOException {
+        JsonObject settings = JsonFiles.read(file.toPath(), JsonObject.class);
+        if (settings == null) return;
+        load(SettingsManager.getGlobalSettingsManager(), section(settings, "GLOBAL"));
         for (Challenge challenge : ChallengeRegistry.getAllChallenges()) {
-            saveChallengeSettings(challenge, settingsObject);
-        }
-
-        try (FileWriter writer = new FileWriter(jsonFile)) {
-            GSON.toJson(settingsObject, writer);
+            load(challenge.getSettingsManager(), section(settings, challenge.getType().name()));
         }
     }
 
-    private static void saveChallengeSettings(Challenge challenge, JsonObject settingsObject) {
-        ChallengeSettingsManager settingsManager = challenge.getSettingsManager();
-        String challengeKey = challenge.getType().name().toLowerCase();
-        if (settingsManager == null) return;
+    private static JsonObject section(JsonObject settings, String key) {
+        JsonElement section = settings.get(key);
+        return section != null && section.isJsonObject() ? section.getAsJsonObject() : settings;
+    }
 
-        try {
-            settingsManager.exportStates().forEach(settingsObject::addProperty);
-        } catch (Exception e) {
-            logger.warn("Failed to save settings for challenge {}: {}", challengeKey, e.getMessage());
+    private static void load(ChallengeSettingsManager manager, JsonObject settings) {
+        if (manager == null) return;
+        for (Setting setting : manager.getAllSettings()) {
+            JsonElement value = settings.get(setting.getId());
+            if (value == null) continue;
+            try {
+                if (!manager.importState(setting, value.getAsString())) {
+                    logger.warn("Invalid state for {}, keeping its default", setting.getId());
+                }
+            } catch (RuntimeException e) {
+                logger.warn("Could not load setting {}", setting.getId(), e);
+            }
         }
     }
 
+    public static void saveToFile(File file) throws IOException {
+        JsonObject settings = new JsonObject();
+        save(settings, "GLOBAL", SettingsManager.getGlobalSettingsManager());
+        for (Challenge challenge : ChallengeRegistry.getAllChallenges()) {
+            save(settings, challenge.getType().name(), challenge.getSettingsManager());
+        }
+        JsonFiles.write(file.toPath(), settings);
+    }
+
+    private static void save(JsonObject settings, String key, ChallengeSettingsManager manager) {
+        if (manager == null) return;
+        JsonObject section = new JsonObject();
+        manager.exportStates().forEach(section::addProperty);
+        settings.add(key, section);
+    }
 }

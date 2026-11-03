@@ -12,52 +12,21 @@ import gg.itzkatze.katze.forcebattle.ForceBattleType;
 import gg.itzkatze.katze.player.KatzePlayer;
 import gg.itzkatze.katze.util.KatzeColor;
 import gg.itzkatze.katze.util.Toast;
+import gg.itzkatze.katze.util.StructureScanner;
 import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.generator.structure.GeneratedStructure;
 import org.bukkit.generator.structure.Structure;
-import org.bukkit.generator.structure.StructurePiece;
-import org.bukkit.util.BoundingBox;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Level;
 
 public class StructureTask implements ForceTask {
 
-    private static final int MAX_CACHE_ENTRIES = 512;
-    private static final int SCAN_RADIUS = 4;
-    private static final int MAX_IN_FLIGHT_SCANS = 8;
-
-    private static final Map<String, Set<BoundingBox>> STRUCTURE_CACHE =
-            Collections.synchronizedMap(new LinkedHashMap<>(16, 0.75f, true) {
-                @Override
-                protected boolean removeEldestEntry(Map.Entry<String, Set<BoundingBox>> eldest) {
-                    return size() > MAX_CACHE_ENTRIES;
-                }
-            });
-
-    private static final Set<String> IN_FLIGHT_SCANS = new HashSet<>();
-    private static long cacheGeneration;
-
     public static void clearCache() {
-        synchronized (STRUCTURE_CACHE) {
-            STRUCTURE_CACHE.clear();
-            IN_FLIGHT_SCANS.clear();
-            cacheGeneration++;
-        }
+        StructureScanner.clear();
     }
 
     @Override
@@ -124,131 +93,8 @@ public class StructureTask implements ForceTask {
 
     private boolean checkPlayerLocationInStructure(ForceBattlePlayer fbPlayer, NamespacedKey structureKey, Structure bukkitStructure) {
         Player player = fbPlayer.getPlayer();
-        if (player == null) return false;
-
-        Location playerLocation = player.getLocation();
-        World world = player.getWorld();
-
-        int chunkX = playerLocation.getBlockX() >> 4;
-        int chunkZ = playerLocation.getBlockZ() >> 4;
-
-        String cacheKey = createCacheKey(world, structureKey, chunkX, chunkZ);
-
-        Set<BoundingBox> cachedBoxes;
-
-        synchronized (STRUCTURE_CACHE) {
-            Set<BoundingBox> boxes = STRUCTURE_CACHE.get(cacheKey);
-            cachedBoxes = boxes == null ? null : Set.copyOf(boxes);
-        }
-
-        if (cachedBoxes != null) {
-            for (BoundingBox box : cachedBoxes) {
-                if (isInsideBoundingBox(playerLocation, box)) {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        scheduleScan(world, structureKey, bukkitStructure, chunkX, chunkZ, cacheKey);
-
-        return false;
+        return player != null && StructureScanner.contains(player.getLocation(), structureKey);
     }
-
-    private void scheduleScan(World world, NamespacedKey structureKey, Structure bukkitStructure, int centerChunkX, int centerChunkZ, String cacheKey) {
-        final long generation;
-        final String scanKey;
-
-        synchronized (STRUCTURE_CACHE) {
-            generation = cacheGeneration;
-
-            scanKey = cacheKey + ":" + generation;
-
-            if (IN_FLIGHT_SCANS.size() >= MAX_IN_FLIGHT_SCANS) {
-                return;
-            }
-
-            if (!IN_FLIGHT_SCANS.add(scanKey)) {
-                return;
-            }
-        }
-
-        Bukkit.getScheduler().runTask(KatzeGames.get(), () -> {
-            try {
-                World currentWorld = Bukkit.getWorld(world.getName());
-
-                if (currentWorld == null) {
-                    return;
-                }
-
-                Set<BoundingBox> boxes = scanStructure(
-                        currentWorld,
-                        bukkitStructure,
-                        centerChunkX,
-                        centerChunkZ
-                );
-
-                synchronized (STRUCTURE_CACHE) {
-                    if (generation != cacheGeneration) {
-                        return;
-                    }
-
-                    STRUCTURE_CACHE.put(cacheKey, boxes);
-                }
-            } catch (Exception e) {
-                KatzeGames.get().getLogger().log(Level.WARNING, "Failed to scan structure " + structureKey + " around chunk " + centerChunkX + ", " + centerChunkZ, e);
-            } finally {
-                synchronized (STRUCTURE_CACHE) {
-                    IN_FLIGHT_SCANS.remove(scanKey);
-                }
-            }
-        });
-    }
-
-    private Set<BoundingBox> scanStructure(World world, Structure bukkitStructure, int centerChunkX, int centerChunkZ) {
-        Set<BoundingBox> boxes = new HashSet<>();
-
-        for (int dx = -SCAN_RADIUS; dx <= SCAN_RADIUS; dx++) {
-            for (int dz = -SCAN_RADIUS; dz <= SCAN_RADIUS; dz++) {
-                Chunk chunk = world.getChunkAt(
-                        centerChunkX + dx,
-                        centerChunkZ + dz
-                );
-
-                for (GeneratedStructure generated : chunk.getStructures(bukkitStructure)) {
-                    for (StructurePiece piece : generated.getPieces()) {
-                        BoundingBox box = piece.getBoundingBox();
-
-                        boxes.add(box);
-                    }
-                }
-            }
-        }
-
-        return boxes;
-    }
-
-    private String createCacheKey(World world, NamespacedKey structureKey, int chunkX, int chunkZ) {
-        return world.getUID()
-                + ":" + structureKey
-                + ":" + chunkX
-                + ":" + chunkZ;
-    }
-
-    private boolean isInsideBoundingBox(Location location, BoundingBox box) {
-        double x = location.getX();
-        double y = location.getY();
-        double z = location.getZ();
-
-        return x >= box.getMinX()
-                && x <= box.getMaxX()
-                && y >= box.getMinY()
-                && y <= box.getMaxY()
-                && z >= box.getMinZ()
-                && z <= box.getMaxZ();
-    }
-
     private void completeObjective(KatzePlayer player, ForceBattleObjective objective) {
         Component formattedObjective = objective.displayName();
         Material toastIcon = Material.STRUCTURE_BLOCK;

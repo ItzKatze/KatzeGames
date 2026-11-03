@@ -64,7 +64,6 @@ public class ForceBattle implements Challenge {
         StructureTask.clearCache();
         ForceBattleObjective.deleteAll();
         BossbarManager.hideBarsForChallenge(this);
-        ForceBattleTeam.deleteAll();
         KatzeTeam.downgrade(ChallengeType.FORCE_BATTLE);
         KatzeTeam.unregisterFactory(ChallengeType.FORCE_BATTLE);
         KatzePlayer.downgrade(ChallengeType.FORCE_BATTLE);
@@ -140,7 +139,7 @@ public class ForceBattle implements Challenge {
         if (KatzeGames.getTimer().getRemainingSeconds() == 0 && GameXp.claimNaturalEnd(ChallengeType.FORCE_BATTLE)) {
             ForceBattleWinners.reward();
         }
-        SessionPersistence.requestSave();
+        SessionPersistence.requestSave(ChallengeType.FORCE_BATTLE);
     }
 
     @Override

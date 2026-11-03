@@ -35,12 +35,17 @@ public class SignInput implements Listener {
 
         closeActive(player.getUuid());
 
+        Block target = findSignBlock(bukkitPlayer);
+        if (target == null) {
+            bukkitPlayer.sendMessage(Component.translatable("katze.settings.sign.error.no_space"));
+            return;
+        }
+
         KatzeGUI currentGui = KatzeGUI.GUI_MAP.get(player.getUuid());
         if (currentGui != null) {
             currentGui.close(player, KatzeGUI.CloseReason.SIGN_OPENED);
         }
 
-        Block target = findSignBlock(bukkitPlayer);
         BlockData originalData = target.getBlockData();
         target.setBlockData(Bukkit.createBlockData(Material.OAK_SIGN), false);
 
@@ -64,14 +69,20 @@ public class SignInput implements Listener {
     private static Block findSignBlock(Player player) {
         Block base = player.getLocation().getBlock();
         for (int i = 2; i <= 5; i++) {
+            if (base.getY() + i >= player.getWorld().getMaxHeight()) break;
             Block candidate = base.getRelative(0, i, 0);
             if (candidate.getType().isAir()) return candidate;
         }
-        return base.getRelative(0, 2, 0);
+        return null;
+    }
+
+    public static void closeAll() {
+        List.copyOf(ACTIVE.keySet()).forEach(SignInput::closeActive);
     }
 
     private static void restoreBlock(Block block, BlockData originalData) {
         if (block == null || originalData == null) return;
+        if (block.getType() != Material.OAK_SIGN) return;
         block.setBlockData(originalData, false);
     }
 

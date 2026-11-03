@@ -122,6 +122,7 @@ public class GameLifecycleManager implements Listener {
 
     public static void resetGame() {
         StartCountdown.cancel();
+        KatzeGames.get().releasePause();
         KatzeGames.getTimer().stop();
         GameXp.onReset();
         ChallengeManager.resetGameState();

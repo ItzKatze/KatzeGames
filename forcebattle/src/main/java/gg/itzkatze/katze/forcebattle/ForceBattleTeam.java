@@ -7,8 +7,10 @@ import gg.itzkatze.katze.event.ObjectiveUpdateEvent;
 import gg.itzkatze.katze.event.PlayerTeamJoinEvent;
 import gg.itzkatze.katze.event.PlayerTeamLeaveEvent;
 import gg.itzkatze.katze.game.SessionPersistence;
+import gg.itzkatze.katze.challenges.ChallengeType;
 import gg.itzkatze.katze.level.LevelStore;
 import gg.itzkatze.katze.player.KatzePlayer;
+import gg.itzkatze.katze.text.TextArg;
 import gg.itzkatze.katze.util.KatzeColor;
 import gg.itzkatze.katze.util.Toast;
 import net.kyori.adventure.text.Component;
@@ -91,7 +93,7 @@ public class ForceBattleTeam extends KatzeTeam {
 
     @Override
     public void updateObjective(KatzePlayer finisher, boolean finishLast, boolean hasBeenSkipped) {
-        SessionPersistence.requestSave();
+        SessionPersistence.requestSave(ChallengeType.FORCE_BATTLE);
         if (finishLast && this.objective != null) {
             this.objective.setFinished(finisher);
             this.objective.setHasBeenSkipped(hasBeenSkipped);
@@ -107,7 +109,7 @@ public class ForceBattleTeam extends KatzeTeam {
         ObjectiveUpdateEvent updateEvent = new ObjectiveUpdateEvent(this, newObjective);
         Bukkit.getPluginManager().callEvent(updateEvent);
         if (updateEvent.isCancelled()) {
-            newObjective.delete();
+            if (newObjective != null) newObjective.delete();
             return;
         }
 
@@ -116,11 +118,11 @@ public class ForceBattleTeam extends KatzeTeam {
             Material toastIcon = this.objective.getToastIcon();
             Component objectiveName = this.objective.displayName().color(KatzeColor.BLUE);
             Component toastMessage = Component.translatable("katze.forcebattle.team.new_team_objective",
-                    gg.itzkatze.katze.text.TextArg.component("objective", objectiveName));
+                    TextArg.component("objective", objectiveName));
             for (KatzePlayer member : players) {
                 member.sendMessage(Component.translatable("katze.forcebattle.team.next_objective",
-                        gg.itzkatze.katze.text.TextArg.component("objective", objectiveName),
-                        gg.itzkatze.katze.text.TextArg.component("type", this.objective.getBattleType().displayName())));
+                        TextArg.component("objective", objectiveName),
+                        TextArg.component("type", this.objective.getBattleType().displayName())));
                 if (member.getPlayer() != null) {
                     Bukkit.getScheduler().runTaskLater(
                             KatzeGames.get(),
@@ -157,7 +159,7 @@ public class ForceBattleTeam extends KatzeTeam {
         }
         this.lastJoinRequest = new JoinRequest(katzePlayer, this);
         Component requestMessage = Component.translatable("katze.forcebattle.team.join_request",
-                gg.itzkatze.katze.text.TextArg.text("player", katzePlayer.getName()));
+                TextArg.text("player", katzePlayer.getName()));
         players.forEach(teamPlayer -> teamPlayer.sendMessage(requestMessage));
     }
 

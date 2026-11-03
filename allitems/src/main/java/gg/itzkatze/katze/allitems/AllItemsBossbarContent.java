@@ -27,7 +27,7 @@ public class AllItemsBossbarContent implements BossbarContent {
     }
 
     @Override
-    @Nullable public BossBar getBossbar(@NotNull KatzePlayer player) {
+    @Nullable public BossBar updateBossbar(@NotNull KatzePlayer player, @Nullable BossBar current) {
         List<AllItemsObjectiveType> enabled = getEnabledTypes();
         if (enabled.isEmpty()) {
             return null;
@@ -54,7 +54,7 @@ public class AllItemsBossbarContent implements BossbarContent {
                 gg.itzkatze.katze.text.TextArg.number("total", total),
                 gg.itzkatze.katze.text.TextArg.decimal("percent", percent));
 
-        return BossBar.bossBar(
+        return BossbarContent.update(current,
                 title,
                 (float) Math.clamp(percent / 100.0, 0.0, 1.0),
                 BossBar.Color.GREEN,

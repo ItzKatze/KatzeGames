@@ -43,9 +43,7 @@ public class GUIListener implements Listener {
     @EventHandler
     public void onClose(InventoryCloseEvent event) {
         if (event.getInventory().getHolder() instanceof KatzeGUI gui) {
-            if (gui.isRefreshing(event.getPlayer().getUniqueId())) return;
-            gui.onClose(event, KatzeGUI.CloseReason.PLAYER_EXITED);
-            KatzeGUI.GUI_MAP.remove(event.getPlayer().getUniqueId(), gui);
+            gui.handleClose(event, KatzeGUI.CloseReason.PLAYER_EXITED);
         }
     }
 

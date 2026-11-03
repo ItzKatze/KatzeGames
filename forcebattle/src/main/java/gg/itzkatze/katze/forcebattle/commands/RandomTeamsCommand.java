@@ -1,6 +1,6 @@
 package gg.itzkatze.katze.forcebattle.commands;
 
-import gg.itzkatze.katze.KatzeGames;
+import gg.itzkatze.katze.challenges.ChallengeManager;
 import gg.itzkatze.katze.commands.framework.CallerType;
 import gg.itzkatze.katze.util.KatzeColor;
 import net.kyori.adventure.text.Component;
@@ -30,7 +30,7 @@ public class RandomTeamsCommand extends KatzeCommand {
 
     @Override
     protected void executeCommand(final CommandCaller caller, final String[] args) {
-        if (KatzeGames.getTimer().isRunning()) {
+        if (ChallengeManager.isGameStarted()) {
             caller.sendMessage(Component.translatable("katze.forcebattle.command.game_started").color(KatzeColor.RED));
             return;
         }
@@ -48,7 +48,12 @@ public class RandomTeamsCommand extends KatzeCommand {
             return;
         }
 
-        List<KatzePlayer> players = new ArrayList<>(KatzePlayer.getOnlinePlayers().stream().filter(player -> !player.isSpectator()).toList());
+        if (size <= 0) {
+            caller.sendMessage(Component.translatable("katze.forcebattle.command.positive_number").color(KatzeColor.RED));
+            return;
+        }
+
+        List<KatzePlayer> players = new ArrayList<>(KatzePlayer.getOnlinePlayers().stream().filter(KatzePlayer::isParticipating).toList());
         int playerAmount = players.size();
 
         if (playerAmount % size != 0) {

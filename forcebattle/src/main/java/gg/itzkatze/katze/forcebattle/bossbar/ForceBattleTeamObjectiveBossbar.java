@@ -21,14 +21,14 @@ public class ForceBattleTeamObjectiveBossbar implements BossbarContent {
     }
 
     @Override
-    @Nullable public BossBar getBossbar(@NotNull KatzePlayer player) {
+    @Nullable public BossBar updateBossbar(@NotNull KatzePlayer player, @Nullable BossBar current) {
         if (!player.isInTeam()) return null;
 
         KatzeTeam team = player.getTeam();
         ForceBattleObjective objective = (ForceBattleObjective) team.getObjective();
         if (objective == null) return null;
 
-        return BossBar.bossBar(
+        return BossbarContent.update(current,
                 getTitle(team),
                 1,
                 BossBar.Color.PURPLE,

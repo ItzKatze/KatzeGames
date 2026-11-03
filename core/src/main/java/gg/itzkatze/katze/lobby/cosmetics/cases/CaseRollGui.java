@@ -10,6 +10,7 @@ import gg.itzkatze.katze.lobby.cosmetics.PointsText;
 import gg.itzkatze.katze.lobby.cosmetics.Rarity;
 import gg.itzkatze.katze.lobby.cosmetics.ShopSounds;
 import gg.itzkatze.katze.player.KatzePlayer;
+import gg.itzkatze.katze.player.data.PlayerDataStore;
 import gg.itzkatze.katze.util.ItemStackCreator;
 import gg.itzkatze.katze.util.KatzeColor;
 import net.kyori.adventure.key.Key;
@@ -48,6 +49,7 @@ public final class CaseRollGui extends KatzeGUI {
 
     private final Player player;
     private final List<CaseSpin> spins;
+    private final Map<CaseSpin, List<Component>> rewards = new HashMap<>();
     private boolean reopenPending;
     private @Nullable BukkitTask task;
 
@@ -67,7 +69,7 @@ public final class CaseRollGui extends KatzeGUI {
 
         UUID id = player.getUniqueId();
         CosmeticStore store = CosmeticStore.get();
-        if (!store.openCases(player, CaseLoot.PRICE, count)) {
+        if (store.points(id) < CaseLoot.PRICE * count) {
             player.sendMessage(PointsText.missingComponent(CaseLoot.PRICE * count - store.points(id)).color(KatzeColor.RED));
             player.playSound(ShopSounds.DENY);
             return false;
@@ -79,7 +81,20 @@ public final class CaseRollGui extends KatzeGUI {
             CaseLoot.Draw draw = draws.get(row);
             spins.add(new CaseSpin(CaseReel.build(draw.prize(), () -> CaseLoot.drawShown(available, random), row), draw.pity()));
         }
-        new CaseRollGui(player, spins).start();
+        CaseRollGui roll = new CaseRollGui(player, spins);
+        if (!PlayerDataStore.get().transaction(id, () -> {
+            if (!store.openCases(player, CaseLoot.PRICE, count)) {
+                throw new IllegalStateException("The case balance changed before purchase");
+            }
+            for (CaseSpin spin : spins) {
+                roll.rewards.put(spin, roll.award(store, spin));
+            }
+        })) {
+            player.sendMessage(Component.translatable("katze.cosmetics.purchase_save_failed").color(KatzeColor.RED));
+            player.playSound(ShopSounds.DENY);
+            return false;
+        }
+        roll.start();
         return true;
     }
 
@@ -235,7 +250,7 @@ public final class CaseRollGui extends KatzeGUI {
     private void pay(@NotNull CaseSpin spin, boolean silent) {
         if (!spin.settle()) return;
 
-        List<Component> messages = award(CosmeticStore.get(), spin);
+        List<Component> messages = rewards.getOrDefault(spin, List.of());
         if (silent) return;
 
         messages.forEach(player::sendMessage);

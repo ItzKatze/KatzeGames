@@ -5,6 +5,8 @@ import gg.itzkatze.katze.bossbar.BossbarManager;
 import gg.itzkatze.katze.bossbar.BossbarContent;
 import gg.itzkatze.katze.challenges.Challenge;
 import gg.itzkatze.katze.challenges.ChallengeType;
+import gg.itzkatze.katze.challenges.TimerSpec;
+import gg.itzkatze.katze.game.GameTimer;
 import gg.itzkatze.katze.allitems.data.AllItemsData;
 import gg.itzkatze.katze.allitems.gui.AllItemsSettingsGUI;
 import gg.itzkatze.katze.commands.framework.KatzeCommand;
@@ -50,6 +52,11 @@ public class AllItems implements Challenge {
     @Override
     public void loadData() {
         data.loadFromFile();
+    }
+
+    @Override
+    public TimerSpec getTimerSpec() {
+        return new TimerSpec(GameTimer.Mode.COUNT_UP, 0);
     }
 
     @Override

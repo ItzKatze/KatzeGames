@@ -31,7 +31,7 @@ public class SkipCommand extends KatzeCommand {
 
     @Override
     public void executeCommand(CommandCaller caller, String[] args) {
-        if (args.length > 0) {
+        if (args.length >= 2) {
             switch (args[0]) {
                 case "player" -> {
                     @NotNull Optional<KatzePlayer> battlePlayerOpt = KatzePlayer.adapt(args[1]);

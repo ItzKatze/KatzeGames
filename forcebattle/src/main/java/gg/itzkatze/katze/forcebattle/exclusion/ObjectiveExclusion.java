@@ -19,14 +19,8 @@ import java.util.Set;
 @Getter
 public enum ObjectiveExclusion {
     UNOBTAINABLE(null, Material.BARRIER, ExclusionRules.builder()
-            .items(Material.AIR, Material.BEDROCK, Material.BARRIER, Material.LIGHT, Material.STRUCTURE_BLOCK, Material.STRUCTURE_VOID, Material.JIGSAW,
-                    Material.TEST_BLOCK, Material.TEST_INSTANCE_BLOCK, Material.COMMAND_BLOCK, Material.CHAIN_COMMAND_BLOCK, Material.REPEATING_COMMAND_BLOCK,
-                    Material.COMMAND_BLOCK_MINECART, Material.DEBUG_STICK, Material.KNOWLEDGE_BOOK, Material.SPAWNER, Material.TRIAL_SPAWNER, Material.VAULT,
-                    Material.BUDDING_AMETHYST, Material.REINFORCED_DEEPSLATE, Material.END_PORTAL_FRAME, Material.CHORUS_PLANT, Material.FARMLAND, Material.DIRT_PATH,
-                    Material.FROGSPAWN, Material.SUSPICIOUS_SAND, Material.SUSPICIOUS_GRAVEL, Material.PLAYER_HEAD, Material.PETRIFIED_OAK_SLAB, Material.POTION,
-                    Material.TIPPED_ARROW, Material.SPLASH_POTION, Material.LINGERING_POTION, Material.WRITTEN_BOOK)
-            .itemsNamed(name -> name.startsWith("INFESTED_") || name.endsWith("_SPAWN_EGG"))
-            .mobs(EntityType.GIANT, EntityType.ILLUSIONER, EntityType.MANNEQUIN, EntityType.ARMOR_STAND, EntityType.CREAKING)
+            .unobtainable()
+            .items(Material.POTION, Material.TIPPED_ARROW, Material.SPLASH_POTION, Material.LINGERING_POTION, Material.WRITTEN_BOOK)
             .biomes("the_void")),
     MUSIC_DISCS(ForceBattleSettings.EXCLUDE_MUSIC_DISCS, Material.MUSIC_DISC_CAT, ExclusionRules.builder()
             .items(Material.DISC_FRAGMENT_5)

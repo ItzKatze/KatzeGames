@@ -1,6 +1,7 @@
 package gg.itzkatze.katze.randomizer;
 
 import gg.itzkatze.katze.game.SessionPersistence;
+import gg.itzkatze.katze.challenges.ChallengeType;
 import gg.itzkatze.katze.util.WorldStorage;
 import org.bukkit.Material;
 import org.bukkit.entity.Item;
@@ -152,7 +153,7 @@ public class RandomizerGameListener implements Listener {
             chosen = itemPool.get((itemPool.indexOf(chosen) + 1) % itemPool.size());
         }
         map.put(source, chosen);
-        SessionPersistence.requestSave();
+        SessionPersistence.requestSave(ChallengeType.RANDOMIZER);
         return chosen;
     }
 

@@ -2,6 +2,7 @@ package gg.itzkatze.katze.player.data;
 
 import gg.itzkatze.katze.KatzeGames;
 import gg.itzkatze.katze.util.JsonFiles;
+import com.google.gson.Gson;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -100,8 +101,31 @@ public final class PlayerDataStore {
         }
     }
 
-    public void flush() {
-        write();
+    public boolean flush() {
+        return write();
+    }
+
+    public boolean transaction(@NotNull UUID player, @NotNull Runnable change) {
+        Gson gson = new Gson();
+        PlayerProfile profile = profiles.get(player);
+        PlayerProfile before = profile == null ? null : gson.fromJson(gson.toJson(profile), PlayerProfile.class);
+        boolean previouslyDirty = dirty;
+        try {
+            change.run();
+            if (write()) return true;
+        } catch (RuntimeException e) {
+            restoreProfile(player, before);
+            dirty = previouslyDirty;
+            throw e;
+        }
+        restoreProfile(player, before);
+        dirty = previouslyDirty;
+        return false;
+    }
+
+    private void restoreProfile(UUID player, @Nullable PlayerProfile profile) {
+        if (profile == null) profiles.remove(player);
+        else profiles.put(player, profile);
     }
 
     boolean isDirty() {
@@ -117,8 +141,8 @@ public final class PlayerDataStore {
         write();
     }
 
-    private void write() {
-        if (!dirty) return;
+    private boolean write() {
+        if (!dirty) return true;
 
         FileData data = new FileData();
         profiles.forEach((id, profile) -> data.players.put(id.toString(), profile));
@@ -126,8 +150,10 @@ public final class PlayerDataStore {
             JsonFiles.write(file, data);
             dirty = false;
             writes++;
+            return true;
         } catch (IOException | RuntimeException e) {
             logger.error("Failed to save {}: {}", file, e.getMessage());
+            return false;
         }
     }
 

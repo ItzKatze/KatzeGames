@@ -2,6 +2,10 @@ package gg.itzkatze.katze.game;
 
 import gg.itzkatze.katze.KatzeGames;
 import gg.itzkatze.katze.challenges.ChallengeManager;
+import gg.itzkatze.katze.util.WorldStorage;
+import org.bukkit.event.world.WorldLoadEvent;
+import org.bukkit.event.entity.EntitySpawnEvent;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.Bukkit;
 import org.bukkit.GameRules;
 import org.bukkit.Location;
@@ -37,13 +41,49 @@ public class PauseManager implements Listener {
     private static final NamespacedKey PAUSED_AI_KEY = new NamespacedKey("katzegames", "paused_ai");
 
     private boolean pauseApplied = false;
-    private final Map<String, Integer> randomTickSpeedByWorld = new HashMap<>();
+    private static final String PAUSE_FILE = "pause.json";
+    private final Map<String, WorldRules> rulesByWorld = new HashMap<>();
+    private BukkitTask watcher;
+
+    private record WorldRules(Integer randomTicks, Boolean advanceTime, Boolean advanceWeather) {
+        static WorldRules of(World world) {
+            return new WorldRules(world.getGameRuleValue(GameRules.RANDOM_TICK_SPEED),
+                    world.getGameRuleValue(GameRules.ADVANCE_TIME), world.getGameRuleValue(GameRules.ADVANCE_WEATHER));
+        }
+
+        void restore(World world) {
+            if (randomTicks != null) world.setGameRule(GameRules.RANDOM_TICK_SPEED, randomTicks);
+            if (advanceTime != null) world.setGameRule(GameRules.ADVANCE_TIME, advanceTime);
+            if (advanceWeather != null) world.setGameRule(GameRules.ADVANCE_WEATHER, advanceWeather);
+        }
+    }
+
+    private static final class SavedRules {
+        Map<String, WorldRules> worlds = new HashMap<>();
+    }
     private final Map<UUID, Location> frozenLocations = new HashMap<>();
     private final Set<UUID> aiDisabledEntities = new HashSet<>();
 
     public void startStateWatcher() {
+        SavedRules saved = WorldStorage.load(PAUSE_FILE, SavedRules.class);
+        if (saved != null && saved.worlds != null) {
+            rulesByWorld.putAll(saved.worlds);
+            restoreWorldRules();
+        }
         Bukkit.getWorlds().forEach(world -> world.getEntities().forEach(this::restoreEntityAI));
-        Bukkit.getScheduler().runTaskTimer(KatzeGames.get(), this::updatePauseState, 1L, 5L);
+        watcher = Bukkit.getScheduler().runTaskTimer(KatzeGames.get(), this::updatePauseState, 1L, 5L);
+    }
+
+    public void shutdown() {
+        release();
+        if (watcher != null) {
+            watcher.cancel();
+            watcher = null;
+        }
+    }
+
+    public void release() {
+        if (pauseApplied) clearPause();
     }
 
     private void updatePauseState() {
@@ -60,51 +100,66 @@ public class PauseManager implements Listener {
 
     private void applyPause() {
         pauseApplied = true;
-        randomTickSpeedByWorld.clear();
-
         for (World world : Bukkit.getWorlds()) {
-            Integer randomTickSpeed = world.getGameRuleValue(GameRules.RANDOM_TICK_SPEED);
-            // A speed of 0 is most likely left over from a pause the server crashed in, so resuming falls back to the default.
-            if (randomTickSpeed != null && randomTickSpeed != 0) {
-                randomTickSpeedByWorld.put(world.getName(), randomTickSpeed);
-            }
+            pauseWorld(world);
+        }
+    }
 
-            world.setGameRule(GameRules.RANDOM_TICK_SPEED, 0);
-            world.setGameRule(GameRules.ADVANCE_TIME, false);
-            world.setGameRule(GameRules.ADVANCE_WEATHER, false);
+    private void pauseWorld(World world) {
+        rulesByWorld.putIfAbsent(world.getUID().toString(), WorldRules.of(world));
+        SavedRules saved = new SavedRules();
+        saved.worlds.putAll(rulesByWorld);
+        WorldStorage.save(PAUSE_FILE, saved);
+        world.setGameRule(GameRules.RANDOM_TICK_SPEED, 0);
+        world.setGameRule(GameRules.ADVANCE_TIME, false);
+        world.setGameRule(GameRules.ADVANCE_WEATHER, false);
+        world.getEntities().forEach(this::pauseEntity);
+    }
 
-            for (Entity entity : world.getEntities()) {
-                entity.setVelocity(new Vector(0, 0, 0));
-                if (entity instanceof LivingEntity livingEntity && !(livingEntity instanceof Player)) {
-                    try {
-                        if (livingEntity.hasAI()) {
-                            livingEntity.setAI(false);
-                            livingEntity.getPersistentDataContainer().set(PAUSED_AI_KEY, PersistentDataType.BOOLEAN, true);
-                            aiDisabledEntities.add(livingEntity.getUniqueId());
-                        }
-                    } catch (Throwable ignored) {
-                    }
-                }
-            }
+    private void pauseEntity(Entity entity) {
+        entity.setVelocity(new Vector(0, 0, 0));
+        if (entity instanceof LivingEntity living && !(living instanceof Player) && living.hasAI()) {
+            living.getPersistentDataContainer().set(PAUSED_AI_KEY, PersistentDataType.BOOLEAN, true);
+            living.setAI(false);
+            aiDisabledEntities.add(living.getUniqueId());
         }
     }
 
     private void clearPause() {
         pauseApplied = false;
-
-        for (World world : Bukkit.getWorlds()) {
-            Integer randomTickSpeed = randomTickSpeedByWorld.get(world.getName());
-
-            world.setGameRule(GameRules.RANDOM_TICK_SPEED, randomTickSpeed == null ? 20 : randomTickSpeed);
-            world.setGameRule(GameRules.ADVANCE_TIME, true);
-            world.setGameRule(GameRules.ADVANCE_WEATHER, true);
-
-            for (Entity entity : world.getEntities()) {
-                restoreEntityAI(entity);
-            }
-        }
-
+        restoreWorldRules();
+        Bukkit.getWorlds().forEach(world -> world.getEntities().forEach(this::restoreEntityAI));
         frozenLocations.clear();
+    }
+
+    private void restoreWorldRules() {
+        rulesByWorld.entrySet().removeIf(entry -> {
+            World world = Bukkit.getWorld(UUID.fromString(entry.getKey()));
+            if (world == null) return false;
+            if (entry.getValue() != null) entry.getValue().restore(world);
+            return true;
+        });
+        if (rulesByWorld.isEmpty()) {
+            WorldStorage.delete(PAUSE_FILE);
+        } else {
+            SavedRules saved = new SavedRules();
+            saved.worlds.putAll(rulesByWorld);
+            WorldStorage.save(PAUSE_FILE, saved);
+        }
+    }
+
+    @EventHandler
+    public void onWorldLoad(WorldLoadEvent event) {
+        if (pauseApplied) {
+            pauseWorld(event.getWorld());
+        } else {
+            restoreWorldRules();
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onSpawn(EntitySpawnEvent event) {
+        if (pauseApplied) pauseEntity(event.getEntity());
     }
 
     private void restoreEntityAI(Entity entity) {
@@ -192,11 +247,9 @@ public class PauseManager implements Listener {
 
     @EventHandler
     public void onEntitiesLoad(EntitiesLoadEvent event) {
-        if (pauseApplied) {
-            return;
-        }
         for (Entity entity : event.getEntities()) {
-            restoreEntityAI(entity);
+            if (pauseApplied) pauseEntity(entity);
+            else restoreEntityAI(entity);
         }
     }
 }

@@ -13,35 +13,21 @@ import gg.itzkatze.katze.util.KatzeColor;
 import gg.itzkatze.katze.util.Toast;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
-import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Fireball;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 
 public class MobsTask {
 
-    public static void onDamage(EntityDamageByEntityEvent event) {
+    public static void onDeath(EntityDeathEvent event) {
         if (ForceBattleType.FORCE_MOB.getSettingState() == PlayerTeamBothState.OFF) return;
-
-        Player damager;
-
-        if (!(event.getEntity() instanceof LivingEntity target)) return;
-        if (event.getDamager() instanceof Fireball || event.getDamager() instanceof Arrow) {
-            // Not Fireball#getShooter(): Paper caches it and a player hitting the fireball back does not update the cache
-            if (event.getDamageSource().getCausingEntity() instanceof Player player) {
-                damager = player;
-            } else return;
-        } else if (event.getDamager() instanceof Player player) {
-            damager = player;
-        } else return;
-
+        LivingEntity target = event.getEntity();
+        Player damager = event.getDamageSource().getCausingEntity() instanceof Player player
+                ? player : target.getKiller();
+        if (damager == null) return;
         if (!(KatzePlayer.adapt(damager) instanceof ForceBattlePlayer katzePlayer)) return;
         if (!katzePlayer.isParticipating()) return;
-
-        if (target.getHealth() - event.getDamage() > 0) return;
-
         checkPlayerObjective(katzePlayer, target.getType());
         checkTeamObjective(katzePlayer, target.getType());
     }

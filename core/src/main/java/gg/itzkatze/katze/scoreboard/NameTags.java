@@ -16,6 +16,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Locale;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -28,6 +31,23 @@ import java.util.UUID;
 public final class NameTags {
 
     private static final long PERIOD_TICKS = 3;
+    private static final Map<UUID, CachedDecoration> DECORATIONS = new HashMap<>();
+
+    private record Decoration(Component prefix, Component suffix) {}
+
+    private static final class CachedDecoration {
+        private final Decoration original;
+        private final Map<Locale, Decoration> rendered = new HashMap<>();
+
+        private CachedDecoration(Decoration original) {
+            this.original = original;
+        }
+
+        private Decoration forViewer(Player viewer) {
+            return rendered.computeIfAbsent(viewer.locale(), ignored ->
+                    new Decoration(Texts.render(original.prefix(), viewer), Texts.render(original.suffix(), viewer)));
+        }
+    }
 
     private NameTags() {
     }
@@ -40,6 +60,19 @@ public final class NameTags {
         List<KatzePlayer> online = KatzePlayer.getOnlinePlayers();
         Set<String> onlineTeams = new HashSet<>();
         online.forEach(target -> onlineTeams.add(target.getUuid().toString()));
+        Set<UUID> onlineIds = new HashSet<>();
+        List<Challenge> challenges = ChallengeManager.getActiveChallenges().stream()
+                .sorted(Comparator.comparing(Challenge::getType)).toList();
+        for (KatzePlayer target : online) {
+            onlineIds.add(target.getUuid());
+            Decoration decoration = new Decoration(LevelTag.of(LevelStore.get().level(target.getUuid())).append(Component.space()),
+                    suffix(target, challenges));
+            CachedDecoration cached = DECORATIONS.get(target.getUuid());
+            if (cached == null || !cached.original.equals(decoration)) {
+                DECORATIONS.put(target.getUuid(), new CachedDecoration(decoration));
+            }
+        }
+        DECORATIONS.keySet().retainAll(onlineIds);
 
         for (KatzePlayer viewer : online) {
             Player player = viewer.getPlayer();
@@ -70,19 +103,19 @@ public final class NameTags {
             team.addEntry(target.getName());
         }
 
-        Component prefix = Texts.render(LevelTag.of(LevelStore.get().level(target.getUuid())).append(Component.space()), viewer);
+        Decoration decoration = DECORATIONS.get(target.getUuid()).forViewer(viewer);
+        Component prefix = decoration.prefix();
         if (!prefix.equals(team.prefix())) {
             team.prefix(prefix);
         }
-        Component suffix = Texts.render(suffix(target), viewer);
+        Component suffix = decoration.suffix();
         if (!suffix.equals(team.suffix())) {
             team.suffix(suffix);
         }
     }
 
-    private static @NotNull Component suffix(@NotNull KatzePlayer target) {
-        return ChallengeManager.getActiveChallenges().stream()
-                .sorted(Comparator.comparing(Challenge::getType))
+    private static @NotNull Component suffix(@NotNull KatzePlayer target, List<Challenge> challenges) {
+        return challenges.stream()
                 .map(challenge -> challenge.getNametagSuffix(target))
                 .filter(Objects::nonNull)
                 .findFirst()

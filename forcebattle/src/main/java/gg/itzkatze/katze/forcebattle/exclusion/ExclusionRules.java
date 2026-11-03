@@ -3,6 +3,7 @@ package gg.itzkatze.katze.forcebattle.exclusion;
 import gg.itzkatze.katze.data.KatzeAdvancement;
 import gg.itzkatze.katze.data.KatzeDamageType;
 import gg.itzkatze.katze.data.KatzeStructure;
+import gg.itzkatze.katze.data.ObtainableObjectives;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.jetbrains.annotations.NotNull;
@@ -18,6 +19,7 @@ import java.util.function.Predicate;
 
 public final class ExclusionRules {
 
+    private final boolean unobtainable;
     private final Set<Material> items;
     private final List<Predicate<String>> itemNameRules;
     private final Set<EntityType> mobs;
@@ -27,6 +29,7 @@ public final class ExclusionRules {
     private final Set<KatzeDamageType> deaths;
 
     private ExclusionRules(@NotNull Builder builder) {
+        this.unobtainable = builder.unobtainable;
         this.items = builder.items;
         this.itemNameRules = builder.itemNameRules;
         this.mobs = builder.mobs;
@@ -41,11 +44,12 @@ public final class ExclusionRules {
     }
 
     public boolean excludesItem(@NotNull Material material) {
-        return items.contains(material) || itemNameRules.stream().anyMatch(rule -> rule.test(material.name()));
+        return (unobtainable && !ObtainableObjectives.isItem(material))
+                || items.contains(material) || itemNameRules.stream().anyMatch(rule -> rule.test(material.name()));
     }
 
     public boolean excludesMob(@NotNull EntityType type) {
-        return mobs.contains(type);
+        return (unobtainable && !ObtainableObjectives.isMob(type)) || mobs.contains(type);
     }
 
     public boolean excludesBiome(@NotNull String key) {
@@ -66,6 +70,7 @@ public final class ExclusionRules {
 
     public static final class Builder {
 
+        private boolean unobtainable;
         private final Set<Material> items = EnumSet.noneOf(Material.class);
         private final List<Predicate<String>> itemNameRules = new ArrayList<>();
         private final Set<EntityType> mobs = EnumSet.noneOf(EntityType.class);
@@ -75,6 +80,11 @@ public final class ExclusionRules {
         private final Set<KatzeDamageType> deaths = EnumSet.noneOf(KatzeDamageType.class);
 
         private Builder() {
+        }
+
+        public @NotNull Builder unobtainable() {
+            unobtainable = true;
+            return this;
         }
 
         public @NotNull Builder items(@NotNull Material... materials) {

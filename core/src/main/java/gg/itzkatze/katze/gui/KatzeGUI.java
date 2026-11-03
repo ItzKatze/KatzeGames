@@ -130,47 +130,53 @@ public abstract class KatzeGUI implements Listener, InventoryHolder {
     }
 
     public void open(KatzePlayer player) {
-        Player p = player.getPlayer();
-        KatzeGUI previous = GUI_MAP.get(p.getUniqueId());
-
-        if (previous != null) {
-            previous.removeViewer(p.getUniqueId());
-            previous.onClose(new InventoryCloseEvent(p.getOpenInventory()), CloseReason.SERVER_EXITED);
-            GUI_MAP.remove(p.getUniqueId());
-        }
-
-        if (this.inventory == null) {
-            this.inventory = Bukkit.createInventory(this, size, title);
-        }
-
-        // Add to viewers
-        this.currentViewers.add(p.getUniqueId());
-        GUI_MAP.put(p.getUniqueId(), this);
-
+        Player viewer = player.getPlayer();
+        if (viewer == null) return;
         try {
+            onOpen(player);
             setItems(player);
             updateInventory(player);
             hasFinishedLoading = true;
         } catch (Exception e) {
-            p.sendMessage(Component.translatable("katze.gui.open_failed"));
+            viewer.sendMessage(Component.translatable("katze.gui.open_failed"));
             e.printStackTrace();
             return;
         }
 
-        p.openInventory(inventory);
+        UUID id = viewer.getUniqueId();
+        KatzeGUI previous = GUI_MAP.put(id, this);
+        currentViewers.add(id);
+        viewer.openInventory(getInventory());
+        if (viewer.getOpenInventory().getTopInventory().getHolder() != this) {
+            currentViewers.remove(id);
+            GUI_MAP.remove(id, this);
+            if (previous != null && viewer.getOpenInventory().getTopInventory().getHolder() == previous) {
+                GUI_MAP.put(id, previous);
+            }
+            return;
+        }
         afterOpen(player);
     }
 
     public void close(KatzePlayer player, CloseReason reason) {
-        UUID playerId = player.getPlayer().getUniqueId();
-        player.getPlayer().closeInventory();
-        onClose(new InventoryCloseEvent(player.getPlayer().getOpenInventory()), reason);
-        removeViewer(playerId);
-        GUI_MAP.remove(playerId);
+        Player viewer = player.getPlayer();
+        if (viewer == null) {
+            currentViewers.remove(player.getUuid());
+            GUI_MAP.remove(player.getUuid(), this);
+            return;
+        }
+        if (viewer.getOpenInventory().getTopInventory().getHolder() != this) return;
+        handleClose(new InventoryCloseEvent(viewer.getOpenInventory()), reason);
+        if (viewer.getOpenInventory().getTopInventory().getHolder() == this) {
+            viewer.closeInventory();
+        }
     }
 
-    private void removeViewer(UUID playerId) {
-        currentViewers.remove(playerId);
+    public void handleClose(InventoryCloseEvent event, CloseReason reason) {
+        UUID id = event.getPlayer().getUniqueId();
+        if (isRefreshing(id) || !currentViewers.remove(id)) return;
+        GUI_MAP.remove(id, this);
+        onClose(event, reason);
     }
 
     public void updateInventory(KatzePlayer player) {

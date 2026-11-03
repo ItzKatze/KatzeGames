@@ -1,4 +1,4 @@
-package gg.itzkatze.katze.forcebattle.commands;
+package gg.itzkatze.katze.commands;
 
 import gg.itzkatze.katze.commands.framework.CallerType;
 import gg.itzkatze.katze.util.KatzeColor;
@@ -30,11 +30,12 @@ public class MobileCraftingCommand extends KatzeCommand {
     @Override
     public void executeCommand(@NotNull CommandCaller caller, String[] args) {
         if (!SettingsManager.isEnabled(GlobalSetting.MOBILE_CRAFTING)) {
-            caller.sendMessage(Component.translatable("katze.forcebattle.command.mobile_crafting_disabled").color(KatzeColor.RED));
+            caller.sendMessage(Component.translatable("katze.command.mobile_crafting_disabled").color(KatzeColor.RED));
             return;
         }
         if (caller instanceof KatzePlayer katzePlayer) {
             Player player = katzePlayer.getPlayer();
+            if (player == null || !katzePlayer.isParticipating()) return;
             player.openWorkbench(null, true);
         }
     }

@@ -181,6 +181,7 @@ public class ResultGUI extends KatzeGUI {
                     new BukkitRunnable() {
                         @Override
                         public void run() {
+                            if (viewer.isOffline() || viewer.getPlayer().getOpenInventory().getTopInventory().getHolder() != ResultGUI.this) return;
                             viewer.getPlayer().playSound(viewer.getPlayer().getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 100, 1f);
                             viewer.getPlayer().closeInventory();
                             showResultSummary(viewer);
@@ -269,7 +270,7 @@ public class ResultGUI extends KatzeGUI {
                     viewer.getPlayer().showTitle(Title.title(
                             Component.text(targetPlayer.getName(), KatzeColor.GOLD),
                             Component.translatable("katze.forcebattle.results.score",
-                                    gg.itzkatze.katze.text.TextArg.number("score", targetPlayer.getPoints())).color(KatzeColor.YELLOW),
+                                    TextArg.number("score", targetPlayer.getPoints())).color(KatzeColor.YELLOW),
                             times
                     ));
                 }
@@ -280,9 +281,9 @@ public class ResultGUI extends KatzeGUI {
 
                     viewer.getPlayer().showTitle(Title.title(
                             Component.translatable("katze.forcebattle.results.team_title",
-                                    gg.itzkatze.katze.text.TextArg.number("team", targetTeam.getId())).color(KatzeColor.GOLD),
+                                    TextArg.number("team", targetTeam.getId())).color(KatzeColor.GOLD),
                             Component.translatable("katze.forcebattle.results.score",
-                                    gg.itzkatze.katze.text.TextArg.number("score", targetTeam.getPoints())).color(KatzeColor.YELLOW),
+                                    TextArg.number("score", targetTeam.getPoints())).color(KatzeColor.YELLOW),
                             times
                     ));
                 }
@@ -302,7 +303,12 @@ public class ResultGUI extends KatzeGUI {
         return false;
     }
 
-    public void onClose(KatzePlayer player, InventoryCloseEvent event) {
+    @Override
+    public void onClose(InventoryCloseEvent event, CloseReason reason) {
+        KatzePlayer player = objectiveList.keySet().stream()
+                .filter(viewer -> viewer.getUuid().equals(event.getPlayer().getUniqueId()))
+                .findFirst().orElse(null);
+        if (player == null) return;
         BukkitRunnable task = activeAnimations.remove(player);
         if (task != null) task.cancel();
 
@@ -315,9 +321,9 @@ public class ResultGUI extends KatzeGUI {
 
         return switch (type) {
             case PLAYER -> Component.translatable("katze.forcebattle.results.player_title",
-                    gg.itzkatze.katze.text.TextArg.text("player", player != null ? player.getName() : "Unknown"));
+                    TextArg.text("player", player != null ? player.getName() : "Unknown"));
             case TEAM -> Component.translatable("katze.forcebattle.results.team_title",
-                    gg.itzkatze.katze.text.TextArg.text("team", team != null ? String.valueOf(team.getId()) : "N/A"));
+                    TextArg.text("team", team != null ? String.valueOf(team.getId()) : "N/A"));
             default -> Component.translatable("katze.forcebattle.results.all_title");
         };
     }

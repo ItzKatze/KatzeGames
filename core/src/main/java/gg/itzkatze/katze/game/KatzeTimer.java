@@ -138,6 +138,7 @@ public class KatzeTimer implements GameTimer {
     @Override
     public void setMode(Mode mode) {
         this.mode = mode;
+        this.elapsedSeconds = 0;
         this.hitZero = false;
     }
 
@@ -155,7 +156,6 @@ public class KatzeTimer implements GameTimer {
             return;
         }
         this.remainingSeconds = startEvent.getStartTime();
-        this.elapsedSeconds = 0;
         this.hitZero = false;
         this.running = true;
     }

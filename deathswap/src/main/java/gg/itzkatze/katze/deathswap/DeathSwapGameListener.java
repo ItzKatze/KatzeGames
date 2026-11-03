@@ -163,7 +163,7 @@ public class DeathSwapGameListener implements Listener {
             boolean swapped = swapAlivePlayers();
             if (swapped) {
                 swapCount++;
-                SessionPersistence.requestSave();
+                SessionPersistence.requestSave(ChallengeType.DEATH_SWAP);
             }
             swapTimer.consumeElapsed();
             if (!swapped) break;
@@ -185,7 +185,7 @@ public class DeathSwapGameListener implements Listener {
         if (eliminatedPlayers.add(player.getUniqueId())) {
             SpectatorManager.eliminate(player.getUniqueId());
             checkForWinner();
-            SessionPersistence.requestSave();
+            SessionPersistence.requestSave(ChallengeType.DEATH_SWAP);
         }
     }
 
@@ -215,15 +215,9 @@ public class DeathSwapGameListener implements Listener {
 
         Collections.shuffle(alivePlayers, random);
 
-        for (int i = 0; i + 1 < alivePlayers.size(); i += 2) {
-            Player first = alivePlayers.get(i);
-            Player second = alivePlayers.get(i + 1);
-
-            Location firstLocation = first.getLocation().clone();
-            Location secondLocation = second.getLocation().clone();
-
-            first.teleport(secondLocation);
-            second.teleport(firstLocation);
+        List<Location> destinations = alivePlayers.stream().map(Player::getLocation).toList();
+        for (int i = 0; i < alivePlayers.size(); i++) {
+            alivePlayers.get(i).teleport(destinations.get((i + 1) % destinations.size()));
         }
 
         for (Player survivor : alivePlayers) {
@@ -238,6 +232,7 @@ public class DeathSwapGameListener implements Listener {
     private List<Player> getAlivePlayers() {
         List<Player> alivePlayers = new ArrayList<>();
         for (Player player : Bukkit.getOnlinePlayers()) {
+            if (!KatzePlayer.adapt(player).isParticipating()) continue;
             if (eliminatedPlayers.contains(player.getUniqueId())) continue;
             if (player.getGameMode() == GameMode.SPECTATOR) continue;
             alivePlayers.add(player);

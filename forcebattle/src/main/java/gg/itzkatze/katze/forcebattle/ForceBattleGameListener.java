@@ -16,9 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
@@ -149,17 +147,7 @@ public class ForceBattleGameListener implements Listener {
         }
     }
 
-    @EventHandler
-    public void onHungerChange(FoodLevelChangeEvent event) {
-        if (!(event.getEntity() instanceof Player player)) return;
 
-        if (!KatzeGames.getTimer().isRunning() || SettingsManager.isEnabled(GlobalSetting.NO_HUNGER)) {
-            event.setCancelled(true);
-
-            player.setFoodLevel(20);
-            player.setSaturation(20);
-        }
-    }
 
 
     @EventHandler
@@ -172,20 +160,13 @@ public class ForceBattleGameListener implements Listener {
         updateAllTablists();
     }
 
-    @EventHandler
-    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onEntityDeath(EntityDeathEvent event) {
         if (!KatzeGames.getTimer().isRunning()) return;
-
-        MobsTask.onDamage(event);
+        MobsTask.onDeath(event);
     }
 
-    @EventHandler
-    public void onPlayerDamage(EntityDamageEvent event) {
-        if (!(event.getEntity() instanceof Player)) return;
-        if (!KatzeGames.getTimer().isRunning() || SettingsManager.isEnabled(GlobalSetting.NO_DAMAGE)) {
-            event.setCancelled(true);
-        }
-    }
+
 
     private void updateAllTablists() {
         // The tab list shows higher orders first and Paper refuses negative ones, so teams start at 1 to keep the spectators' 0 below team 0.
@@ -249,6 +230,7 @@ public class ForceBattleGameListener implements Listener {
         if (event.getItem() == null || !Joker.isTeamSkipItem(event.getItem())) {return;}
         ForceBattleTeam team = (ForceBattleTeam) katzePlayer.getTeam();
         if (!katzePlayer.isParticipating()) return;
+        if (team == null) return;
 
         event.setCancelled(true);
 

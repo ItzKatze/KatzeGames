@@ -8,6 +8,7 @@ import gg.itzkatze.katze.commands.framework.KatzeCommand;
 import gg.itzkatze.katze.commands.framework.CommandHandler;
 import gg.itzkatze.katze.commands.framework.CommandVisibilityListener;
 import gg.itzkatze.katze.game.GameLifecycleManager;
+import gg.itzkatze.katze.game.GlobalGameplayListener;
 import gg.itzkatze.katze.game.KatzeTimer;
 import gg.itzkatze.katze.game.PauseManager;
 import gg.itzkatze.katze.game.SessionPersistence;
@@ -37,6 +38,7 @@ import gg.itzkatze.katze.spectator.SpectatorChat;
 import gg.itzkatze.katze.spectator.SpectatorListener;
 import gg.itzkatze.katze.text.Texts;
 import gg.itzkatze.katze.text.LanguageListener;
+import gg.itzkatze.katze.util.StructureScanner;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -100,6 +102,7 @@ public final class KatzeGames extends JavaPlugin {
         XpDigest.start();
 
         getServer().getPluginManager().registerEvents(new GameLifecycleManager(), this);
+        getServer().getPluginManager().registerEvents(new GlobalGameplayListener(), this);
         getServer().getPluginManager().registerEvents(new LobbyManager(), this);
         getServer().getPluginManager().registerEvents(new CaseFireworkGuard(), this);
         getServer().getPluginManager().registerEvents(new ClientModHint(), this);
@@ -123,6 +126,9 @@ public final class KatzeGames extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        SignInput.closeAll();
+        pauseManager.shutdown();
+        StructureScanner.clear();
         MusicManager.releaseAll();
         CaseRollGui.finishAllSilently();
         PlayerDataStore.flushInstalled();
@@ -146,6 +152,10 @@ public final class KatzeGames extends JavaPlugin {
 
     public int getGameDuration() {
         return getConfig().getInt("game-duration", 5400);
+    }
+
+    public void releasePause() {
+        pauseManager.release();
     }
 
     public static GameTimer getTimer() {

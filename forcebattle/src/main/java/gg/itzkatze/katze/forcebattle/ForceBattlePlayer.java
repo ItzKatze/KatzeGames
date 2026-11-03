@@ -11,6 +11,7 @@ import gg.itzkatze.katze.game.SessionPersistence;
 import gg.itzkatze.katze.level.LevelStore;
 import gg.itzkatze.katze.team.KatzeTeam;
 import gg.itzkatze.katze.player.KatzePlayer;
+import gg.itzkatze.katze.text.TextArg;
 import gg.itzkatze.katze.util.Joker;
 import gg.itzkatze.katze.util.KatzeColor;
 import gg.itzkatze.katze.util.Toast;
@@ -113,10 +114,10 @@ public class ForceBattlePlayer extends KatzePlayer {
             Material toastIcon = newObjective.getToastIcon();
             Component objectiveName = newObjective.displayName().color(KatzeColor.BLUE);
             Component toastMessage = Component.translatable("katze.forcebattle.player.new_objective",
-                    gg.itzkatze.katze.text.TextArg.component("objective", objectiveName));
+                    TextArg.component("objective", objectiveName));
             sendMessage(Component.translatable("katze.forcebattle.player.next_objective",
-                    gg.itzkatze.katze.text.TextArg.component("objective", objectiveName),
-                    gg.itzkatze.katze.text.TextArg.component("type", newObjective.getBattleType().displayName())));
+                    TextArg.component("objective", objectiveName),
+                    TextArg.component("type", newObjective.getBattleType().displayName())));
             if (getPlayer() != null) {
                 Bukkit.getScheduler().runTaskLater(
                         KatzeGames.get(),
@@ -127,7 +128,7 @@ public class ForceBattlePlayer extends KatzePlayer {
         }
 
         this.objective = newObjective;
-        SessionPersistence.requestSave();
+        SessionPersistence.requestSave(ChallengeType.FORCE_BATTLE);
     }
 
     private void finishObjective(boolean hasBeenSkipped) {
@@ -175,6 +176,7 @@ public class ForceBattlePlayer extends KatzePlayer {
 
         this.points = 0;
         this.chainProgress = 0;
+        BACKPACK_INVENTORY.clear();
         this.skippedObjectives = new ArrayList<>();
         setCurrentObjective(null, false, false);
         if (isInTeam() && getTeam() instanceof ForceBattleTeam fbTeam) {

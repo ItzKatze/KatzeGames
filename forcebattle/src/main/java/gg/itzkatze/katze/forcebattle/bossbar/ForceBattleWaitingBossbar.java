@@ -18,8 +18,8 @@ public class ForceBattleWaitingBossbar implements BossbarContent {
     }
 
     @Override
-    @Nullable public BossBar getBossbar(@NotNull KatzePlayer player) {
-        return BossBar.bossBar(
+    @Nullable public BossBar updateBossbar(@NotNull KatzePlayer player, @Nullable BossBar current) {
+        return BossbarContent.update(current,
                 Component.translatable("katze.forcebattle.bossbar.waiting").color(KatzeColor.LIGHT_GRAY)
                         .decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE),
                 1,

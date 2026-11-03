@@ -1,6 +1,7 @@
 package gg.itzkatze.katze.itemrain;
 
 import gg.itzkatze.katze.KatzeGames;
+import gg.itzkatze.katze.challenges.ChallengeManager;
 import gg.itzkatze.katze.game.ChallengeTimer;
 import gg.itzkatze.katze.game.GameTimer;
 import gg.itzkatze.katze.spectator.SpectatorManager;
@@ -31,6 +32,7 @@ public class ItemRainGameListener implements Listener {
     }
 
     public void runTask() {
+        if (!ChallengeManager.isGameStarted()) return;
         if (KatzeGames.getTimer().getMode() != GameTimer.Mode.DISABLED
                 && !KatzeGames.getTimer().isRunning()) {
             if (dropTimer != null) {

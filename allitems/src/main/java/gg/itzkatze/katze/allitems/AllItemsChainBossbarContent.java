@@ -4,6 +4,7 @@ import gg.itzkatze.katze.allitems.data.AllItemsData;
 import gg.itzkatze.katze.bossbar.BossbarContent;
 import gg.itzkatze.katze.bossbar.BossbarKind;
 import gg.itzkatze.katze.player.KatzePlayer;
+import gg.itzkatze.katze.text.TextArg;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +24,7 @@ public class AllItemsChainBossbarContent implements BossbarContent {
     }
 
     @Override
-    public @Nullable BossBar getBossbar(@NotNull KatzePlayer player) {
+    public @Nullable BossBar updateBossbar(@NotNull KatzePlayer player, @Nullable BossBar current) {
         if (!AllItemsSettings.isChainModeEnabled()) {
             return null;
         }
@@ -35,10 +36,10 @@ public class AllItemsChainBossbarContent implements BossbarContent {
             return null;
         }
 
-        return BossBar.bossBar(
+        return BossbarContent.update(current,
                 Component.translatable("katze.allitems.bossbar.chain_objective",
-                        gg.itzkatze.katze.text.TextArg.component("objective", objective.displayNameComponent()),
-                        gg.itzkatze.katze.text.TextArg.component("type", objective.type().displayName())),
+                        TextArg.component("objective", objective.displayNameComponent()),
+                        TextArg.component("type", objective.type().displayName())),
                 1.0f,
                 BossBar.Color.BLUE,
                 BossBar.Overlay.PROGRESS

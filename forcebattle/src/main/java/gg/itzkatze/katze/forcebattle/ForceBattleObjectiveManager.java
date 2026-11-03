@@ -13,12 +13,9 @@ import gg.itzkatze.katze.data.MobsSimplified;
 import gg.itzkatze.katze.data.StructureSimplified;
 import gg.itzkatze.katze.forcebattle.exclusion.ObjectiveFilter;
 import gg.itzkatze.katze.player.KatzePlayer;
-import gg.itzkatze.katze.text.TextArg;
-import gg.itzkatze.katze.util.KatzeColor;
 import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
 import lombok.Getter;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -66,10 +63,7 @@ public class ForceBattleObjectiveManager {
         if (players.isEmpty()) return null;
 
         ForceBattlePlayer player = (ForceBattlePlayer) players.get(ThreadLocalRandom.current().nextInt(players.size()));
-        ForceBattleType battleType = randomBattleType(PlayerTeamBothState.TEAM);
-        if (battleType == null) return null;
-
-        return generateObjective(battleType, player, team);
+        return generateAvailableObjective(PlayerTeamBothState.TEAM, player, team);
     }
 
     public ForceBattleObjective getNewObjective(ForceBattlePlayer player) {
@@ -77,17 +71,18 @@ public class ForceBattleObjectiveManager {
             return chainObjective(getChainList(), player.getChainProgress());
         }
 
-        ForceBattleType battleType = randomBattleType(PlayerTeamBothState.PLAYER);
-        if (battleType == null) return null;
-
-        return generateObjective(battleType, player, null);
+        return generateAvailableObjective(PlayerTeamBothState.PLAYER, player, null);
     }
 
-    private @Nullable ForceBattleType randomBattleType(@NotNull PlayerTeamBothState audience) {
-        List<ForceBattleType> availableBattleTypes = Arrays.stream(ForceBattleType.values()).filter(type -> isEnabledFor(type, audience)).toList();
-        if (availableBattleTypes.isEmpty()) return null;
-
-        return availableBattleTypes.get(ThreadLocalRandom.current().nextInt(availableBattleTypes.size()));
+    private @Nullable ForceBattleObjective generateAvailableObjective(@NotNull PlayerTeamBothState audience, ForceBattlePlayer player, ForceBattleTeam team) {
+        List<ForceBattleType> types = new ArrayList<>(Arrays.stream(ForceBattleType.values())
+                .filter(type -> isEnabledFor(type, audience)).toList());
+        Collections.shuffle(types);
+        for (ForceBattleType type : types) {
+            ForceBattleObjective objective = generateObjective(type, player, team);
+            if (objective != null) return objective;
+        }
+        return null;
     }
 
     private static boolean isEnabledFor(@NotNull ForceBattleType type, @NotNull PlayerTeamBothState audience) {
@@ -115,13 +110,7 @@ public class ForceBattleObjectiveManager {
         }
 
         if (allPossible.isEmpty()) {
-            player.sendMessage(Component.translatable("katze.forcebattle.objective.none_available",
-                    TextArg.text("type", battleType.name())).color(KatzeColor.RED));
-            if (team != null && SettingsManager.isEnabled(GlobalSetting.EXTRA_TEAM_OBJECTIVE)) {
-                return getNewObjective(team);
-            } else {
-                return getNewObjective(player);
-            }
+            return null;
         }
 
         return allPossible.get(ThreadLocalRandom.current().nextInt(allPossible.size())).toObjective();

@@ -24,6 +24,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.EnumSet;
+import java.util.Set;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +47,8 @@ public final class SessionPersistence {
     private static boolean restoreDone = false;
     private static boolean awaitingResume = false;
     private static @Nullable BukkitTask pendingSave;
+    private static final Set<ChallengeType> dirtyChallenges = EnumSet.noneOf(ChallengeType.class);
+    private static final long SAVE_INTERVAL_TICKS = 100;
 
     private SessionPersistence() {
     }
@@ -67,14 +71,28 @@ public final class SessionPersistence {
     }
 
     public static void requestSave() {
+        dirtyChallenges.addAll(EnumSet.allOf(ChallengeType.class));
+        scheduleSave();
+    }
+
+    public static void requestSave(ChallengeType challenge) {
+        dirtyChallenges.add(challenge);
+        scheduleSave();
+    }
+
+    private static void scheduleSave() {
         KatzeGames plugin = KatzeGames.get();
         if (pendingSave != null || plugin == null || !plugin.isEnabled()) {
             return;
         }
-        pendingSave = Bukkit.getScheduler().runTask(plugin, SessionPersistence::saveNow);
+        pendingSave = Bukkit.getScheduler().runTaskLater(plugin, () -> save(false), SAVE_INTERVAL_TICKS);
     }
 
     public static void saveNow() {
+        save(true);
+    }
+
+    private static void save(boolean allChallenges) {
         if (pendingSave != null) {
             pendingSave.cancel();
             pendingSave = null;
@@ -86,8 +104,10 @@ public final class SessionPersistence {
         WorldStorage.save(FILE_NAME, snapshot());
         GameXp.save();
         for (Challenge challenge : ChallengeManager.getActiveChallenges()) {
+            if (!allChallenges && !dirtyChallenges.contains(challenge.getType())) continue;
             try {
                 challenge.saveData();
+                dirtyChallenges.remove(challenge.getType());
             } catch (RuntimeException e) {
                 logger.warn("Failed to save the data of {}.", challenge.getType(), e);
             }
@@ -104,6 +124,11 @@ public final class SessionPersistence {
     }
 
     public static void delete() {
+        if (pendingSave != null) {
+            pendingSave.cancel();
+            pendingSave = null;
+        }
+        dirtyChallenges.clear();
         WorldStorage.delete(FILE_NAME);
     }
 

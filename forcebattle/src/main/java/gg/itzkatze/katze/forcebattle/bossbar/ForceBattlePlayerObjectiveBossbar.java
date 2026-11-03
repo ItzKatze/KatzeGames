@@ -21,12 +21,12 @@ public class ForceBattlePlayerObjectiveBossbar implements BossbarContent {
     }
 
     @Override
-    @Nullable public BossBar getBossbar(@NotNull KatzePlayer katzePlayer) {
+    @Nullable public BossBar updateBossbar(@NotNull KatzePlayer katzePlayer, @Nullable BossBar current) {
         ForceBattlePlayer player = (ForceBattlePlayer) katzePlayer;
         ForceBattleObjective objective = player.getObjective();
         if (objective == null) return null;
 
-        return BossBar.bossBar(
+        return BossbarContent.update(current,
                 getTitle(player),
                 1,
                 BossBar.Color.BLUE,

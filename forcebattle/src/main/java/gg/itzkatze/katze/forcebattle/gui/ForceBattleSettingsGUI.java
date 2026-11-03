@@ -92,7 +92,8 @@ public class ForceBattleSettingsGUI extends KatzeGUI {
             List<Component> loreLines = new ArrayList<>();
             loreLines.add(Component.translatable("katze.forcebattle.gui.button." + name().toLowerCase(Locale.ROOT) + ".hint").color(KatzeColor.LIGHT_GRAY));
             loreLines.add(Component.empty());
-            loreLines.add(Component.translatable("katze.forcebattle.gui.current_status", getSettingState().getDisplayName()));
+            loreLines.add(Component.translatable("katze.forcebattle.gui.current_status",
+                    TextArg.component("state", getSettingState().getDisplayName())));
 
             return ItemStackCreator.getStack(
                     Component.translatable("katze.forcebattle.gui.button." + name().toLowerCase(Locale.ROOT)).color(KatzeColor.BLUE),
@@ -159,7 +160,7 @@ public class ForceBattleSettingsGUI extends KatzeGUI {
 
             KatzeGames.broadcast(Component.translatable(
                     "katze.forcebattle.gui.setting_changed",
-                    Component.translatable("katze.forcebattle.gui.button." + name().toLowerCase(Locale.ROOT)).color(KatzeColor.BLUE),
+                    TextArg.component("name", Component.translatable("katze.forcebattle.gui.button." + name().toLowerCase(Locale.ROOT)).color(KatzeColor.BLUE)),
                     TextArg.component("state", getSettingState().getDisplayName())
             ));
 

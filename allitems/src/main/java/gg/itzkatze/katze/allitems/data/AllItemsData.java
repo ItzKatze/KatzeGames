@@ -8,7 +8,9 @@ import gg.itzkatze.katze.allitems.AllItemsSettings;
 import gg.itzkatze.katze.data.BiomeSimplified;
 import gg.itzkatze.katze.data.KatzeAdvancement;
 import gg.itzkatze.katze.data.StructureSimplified;
+import gg.itzkatze.katze.data.ObtainableObjectives;
 import gg.itzkatze.katze.game.SessionPersistence;
+import gg.itzkatze.katze.challenges.ChallengeType;
 import gg.itzkatze.katze.util.StringUtility;
 import gg.itzkatze.katze.util.WorldStorage;
 import net.kyori.adventure.text.Component;
@@ -71,6 +73,7 @@ public class AllItemsData {
     }
 
     public boolean recordItemFound(@NotNull Player player, @NotNull Material material) {
+        if (!ObtainableObjectives.isItem(material)) return false;
         FoundEntry entry = buildEntry(player);
 
         if (AllItemsSettings.isTeamMode()) {
@@ -85,7 +88,7 @@ public class AllItemsData {
         playerFoundItems.computeIfAbsent(player.getUniqueId(), k -> ConcurrentHashMap.newKeySet()).add(material);
         addRecentFind(AllItemsObjectiveType.ITEM, material.name(), formatMaterialName(material), entry);
         advanceChainIfNeeded(player, AllItemsObjectiveType.ITEM, material.name());
-        SessionPersistence.requestSave();
+        SessionPersistence.requestSave(ChallengeType.ALL_ITEMS);
         return true;
     }
 
@@ -104,11 +107,12 @@ public class AllItemsData {
         playerFoundBiomes.computeIfAbsent(player.getUniqueId(), k -> ConcurrentHashMap.newKeySet()).add(biome);
         addRecentFind(AllItemsObjectiveType.BIOME, biome.name(), biome.getName(), entry);
         advanceChainIfNeeded(player, AllItemsObjectiveType.BIOME, biome.name());
-        SessionPersistence.requestSave();
+        SessionPersistence.requestSave(ChallengeType.ALL_ITEMS);
         return true;
     }
 
     public boolean recordMobFound(@NotNull Player player, @NotNull EntityType type) {
+        if (!ObtainableObjectives.isMob(type)) return false;
         FoundEntry entry = buildEntry(player);
 
         if (AllItemsSettings.isTeamMode()) {
@@ -123,7 +127,7 @@ public class AllItemsData {
         playerFoundMobs.computeIfAbsent(player.getUniqueId(), k -> ConcurrentHashMap.newKeySet()).add(type);
         addRecentFind(AllItemsObjectiveType.MOB, type.name(), formatMaterialName(type.name()), entry);
         advanceChainIfNeeded(player, AllItemsObjectiveType.MOB, type.name());
-        SessionPersistence.requestSave();
+        SessionPersistence.requestSave(ChallengeType.ALL_ITEMS);
         return true;
     }
 
@@ -142,7 +146,7 @@ public class AllItemsData {
         playerFoundStructures.computeIfAbsent(player.getUniqueId(), k -> ConcurrentHashMap.newKeySet()).add(structure);
         addRecentFind(AllItemsObjectiveType.STRUCTURE, structure.name(), structure.getName(), entry);
         advanceChainIfNeeded(player, AllItemsObjectiveType.STRUCTURE, structure.name());
-        SessionPersistence.requestSave();
+        SessionPersistence.requestSave(ChallengeType.ALL_ITEMS);
         return true;
     }
 
@@ -161,7 +165,7 @@ public class AllItemsData {
         playerFoundAdvancements.computeIfAbsent(player.getUniqueId(), k -> ConcurrentHashMap.newKeySet()).add(advancement);
         addRecentFind(AllItemsObjectiveType.ADVANCEMENT, advancement.name(), advancement.getName(), entry);
         advanceChainIfNeeded(player, AllItemsObjectiveType.ADVANCEMENT, advancement.name());
-        SessionPersistence.requestSave();
+        SessionPersistence.requestSave(ChallengeType.ALL_ITEMS);
         return true;
     }
 
@@ -257,8 +261,7 @@ public class AllItemsData {
 
     public int getTotalAvailableItems() {
         return (int) Arrays.stream(Material.values())
-                .filter(Material::isItem)
-                .filter(material -> !material.name().contains("LEGACY"))
+                .filter(ObtainableObjectives::isItem)
                 .count();
     }
 
@@ -308,8 +311,7 @@ public class AllItemsData {
     public List<Material> getMissingItems(@NotNull UUID playerUUID) {
         Set<Material> found = getItemsFoundByPlayer(playerUUID);
         return Arrays.stream(Material.values())
-                .filter(Material::isItem)
-                .filter(material -> !material.name().contains("LEGACY"))
+                .filter(ObtainableObjectives::isItem)
                 .filter(material -> !found.contains(material))
                 .sorted(Comparator.comparing(Enum::name))
                 .toList();
@@ -473,6 +475,10 @@ public class AllItemsData {
         } catch (RuntimeException e) {
             KatzeGames.get().getLogger().warning("Failed to restore All Items data: " + e.getMessage());
         }
+        teamFoundItems.keySet().removeIf(material -> !ObtainableObjectives.isItem(material));
+        teamFoundMobs.keySet().removeIf(type -> !ObtainableObjectives.isMob(type));
+        playerFoundItems.values().forEach(items -> items.removeIf(material -> !ObtainableObjectives.isItem(material)));
+        playerFoundMobs.values().forEach(mobs -> mobs.removeIf(type -> !ObtainableObjectives.isMob(type)));
     }
 
     public void clearAllProgress() {
@@ -509,19 +515,41 @@ public class AllItemsData {
         if (state == null) {
             return;
         }
-        if (state.getCurrent() != null && state.getCurrent().matches(type, key)) {
+        advancePastFound(state, player.getUniqueId());
+    }
+
+    private void advancePastFound(ChainState state, UUID player) {
+        while (state.getCurrent() != null && isCompletedOrUnavailable(state.getCurrent(), player)) {
             state.advance();
         }
     }
 
+    private boolean isCompletedOrUnavailable(AllItemsObjective objective, UUID player) {
+        try {
+            return switch (objective.type()) {
+            case ITEM -> !ObtainableObjectives.isItem(Material.valueOf(objective.key())) || hasPlayerFoundItem(player, Material.valueOf(objective.key()));
+            case BIOME -> hasPlayerFoundBiome(player, BiomeSimplified.valueOf(objective.key()));
+            case MOB -> !ObtainableObjectives.isMob(EntityType.valueOf(objective.key())) || hasPlayerFoundMob(player, EntityType.valueOf(objective.key()));
+            case STRUCTURE -> hasPlayerFoundStructure(player, StructureSimplified.valueOf(objective.key()));
+            case ADVANCEMENT -> hasPlayerFoundAdvancement(player, KatzeAdvancement.valueOf(objective.key()));
+            };
+        } catch (IllegalArgumentException e) {
+            return true;
+        }
+    }
+
     private @Nullable ChainState getChainState(Player player) {
+        ChainState state;
         if (AllItemsSettings.isTeamMode()) {
             if (teamChain == null || teamChain.isExhausted()) {
                 teamChain = buildChain(null);
             }
-            return teamChain;
+            state = teamChain;
+        } else {
+            state = playerChains.computeIfAbsent(player.getUniqueId(), this::buildChain);
         }
-        return playerChains.computeIfAbsent(player.getUniqueId(), this::buildChain);
+        advancePastFound(state, player.getUniqueId());
+        return state;
     }
 
     private ChainState buildChain(@Nullable UUID playerUUID) {
@@ -567,9 +595,7 @@ public class AllItemsData {
 
     private List<EntityType> getAvailableMobs() {
         return Arrays.stream(EntityType.values())
-                .filter(EntityType::isAlive)
-                .filter(EntityType::isSpawnable)
-                .filter(type -> type != EntityType.PLAYER)
+                .filter(ObtainableObjectives::isMob)
                 .sorted(Comparator.comparing(Enum::name))
                 .toList();
     }
