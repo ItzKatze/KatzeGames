@@ -3,6 +3,7 @@ package gg.itzkatze.katze.util;
 import gg.itzkatze.katze.KatzeGames;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.NamespacedKey;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +18,7 @@ public final class WorldStorage {
     }
 
     public static Path getFilePath(String fileName) {
-        World mainWorld = Bukkit.getWorlds().isEmpty() ? null : Bukkit.getWorlds().getFirst();
+        World mainWorld = Bukkit.getWorld(NamespacedKey.minecraft("overworld"));
         File baseDir = (mainWorld != null) ? mainWorld.getWorldFolder() : KatzeGames.get().getDataDirectory();
         File dataDir = new File(baseDir, DATA_DIR_NAME);
         if (!dataDir.exists()) {

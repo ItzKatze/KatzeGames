@@ -8,6 +8,7 @@ import gg.itzkatze.katze.lobby.LobbyManager;
 import gg.itzkatze.katze.player.KatzePlayer;
 import gg.itzkatze.katze.spectator.SpectatorManager;
 import gg.itzkatze.katze.util.KatzeColor;
+import gg.itzkatze.katze.util.StructureScanner;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
@@ -23,8 +24,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.world.WorldSaveEvent;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 public class GameLifecycleManager implements Listener {
 
@@ -82,7 +81,7 @@ public class GameLifecycleManager implements Listener {
         LobbyManager.destroyLobby();
         prepareWorlds();
 
-        World world = Bukkit.getWorld("world");
+        World world = GameWorldManager.getWorld();
         for (KatzePlayer player : KatzePlayer.getOnlinePlayers()) {
             if (player.getPlayer() == null) continue;
 
@@ -99,6 +98,7 @@ public class GameLifecycleManager implements Listener {
 
             if (world != null) {
                 player.getPlayer().teleport(world.getSpawnLocation());
+                player.getPlayer().setRespawnLocation(world.getSpawnLocation(), true);
             }
 
             player.getPlayer().playSound(player.getPlayer(), Sound.EVENT_RAID_HORN, SoundCategory.MASTER, 100, 1);
@@ -107,9 +107,7 @@ public class GameLifecycleManager implements Listener {
     }
 
     private static void prepareWorlds() {
-        for (String worldName : List.of("world", "world_nether", "world_the_end")) {
-            World world = Bukkit.getWorld(worldName);
-            if (world == null) continue;
+        for (World world : GameWorldManager.getWorlds()) {
 
             if (world.getEnvironment() == World.Environment.NORMAL) {
                 world.setTime(0);
@@ -123,6 +121,12 @@ public class GameLifecycleManager implements Listener {
     }
 
     public static void resetGame() {
+        resetGame(() -> KatzeGames.broadcast(Component.translatable("katze.game.reset.success").color(KatzeColor.LIME)),
+                () -> KatzeGames.broadcast(Component.translatable("katze.game.reset.failed").color(KatzeColor.RED)));
+    }
+
+    public static void resetGame(Runnable onSuccess, Runnable onFailure) {
+        if (GameWorldManager.isResetting()) return;
         StartCountdown.cancel();
         KatzeGames.get().releasePause();
         KatzeGames.getTimer().stop();
@@ -131,10 +135,15 @@ public class GameLifecycleManager implements Listener {
         ChallengeManager.resetGameState();
         SessionPersistence.delete();
         KatzePlayer.removeOfflinePlayers();
+        StructureScanner.clear();
 
         for (KatzePlayer player : KatzePlayer.getOnlinePlayers()) {
             sendToLobby(player);
+            if (player.getPlayer() != null) {
+                player.getPlayer().setRespawnLocation(LobbyManager.getSpawn(), true);
+            }
         }
         SpectatorManager.onReset();
+        GameWorldManager.reset(onSuccess, onFailure);
     }
 }

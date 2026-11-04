@@ -1,6 +1,7 @@
 package gg.itzkatze.katze.forcebattle;
 
 import gg.itzkatze.katze.configuration.GlobalSetting;
+import gg.itzkatze.katze.game.GameWorldManager;
 import gg.itzkatze.katze.configuration.SettingsManager;
 import gg.itzkatze.katze.configuration.states.PlayerTeamBothState;
 import gg.itzkatze.katze.configuration.states.SettingStateType;
@@ -16,7 +17,6 @@ import gg.itzkatze.katze.player.KatzePlayer;
 import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
 import lombok.Getter;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
@@ -192,7 +192,7 @@ public class ForceBattleObjectiveManager {
 
     public Location getRandomLocation(KatzePlayer katzePlayer) {
         org.bukkit.entity.Player player = katzePlayer.getPlayer();
-        if (player == null) return new Location(Bukkit.getWorld("world"), 0, 0, 0);
+        if (player == null) return new Location(GameWorldManager.getWorld(), 0, 0, 0);
 
         int maxDistance = 2000;
 

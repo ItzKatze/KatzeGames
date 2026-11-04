@@ -37,6 +37,7 @@ commands:
     info:
         aliases: [ information ]
     lobbypos:
+    map:
     setspawn:
     casefireworks:
     spectate:

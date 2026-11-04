@@ -2,6 +2,7 @@ package gg.itzkatze.katze.spectator;
 
 import gg.itzkatze.katze.KatzeGames;
 import gg.itzkatze.katze.challenges.ChallengeManager;
+import gg.itzkatze.katze.game.GameWorldManager;
 import gg.itzkatze.katze.gui.KatzeGUI;
 import gg.itzkatze.katze.player.KatzePlayer;
 import gg.itzkatze.katze.util.KatzeColor;
@@ -37,7 +38,7 @@ public class SpectatorListener implements Listener {
             SpectatorManager.markLateJoin(player.getUniqueId());
             KatzePlayer.adapt(player);
             player.getInventory().clear();
-            World world = Bukkit.getWorld("world");
+            World world = GameWorldManager.getWorld();
             if (world != null) {
                 player.teleport(world.getSpawnLocation());
             }

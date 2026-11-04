@@ -1,6 +1,7 @@
 package gg.itzkatze.katze.lobby;
 
 import gg.itzkatze.katze.KatzeGames;
+import gg.itzkatze.katze.game.GameWorldManager;
 import gg.itzkatze.katze.player.KatzePlayer;
 import gg.itzkatze.katze.util.StructureUtil;
 import gg.itzkatze.katze.util.WorldStorage;
@@ -50,7 +51,6 @@ public class LobbyManager implements Listener {
 
     private static final Logger logger = LoggerFactory.getLogger("KatzeGames/" + LobbyManager.class.getSimpleName());
     private static final String ISLAND_PACKAGE = "gg.itzkatze.katze.lobby.islands";
-    private static final String WORLD_NAME = "world";
     private static final String RECORD_FILE = "lobby.json";
     private static final int BASE_Y = 190;
 
@@ -86,11 +86,11 @@ public class LobbyManager implements Listener {
 
     public static void createLobbyIfNeeded() {
         if (activeLobby != null) return;
-        World world = Bukkit.getWorld(WORLD_NAME);
-        if (world == null) return;
+        World world = GameWorldManager.getLimbo();
 
         LobbyRecord record = WorldStorage.load(RECORD_FILE, LobbyRecord.class);
         if (record != null) {
+            if (!world.getName().equals(record.world)) clear(record);
             LobbyIsland recorded = findIsland(record.island);
             if (recorded != null && tryCreate(recorded, world)) return;
             clear(record);
@@ -124,7 +124,7 @@ public class LobbyManager implements Listener {
         }
         WorldStorage.delete(RECORD_FILE);
 
-        World world = Bukkit.getWorld(WORLD_NAME);
+        World world = lobby == null ? null : lobby.getWorld();
         if (world != null) {
             world.setGameRule(GameRules.RANDOM_TICK_SPEED, 20);
             world.setGameRule(GameRules.ADVANCE_TIME, true);
@@ -144,7 +144,7 @@ public class LobbyManager implements Listener {
 
     public static boolean switchIsland(@NotNull LobbyIsland island) {
         Lobby previous = activeLobby;
-        World world = Bukkit.getWorld(WORLD_NAME);
+        World world = previous == null ? null : previous.getWorld();
         if (previous == null || world == null) return false;
         if (previous.getIsland().getId().equals(island.getId())) return true;
 
@@ -216,6 +216,7 @@ public class LobbyManager implements Listener {
         world.setGameRule(GameRules.RANDOM_TICK_SPEED, 0);
         world.setGameRule(GameRules.ADVANCE_TIME, false);
         world.setGameRule(GameRules.ADVANCE_WEATHER, false);
+        world.setSpawnLocation(lobby.getSpawn());
 
         WorldStorage.save(RECORD_FILE, LobbyRecord.of(lobby, world));
         activeLobby = lobby;
@@ -287,6 +288,10 @@ public class LobbyManager implements Listener {
                 && lobby.getBounds().contains(block.getX() + 0.5, block.getY() + 0.5, block.getZ() + 0.5);
     }
 
+    private static boolean isLobbyWorld(@NotNull World world) {
+        return activeLobby != null && world.equals(activeLobby.getWorld());
+    }
+
     @EventHandler
     public void onBlockPhysics(BlockPhysicsEvent event) {
         if (isInLobby(event.getBlock())) {
@@ -311,35 +316,36 @@ public class LobbyManager implements Listener {
         if (player.getGameMode() != GameMode.ADVENTURE && player.getGameMode() != GameMode.SURVIVAL) return;
 
         Location to = event.getTo();
-        if (to.getWorld() != null && to.getWorld().equals(lobby.getWorld()) && isFallingOut(lobby.getBounds(), to.getX(), to.getY(), to.getZ())) {
+        if (to.getWorld() != null && to.getWorld().equals(lobby.getWorld()) && (to.getY() <= lobby.getBounds().getMinY()
+                || isFallingOut(lobby.getBounds(), to.getX(), to.getY(), to.getZ()))) {
             player.teleport(lobby.getSpawn());
         }
     }
 
     @EventHandler
     public void onPlayerDamage(EntityDamageEvent event) {
-        if (activeLobby != null && event.getEntity().getType() == EntityType.PLAYER) {
+        if (isLobbyWorld(event.getEntity().getWorld()) && event.getEntity().getType() == EntityType.PLAYER) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onHungerChange(FoodLevelChangeEvent event) {
-        if (activeLobby != null) {
+        if (isLobbyWorld(event.getEntity().getWorld())) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onDropItem(PlayerDropItemEvent event) {
-        if (activeLobby != null) {
+        if (isLobbyWorld(event.getPlayer().getWorld())) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onEntityAtInteract(PlayerInteractAtEntityEvent event) {
-        if (activeLobby != null) {
+        if (isLobbyWorld(event.getPlayer().getWorld())) {
             event.setCancelled(true);
         }
     }

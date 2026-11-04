@@ -1,6 +1,7 @@
 package gg.itzkatze.katze.forcebattle;
 
 import gg.itzkatze.katze.achievements.AchievementService;
+import gg.itzkatze.katze.game.GameWorldManager;
 
 import gg.itzkatze.katze.KatzeGames;
 import gg.itzkatze.katze.configuration.GlobalSetting;
@@ -143,7 +144,7 @@ public class ForceBattleGameListener implements Listener {
                 team.setObjective(null);
             }
             player.setCurrentObjective(null, false, false);
-            player.getPlayer().teleport(Bukkit.getWorld("world").getSpawnLocation());
+            player.getPlayer().teleport(GameWorldManager.getWorld().getSpawnLocation());
             player.getPlayer().setHealth(20);
             player.getPlayer().setSaturation(20);
         }

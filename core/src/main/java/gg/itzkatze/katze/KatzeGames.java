@@ -11,6 +11,9 @@ import gg.itzkatze.katze.commands.framework.KatzeCommand;
 import gg.itzkatze.katze.commands.framework.CommandHandler;
 import gg.itzkatze.katze.commands.framework.CommandVisibilityListener;
 import gg.itzkatze.katze.game.GameLifecycleManager;
+import gg.itzkatze.katze.game.GameWorldManager;
+import gg.itzkatze.katze.game.GameWorldListener;
+import gg.itzkatze.katze.game.LimboBiomes;
 import gg.itzkatze.katze.game.GlobalGameplayListener;
 import gg.itzkatze.katze.game.KatzeTimer;
 import gg.itzkatze.katze.game.PauseManager;
@@ -127,7 +130,11 @@ public final class KatzeGames extends JavaPlugin {
         getServer().getPluginManager().registerEvents(afk, this);
         new PlaytimeXp(afk).start();
 
+        GameWorldManager.loadSavedWorlds();
         SessionPersistence.restore();
+        GameWorldManager.initialize();
+        getServer().getPluginManager().registerEvents(new GameWorldListener(), this);
+        getServer().getPluginManager().registerEvents(new LimboBiomes(), this);
         achievementSampler.start();
 
         logger.info("Successfully initialized KatzeGames.");

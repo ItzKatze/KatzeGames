@@ -39,7 +39,8 @@ Access global plugin settings anytime in-game using `/settings`:
 | Command           | Description                                                    |
 |:------------------|:---------------------------------------------------------------|
 | `/start`          | Starts the selected challenge after a 5 second countdown       |
-| `/reset [player]` | Resets the game or a specific player                           |
+| `/reset`          | Sends players to limbo and replaces the game map with a new seed |
+| `/map [overworld\|nether\|end\|limbo]` | Operators: visit the next map in creative mode or return to limbo |
 | `/timer`          | Controls the global timer (start, pause, resume, set duration) |
 | `/settings`       | Opens the global settings GUI                                  |
 | `/team`           | Create, join, or leave teams                                   |
@@ -49,6 +50,14 @@ Access global plugin settings anytime in-game using `/settings`:
 | `/level [player]` | Shows a player's level and XP (ops: `/level add <player> <n>`) |
 
 ---
+
+## Limbo and map resets
+
+`/reset` moves everyone to a void world containing the lobby island and all its features. Players stay there until `/start`. The game overworld, Nether and End are unloaded, deleted and recreated with a new random seed. `/reset` also works when no challenge is enabled; `/start` waits until generation finishes. If a reset fails, players stay in limbo and an operator can retry `/reset`. An interrupted reset resumes on server startup.
+
+Game dimensions use the keys `katzegames:game`, `katzegames:game_nether` and `katzegames:game_the_end`; limbo uses `katzegames:limbo`. Their files live under the primary world's `dimensions/katzegames` directory. Reset state lives in `plugins/KatzeGames/data/game-worlds.json`. Existing running sessions continue on their original map until the first reset. Paper cannot unload the primary overworld, so that original server world is retained; subsequent games use the replaceable dimensions. Player levels and cosmetics survive resets.
+
+Operators can use `/map` (or `/map overworld`, `/map nether`, `/map end`) to inspect and edit the generated map in creative mode while everyone else stays in limbo. `/map limbo` returns to the lobby and its normal inventory and adventure mode. Map visits are available once generation finishes and before the start countdown. Staff can use Chunky in the visited world to pre-generate terrain, or `/reset` to discard a bad map and roll another seed. `/start` brings everyone, including visiting staff, into the game with the normal game mode and an empty inventory.
 
 ## ⭐ Levels
 

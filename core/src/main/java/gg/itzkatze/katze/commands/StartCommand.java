@@ -6,6 +6,7 @@ import gg.itzkatze.katze.commands.framework.CallerType;
 import gg.itzkatze.katze.commands.framework.CommandCaller;
 import gg.itzkatze.katze.commands.framework.KatzeCommand;
 import gg.itzkatze.katze.game.GameLifecycleManager;
+import gg.itzkatze.katze.game.GameWorldManager;
 import gg.itzkatze.katze.game.GameTimer;
 import gg.itzkatze.katze.game.SessionPersistence;
 import gg.itzkatze.katze.game.StartCountdown;
@@ -46,6 +47,10 @@ public class StartCommand extends KatzeCommand {
     }
 
     private static boolean canStart(@NotNull CommandCaller caller) {
+        if (!GameWorldManager.isReady()) {
+            caller.sendMessage(Component.translatable("katze.game.reset.not_ready").color(KatzeColor.RED));
+            return false;
+        }
         if (ChallengeManager.getActiveChallenges().isEmpty()) {
             caller.sendMessage(Component.translatable("katze.game.start.no_challenge").color(KatzeColor.RED));
             return false;

@@ -99,7 +99,7 @@ public final class SessionPersistence {
             pendingSave.cancel();
             pendingSave = null;
         }
-        if (!restoreDone) {
+        if (!restoreDone || GameWorldManager.isResetting()) {
             return;
         }
 
