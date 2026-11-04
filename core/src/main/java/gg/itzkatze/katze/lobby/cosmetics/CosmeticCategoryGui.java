@@ -159,7 +159,14 @@ public final class CosmeticCategoryGui extends KatzeGUI {
 
         List<Component> lore = new ArrayList<>();
         if (entry.random()) {
-            lore.add(Component.translatable("katze.cosmetics.random_hint").color(KatzeColor.LIGHT_GRAY));
+            String hint = category == CosmeticCategory.MUSIC
+                    ? store.isRandomPerJump(id, category) ? "random_music_sequence" : "random_music_per_run"
+                    : store.isRandomPerJump(id, category) ? "random_hint_per_jump" : "random_hint";
+            lore.add(Component.translatable("katze.cosmetics." + hint).color(KatzeColor.LIGHT_GRAY));
+            if (equipped) {
+                lore.add(Component.translatable(category == CosmeticCategory.MUSIC
+                        ? "katze.cosmetics.random_music_toggle_hint" : "katze.cosmetics.random_toggle_hint").color(KatzeColor.YELLOW));
+            }
         }
         if (cosmetic != null) {
             lore.add(Component.translatable("katze.cosmetics.rarity_label", gg.itzkatze.katze.text.TextArg.component("rarity", cosmetic.rarity().displayNameComponent())).color(cosmetic.rarity().color()));
@@ -206,11 +213,9 @@ public final class CosmeticCategoryGui extends KatzeGUI {
         UUID id = player.getUniqueId();
         Cosmetic cosmetic = entry.cosmetic();
         if (entry.random()) {
-            if (!store.isRandom(id, category)) {
-                store.equipRandom(player, category);
-                CosmeticGuiItems.play(clicker, ShopSounds.CLICK);
-                redraw(clicker);
-            }
+            store.equipRandom(player, category);
+            CosmeticGuiItems.play(clicker, ShopSounds.CLICK);
+            redraw(clicker);
         } else if (cosmetic == null) {
             if (store.isRandom(id, category) || store.equipped(id, category).isPresent()) {
                 store.unequip(player, category);

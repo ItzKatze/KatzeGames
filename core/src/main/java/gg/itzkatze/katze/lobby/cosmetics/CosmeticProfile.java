@@ -31,6 +31,7 @@ public final class CosmeticProfile {
     private List<String> owned = new ArrayList<>();
     private List<String> equipped = new ArrayList<>();
     private Set<CosmeticCategory> randomCategories = EnumSet.noneOf(CosmeticCategory.class);
+    private Set<CosmeticCategory> randomPerJumpCategories = EnumSet.noneOf(CosmeticCategory.class);
 
     public CosmeticProfile() {
     }
@@ -119,6 +120,7 @@ public final class CosmeticProfile {
 
     void unequip(@NotNull CosmeticCategory category, @NotNull CosmeticCatalog catalog) {
         randomCategories.remove(category);
+        randomPerJumpCategories.remove(category);
         equipped.removeIf(id -> catalog.find(id).map(Cosmetic::category).orElse(null) == category);
     }
 
@@ -127,8 +129,14 @@ public final class CosmeticProfile {
     }
 
     void equipRandom(@NotNull CosmeticCategory category, @NotNull CosmeticCatalog catalog) {
+        boolean perJump = isRandom(category) && !isRandomPerJump(category);
         unequip(category, catalog);
         randomCategories.add(category);
+        if (perJump) randomPerJumpCategories.add(category);
+    }
+
+    boolean isRandomPerJump(@NotNull CosmeticCategory category) {
+        return randomPerJumpCategories.contains(category);
     }
 
     @NotNull Optional<Cosmetic> equipped(@NotNull CosmeticCategory category, @NotNull CosmeticCatalog catalog) {
@@ -142,6 +150,8 @@ public final class CosmeticProfile {
     void normalize(@NotNull CosmeticCatalog catalog) {
         randomCategories = randomCategories == null ? EnumSet.noneOf(CosmeticCategory.class)
                 : randomCategories.stream().filter(Objects::nonNull).collect(Collectors.toCollection(() -> EnumSet.noneOf(CosmeticCategory.class)));
+        randomPerJumpCategories = randomPerJumpCategories == null ? EnumSet.noneOf(CosmeticCategory.class)
+                : randomPerJumpCategories.stream().filter(randomCategories::contains).collect(Collectors.toCollection(() -> EnumSet.noneOf(CosmeticCategory.class)));
         points = Math.max(points, 0);
         earned = Math.max(earned, 0);
         best = Math.max(best, 0);

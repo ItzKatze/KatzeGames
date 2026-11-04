@@ -1,6 +1,7 @@
 package gg.itzkatze.katze.client;
 
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
@@ -11,15 +12,18 @@ public final class KatzeGamesClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         PayloadTypeRegistry.clientboundPlay().register(MusicPayload.TYPE, MusicPayload.CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(MusicPayload.TYPE, MusicPayload.CODEC);
         ClientPlayNetworking.registerGlobalReceiver(MusicPayload.TYPE, (payload, context) -> context.client().execute(() -> handle(payload)));
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> client.execute(RunMusicPlayer::stop));
+        ClientTickEvents.END_CLIENT_TICK.register(client -> RunMusicPlayer.tick());
     }
 
     private static void handle(MusicPayload payload) {
         switch (payload) {
-            case MusicPayload.Play(Identifier sound, boolean file) -> RunMusicPlayer.play(sound, file);
+            case MusicPayload.Play(Identifier sound, boolean file, boolean loop) -> RunMusicPlayer.play(sound, file, loop);
             case MusicPayload.Fade(int ticks) -> RunMusicPlayer.fade(ticks);
             case MusicPayload.Stop() -> RunMusicPlayer.stop();
+            case MusicPayload.Finished() -> {}
         }
     }
 }

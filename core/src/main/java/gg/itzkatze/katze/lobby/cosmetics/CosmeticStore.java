@@ -118,6 +118,11 @@ public final class CosmeticStore {
         data.markDirty();
     }
 
+    public boolean isRandomPerJump(@NotNull UUID player, @NotNull CosmeticCategory category) {
+        CosmeticProfile profile = cosmetics(player);
+        return profile != null && profile.isRandomPerJump(category);
+    }
+
     public @NotNull Optional<Cosmetic> selectForRun(@NotNull UUID player, @NotNull CosmeticCategory category) {
         return selectForRun(player, category, cosmetic -> true);
     }

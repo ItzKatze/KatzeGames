@@ -227,9 +227,10 @@ public class JumpAndRun implements LobbyFeature, Listener {
 
     private void land(@NotNull Arena arena, @NotNull JumpRun run) {
         HopDifficulty landed = run.getNextDifficulty();
-        Cell previous = run.getCurrent();
+        removeBlock(arena, run.getCurrent(), run.getCurrentBlock());
         boolean onEvent = run.land();
         CosmeticStore store = CosmeticStore.get();
+        run.refreshCosmetics();
         Random random = ThreadLocalRandom.current();
         int points = runMultiplier.awardLanding(
                 run.getPlayer(),
@@ -243,7 +244,6 @@ public class JumpAndRun implements LobbyFeature, Listener {
         } else {
             run.getPlayer().playSound(run.getLandingSound());
         }
-        removeBlock(arena, previous, run.getLook().block());
 
         Cell standing = run.getCurrent();
         HopSteering.visit(run.getVisited(), standing, arena.playArea());
@@ -264,7 +264,7 @@ public class JumpAndRun implements LobbyFeature, Listener {
 
     private void payEvent(@NotNull Arena arena, @NotNull JumpRun run, @NotNull CosmeticStore store, @NotNull Random random) {
         int payout = EventBlock.payout(random);
-        place(arena, run.getCurrent(), run.getLook().block());
+        place(arena, run.getCurrent(), run.getCurrentBlock());
         EventBlock.animatePayout(plugin, run.getPlayer(), () -> {
             int applied = store.addEventPoints(run.getPlayer(), payout);
             run.recordEvent(applied);
@@ -276,7 +276,7 @@ public class JumpAndRun implements LobbyFeature, Listener {
         runs.remove(run.getId());
         AchievementService.get().jumpEnded(run.getId());
         reservations.release(run.getId());
-        removeBlock(arena, run.getCurrent(), run.getLook().block());
+        removeBlock(arena, run.getCurrent(), run.getCurrentBlock());
         if (run.getNext() != null) {
             removeBlock(arena, run.getNext(), run.isNextEvent() ? EventBlock.MATERIAL : run.getLook().block());
         }

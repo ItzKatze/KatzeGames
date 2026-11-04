@@ -62,8 +62,8 @@ public final class MusicManager {
                 .map(MusicCosmetic.class::cast)
                 .ifPresent(music -> {
                     if (mod) {
-                        MusicChannel.play(plugin, player, music);
                         modPlaybacks.add(id);
+                        playMod(player, music, CosmeticStore.get().isRandomPerJump(id, CosmeticCategory.MUSIC));
                         return;
                     }
                     Playback playback = new Playback(id, music, spawnEmitter(player));
@@ -71,6 +71,20 @@ public final class MusicManager {
                     playbacks.put(id, playback);
                     playback.play(player);
                 });
+    }
+
+    private MusicCosmetic nextMusic(Player player, MusicCosmetic previous, boolean mod) {
+        return CosmeticStore.get().selectForRun(player.getUniqueId(), CosmeticCategory.MUSIC,
+                        cosmetic -> cosmetic != previous && (mod || !((MusicCosmetic) cosmetic).isSong()))
+                .map(MusicCosmetic.class::cast).orElse(previous);
+    }
+
+    private void playMod(Player player, MusicCosmetic music, boolean sequence) {
+        MusicChannel.play(plugin, player, music, sequence ? () -> {
+            if (player.isOnline() && modPlaybacks.contains(player.getUniqueId())) {
+                playMod(player, nextMusic(player, music, true), true);
+            }
+        } : null);
     }
 
     public void fadeOut(Player player) {
@@ -103,6 +117,7 @@ public final class MusicManager {
                 stop(online);
             } else {
                 end(id);
+                MusicChannel.clearCompletion(id);
                 modPlaybacks.remove(id);
             }
         }
@@ -142,9 +157,9 @@ public final class MusicManager {
     private final class Playback extends BukkitRunnable {
 
         private final UUID id;
-        private final MusicCosmetic music;
+        private MusicCosmetic music;
         private final ItemDisplay emitter;
-        private final long length;
+        private final boolean sequence;
         private long ticks;
         private boolean fading;
         private int fadeTicks;
@@ -155,7 +170,7 @@ public final class MusicManager {
             this.id = id;
             this.music = music;
             this.emitter = emitter;
-            this.length = music.durationSeconds() * 20L;
+            this.sequence = CosmeticStore.get().isRandomPerJump(id, CosmeticCategory.MUSIC);
         }
 
         private void play(Player player) {
@@ -182,8 +197,9 @@ public final class MusicManager {
             }
 
             follow(online, OUT_OF_EARSHOT);
-            if (++ticks >= length) {
+            if (++ticks >= music.durationSeconds() * 20L) {
                 ticks = 0;
+                if (sequence) music = nextMusic(online, music, false);
                 play(online);
                 return;
             }

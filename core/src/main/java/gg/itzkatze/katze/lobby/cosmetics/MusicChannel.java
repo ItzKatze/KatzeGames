@@ -7,11 +7,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 // The client mod decodes these messages with FriendlyByteBuf, so any change to their format needs a new channel name.
 public final class MusicChannel {
 
-    public static final String NAME = "katzegames:music";
+    public static final String NAME = "katzegames:music_v2";
+    private static final Map<UUID, Runnable> completions = new HashMap<>();
 
     private static final int PLAY = 0;
     private static final int FADE = 1;
@@ -24,6 +28,11 @@ public final class MusicChannel {
 
     public static void register(@NotNull Plugin plugin) {
         plugin.getServer().getMessenger().registerOutgoingPluginChannel(plugin, NAME);
+        plugin.getServer().getMessenger().registerIncomingPluginChannel(plugin, NAME, (channel, player, message) -> {
+            if (message.length != 1 || message[0] != 3) return;
+            Runnable completion = completions.remove(player.getUniqueId());
+            if (completion != null) completion.run();
+        });
     }
 
     public static boolean isListening(@Nullable Player player) {
@@ -31,6 +40,12 @@ public final class MusicChannel {
     }
 
     public static void play(@NotNull Plugin plugin, @NotNull Player player, @NotNull MusicCosmetic music) {
+        play(plugin, player, music, null);
+    }
+
+    public static void play(@NotNull Plugin plugin, @NotNull Player player, @NotNull MusicCosmetic music, @Nullable Runnable completion) {
+        clearCompletion(player.getUniqueId());
+        if (completion != null) completions.put(player.getUniqueId(), completion);
         ByteArrayOutputStream message = message(PLAY);
         if (music.isSong()) {
             writeString(message, "minecraft:" + music.file());
@@ -39,17 +54,24 @@ public final class MusicChannel {
             writeString(message, music.sound().name().asString());
             message.write(SOUND_EVENT);
         }
+        message.write(completion == null ? 1 : 0);
         send(plugin, player, message);
     }
 
     public static void fade(@NotNull Plugin plugin, @NotNull Player player, int ticks) {
+        clearCompletion(player.getUniqueId());
         ByteArrayOutputStream message = message(FADE);
         writeVarInt(message, ticks);
         send(plugin, player, message);
     }
 
     public static void stop(@NotNull Plugin plugin, @NotNull Player player) {
+        clearCompletion(player.getUniqueId());
         send(plugin, player, message(STOP));
+    }
+
+    public static void clearCompletion(@NotNull UUID player) {
+        completions.remove(player);
     }
 
     private static @NotNull ByteArrayOutputStream message(int kind) {

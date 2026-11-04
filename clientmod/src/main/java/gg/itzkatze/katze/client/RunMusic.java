@@ -16,10 +16,10 @@ final class RunMusic extends AbstractTickableSoundInstance {
     private int fadeElapsed;
 
     // Relative to the listener at 0,0,0 without attenuation, the music plays at the listener, as the game's own music does.
-    RunMusic(Identifier sound, boolean file) {
+    RunMusic(Identifier sound, boolean file, boolean loop) {
         super(SoundEvent.createVariableRangeEvent(sound), SoundSource.RECORDS, SoundInstance.createUnseededRandom());
         this.file = file;
-        this.looping = true;
+        this.looping = loop;
         this.delay = 0;
         this.volume = 1;
         this.pitch = 1;
