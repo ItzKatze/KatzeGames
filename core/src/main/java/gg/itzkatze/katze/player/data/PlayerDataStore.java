@@ -30,7 +30,7 @@ public final class PlayerDataStore {
 
     private static final Logger logger = LoggerFactory.getLogger("KatzeGames/" + PlayerDataStore.class.getSimpleName());
     private static final String FILE_NAME = "data/players.json";
-    private static final int FILE_VERSION = 1;
+    private static final int FILE_VERSION = 4;
     private static final long WRITE_DELAY_TICKS = 100;
     private static final DateTimeFormatter QUARANTINE_TIME = DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss");
 
@@ -162,6 +162,7 @@ public final class PlayerDataStore {
             FileData data = JsonFiles.read(file, FileData.class);
             if (data != null && data.players != null) {
                 data.players.forEach(this::adopt);
+                if (data.version < FILE_VERSION) markDirty();
             }
         } catch (IOException | RuntimeException e) {
             profiles.clear();

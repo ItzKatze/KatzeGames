@@ -1,5 +1,8 @@
 package gg.itzkatze.katze.forcebattle;
 
+import gg.itzkatze.katze.achievements.AchievementService;
+import gg.itzkatze.katze.challenges.ChallengeType;
+
 import gg.itzkatze.katze.level.LevelStore;
 import gg.itzkatze.katze.player.KatzePlayer;
 import gg.itzkatze.katze.team.KatzeTeam;
@@ -7,6 +10,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 final class ForceBattleWinners {
 
@@ -47,6 +53,10 @@ final class ForceBattleWinners {
     }
 
     static void reward() {
-        winners().forEach(winner -> LevelStore.get().grant(winner, ForceBattleXp.WIN.xp()));
+        List<ForceBattlePlayer> winners = winners();
+        Set<UUID> ids = winners.stream().map(KatzePlayer::getUuid).collect(Collectors.toSet());
+        Set<UUID> teamIds = winners.stream().filter(KatzePlayer::isInTeam).map(KatzePlayer::getUuid).collect(Collectors.toSet());
+        AchievementService.get().naturalEnd(ChallengeType.FORCE_BATTLE, ids, teamIds);
+        winners.forEach(winner -> LevelStore.get().grant(winner, ForceBattleXp.WIN.xp()));
     }
 }

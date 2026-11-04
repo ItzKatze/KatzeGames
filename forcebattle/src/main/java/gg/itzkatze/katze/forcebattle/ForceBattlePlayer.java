@@ -1,5 +1,7 @@
 package gg.itzkatze.katze.forcebattle;
 
+import gg.itzkatze.katze.achievements.AchievementService;
+
 import gg.itzkatze.katze.challenges.ChallengeObjective;
 import gg.itzkatze.katze.challenges.ChallengeType;
 import gg.itzkatze.katze.configuration.SettingsManager;
@@ -128,15 +130,21 @@ public class ForceBattlePlayer extends KatzePlayer {
         }
 
         this.objective = newObjective;
+        if (newObjective != null && newObjective.getBattleType() == ForceBattleType.FORCE_ITEM && getPlayer() != null) {
+            Material material = newObjective.getObjectiveValue(Material.class);
+            if (material != null) AchievementService.get().recordAssignment(getPlayer(), material);
+        }
         SessionPersistence.requestSave(ChallengeType.FORCE_BATTLE);
     }
 
     private void finishObjective(boolean hasBeenSkipped) {
+        boolean firstCompletion = !this.objective.isFinished();
         this.objective.setFinished(this);
         this.objective.setHasBeenSkipped(hasBeenSkipped);
         this.points++;
         if (!hasBeenSkipped && isParticipating()) {
             LevelStore.get().grant(this, ForceBattleXp.OBJECTIVE.xp());
+            if (firstCompletion && getPlayer() != null) AchievementService.get().recordObjective(getPlayer(), false);
         }
     }
 

@@ -106,6 +106,26 @@ Its `.jar` file will be located under `clientmod/build/libs`.
 
 ---
 
+## Achievements
+
+Use `/achievements` to browse General, all five games, and Lobby. Each category shows your completed stages; clicking an achievement opens its targets and reward details. Games with no exclusive achievements show an empty page, while General achievements work in every active game.
+
+The catalogue has 33 single achievements and 9 achievements with five stages. Rewards are automatic and paid once per player per stage: Common 25 achievement XP, Uncommon 50, Rare 100, Mythical 250. Every stage of a staged achievement pays its base-rarity reward. The nine staged achievements are Common, so each stage gives 25 XP and all five give 125 XP. Death targets are 4/10/15/20/25 in one round.
+
+Unfinished achievements hide their requirements, target counts and progress. Their descriptions appear as obfuscated characters matching the real description's length and line wrapping. Completed stages reveal their own requirements; later stages remain hidden. Unlock-message hovers also describe only the stage just completed.
+
+Achievement XP has its own level system, starting at level 1. Reaching level 2 costs 100 achievement XP, level 3 costs another 150, level 4 another 200, and each following level costs 50 more than the previous one. The summary in `/achievements` shows your achievement level, total achievement XP and progress to the next level. Achievement XP is calculated from completed stages and their current rewards; it is never saved as a balance. Adjusting achievement rewards automatically updates every player's achievement XP and level. Existing saved achievement XP is ignored and removed on the next save. Completion records stay in `data/players.json`; regular XP is preserved and receives no achievement rewards.
+
+To use custom achievement names, select the name-tag button in `/achievements` or run `/achievements names custom`. The custom pack contains the original mixed German/English names from the achievement PDF. `/achievements names auto` restores names in your game language. This personal choice is saved across reconnects and applies to menu entries, detail titles and unlock messages. Descriptions, hover requirements and other interface text continue to follow your game language.
+
+Round progress resets with a new game; completed stages and best progress stay in `data/players.json`. Jump streaks require one uninterrupted lobby attempt, and inventory targets require carrying all required items simultaneously. Restored rounds retain their counters; paused, spectator, excluded and creative gameplay does not count. English and German are supported without the client mod.
+
+Placed or piston-moved Deepslate Coal Ore is tracked in chunk data across rounds. Blocks placed before this feature was installed cannot be distinguished from generated ore. Advancement progress counts new visible vanilla completions during the round; existing vanilla advancement-reset behavior is unchanged.
+
+The full catalogue and tracking rules are in [the achievement design](docs/superpowers/specs/2026-11-03-achievements-design.md).
+
+---
+
 ## 🤝 Contributing
 
 Want to contribute? Here is how you can help:

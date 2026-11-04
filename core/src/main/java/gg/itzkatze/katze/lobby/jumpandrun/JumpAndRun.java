@@ -1,6 +1,7 @@
 package gg.itzkatze.katze.lobby.jumpandrun;
 
 import gg.itzkatze.katze.KatzeGames;
+import gg.itzkatze.katze.achievements.AchievementService;
 import gg.itzkatze.katze.lobby.Lobby;
 import gg.itzkatze.katze.lobby.LobbyFeature;
 import gg.itzkatze.katze.lobby.cosmetics.BlockCosmetic;
@@ -190,6 +191,7 @@ public class JumpAndRun implements LobbyFeature, Listener {
         JumpRun run = new JumpRun(player, look, block, first);
         HopSteering.visit(run.getVisited(), block, arena.playArea());
         runs.put(id, run);
+        AchievementService.get().jumpStarted(player);
 
         runMultiplier.reset(id);
         if (look.color() != null) {
@@ -235,6 +237,7 @@ public class JumpAndRun implements LobbyFeature, Listener {
         );
 
         store.recordLanding(run.getPlayer(), run.getScore(), points);
+        AchievementService.get().jumpLanded(run.getPlayer());
         if (onEvent) {
             payEvent(arena, run, store, random);
         } else {
@@ -271,6 +274,7 @@ public class JumpAndRun implements LobbyFeature, Listener {
 
     private void end(@NotNull Arena arena, @NotNull JumpRun run, @NotNull Ending ending) {
         runs.remove(run.getId());
+        AchievementService.get().jumpEnded(run.getId());
         reservations.release(run.getId());
         removeBlock(arena, run.getCurrent(), run.getLook().block());
         if (run.getNext() != null) {

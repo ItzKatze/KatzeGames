@@ -1,5 +1,7 @@
 package gg.itzkatze.katze.forcebattle;
 
+import gg.itzkatze.katze.achievements.AchievementService;
+
 import gg.itzkatze.katze.KatzeGames;
 import gg.itzkatze.katze.configuration.SettingsManager;
 import gg.itzkatze.katze.team.KatzeTeam;
@@ -95,12 +97,14 @@ public class ForceBattleTeam extends KatzeTeam {
     public void updateObjective(KatzePlayer finisher, boolean finishLast, boolean hasBeenSkipped) {
         SessionPersistence.requestSave(ChallengeType.FORCE_BATTLE);
         if (finishLast && this.objective != null) {
+            boolean firstCompletion = !this.objective.isFinished();
             this.objective.setFinished(finisher);
             this.objective.setHasBeenSkipped(hasBeenSkipped);
 
             finisher.setPoints(finisher.getPoints() + 1);
             if (!hasBeenSkipped && finisher.isParticipating()) {
                 LevelStore.get().grant(finisher, ForceBattleXp.OBJECTIVE.xp());
+                if (firstCompletion && finisher.getPlayer() != null) AchievementService.get().recordObjective(finisher.getPlayer(), true);
             }
         }
 
@@ -114,6 +118,11 @@ public class ForceBattleTeam extends KatzeTeam {
         }
 
         this.objective = (ForceBattleObjective) updateEvent.getNewObjective();
+        if (this.objective != null && this.objective.getBattleType() == ForceBattleType.FORCE_ITEM) {
+            Material material = this.objective.getObjectiveValue(Material.class);
+            if (material != null) players.stream().map(KatzePlayer::getPlayer).filter(Objects::nonNull)
+                    .forEach(player -> AchievementService.get().recordAssignment(player, material));
+        }
         if (KatzeGames.getTimer().isRunning() && this.objective != null) {
             Material toastIcon = this.objective.getToastIcon();
             Component objectiveName = this.objective.displayName().color(KatzeColor.BLUE);

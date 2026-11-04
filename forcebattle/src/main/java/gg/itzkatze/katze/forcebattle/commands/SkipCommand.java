@@ -1,5 +1,7 @@
 package gg.itzkatze.katze.forcebattle.commands;
 
+import gg.itzkatze.katze.achievements.AchievementService;
+
 import gg.itzkatze.katze.commands.framework.CallerType;
 import gg.itzkatze.katze.util.KatzeColor;
 import net.kyori.adventure.text.Component;
@@ -41,6 +43,7 @@ public class SkipCommand extends KatzeCommand {
                                     return;
                                 }
                                 battlePlayer.updateObjective(false, false);
+                                AchievementService.get().recordJoker(battlePlayer.getUuid());
                                 battlePlayer.sendMessage(Component.translatable("katze.forcebattle.command.objective_skipped_admin").color(KatzeColor.LIME));
                                 caller.sendMessage(Component.translatable("katze.forcebattle.command.player_objective_skipped", gg.itzkatze.katze.text.TextArg.text("name", battlePlayer.getName())).color(KatzeColor.LIME));
                             }, () -> caller.sendMessage(Component.translatable("katze.forcebattle.command.player_not_found").color(KatzeColor.RED))
@@ -52,6 +55,7 @@ public class SkipCommand extends KatzeCommand {
                         teamOpt.ifPresentOrElse(
                                 team -> {
                                     team.updateObjective(null, false, false);
+                                    team.getPlayers().forEach(player -> AchievementService.get().recordJoker(player.getUuid()));
                                     team.getPlayers().forEach(player -> player.sendMessage(Component.translatable("katze.forcebattle.command.objective_skipped_admin").color(KatzeColor.LIME)));
                                     caller.sendMessage(Component.translatable("katze.forcebattle.command.team_objective_skipped", gg.itzkatze.katze.text.TextArg.number("id", team.getId())).color(KatzeColor.LIME));
                                 }, () -> caller.sendMessage(Component.translatable("katze.forcebattle.command.team_not_found").color(KatzeColor.RED))

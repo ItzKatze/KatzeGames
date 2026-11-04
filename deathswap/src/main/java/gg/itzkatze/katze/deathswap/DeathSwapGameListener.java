@@ -1,5 +1,7 @@
 package gg.itzkatze.katze.deathswap;
 
+import gg.itzkatze.katze.achievements.AchievementService;
+
 import gg.itzkatze.katze.KatzeGames;
 import gg.itzkatze.katze.challenges.ChallengeType;
 import gg.itzkatze.katze.game.ChallengeTimer;
@@ -254,6 +256,7 @@ public class DeathSwapGameListener implements Listener {
         winnerId = winner.getUniqueId();
         KatzePlayer winnerWrapper = KatzePlayer.adapt(winner);
         if (GameXp.claimNaturalEnd(ChallengeType.DEATH_SWAP) && winnerWrapper.isParticipating()) {
+            AchievementService.get().naturalEnd(ChallengeType.DEATH_SWAP, Set.of(winner.getUniqueId()), Set.of());
             LevelStore.get().grant(winnerWrapper, DeathSwapXp.WIN.xp());
         }
         KatzeGames.broadcast(Component.translatable("katze.deathswap.winner", gg.itzkatze.katze.text.TextArg.text("name", winner.getName())));

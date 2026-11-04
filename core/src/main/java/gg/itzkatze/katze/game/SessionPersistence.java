@@ -2,6 +2,7 @@ package gg.itzkatze.katze.game;
 
 import com.google.gson.annotations.SerializedName;
 import gg.itzkatze.katze.KatzeGames;
+import gg.itzkatze.katze.achievements.AchievementService;
 import gg.itzkatze.katze.challenges.Challenge;
 import gg.itzkatze.katze.challenges.ChallengeManager;
 import gg.itzkatze.katze.challenges.ChallengeRegistry;
@@ -66,6 +67,7 @@ public final class SessionPersistence {
             GameXp.restore();
         } else {
             GameXp.delete();
+            AchievementService.get().reset();
         }
         restoreDone = true;
     }
@@ -103,6 +105,7 @@ public final class SessionPersistence {
 
         WorldStorage.save(FILE_NAME, snapshot());
         GameXp.save();
+        AchievementService.get().save();
         for (Challenge challenge : ChallengeManager.getActiveChallenges()) {
             if (!allChallenges && !dirtyChallenges.contains(challenge.getType())) continue;
             try {
@@ -130,6 +133,7 @@ public final class SessionPersistence {
         }
         dirtyChallenges.clear();
         WorldStorage.delete(FILE_NAME);
+        AchievementService.get().save();
     }
 
     public static boolean isAwaitingResume() {
@@ -148,6 +152,7 @@ public final class SessionPersistence {
             ChallengeManager.markGameStarted();
         }
         restoreTimer(session.timer);
+        AchievementService.get().restore(session.achievementRoundId);
 
         GameTimer timer = KatzeGames.getTimer();
         awaitingResume = ChallengeManager.isGameStarted() && timer.getMode() != GameTimer.Mode.DISABLED && !timer.hasHitZero();
@@ -254,6 +259,7 @@ public final class SessionPersistence {
                 .map(ChallengeType::name)
                 .toList();
         session.gameStarted = ChallengeManager.isGameStarted();
+        session.achievementRoundId = AchievementService.get().roundId();
         session.timer = TimerData.of(KatzeGames.getTimer());
         session.players = KatzePlayer.PLAYERS.stream().map(PlayerData::of).toList();
         session.teams = KatzeTeam.teams.stream().map(TeamData::of).toList();
@@ -276,6 +282,7 @@ public final class SessionPersistence {
     }
 
     private static final class SessionData {
+        UUID achievementRoundId;
         List<String> activeChallenges = new ArrayList<>();
         boolean gameStarted;
         TimerData timer;

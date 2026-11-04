@@ -1,5 +1,7 @@
 package gg.itzkatze.katze.lobby.cosmetics.cases;
 
+import gg.itzkatze.katze.achievements.AchievementService;
+
 import gg.itzkatze.katze.KatzeGames;
 import gg.itzkatze.katze.gui.GUIClickableItem;
 import gg.itzkatze.katze.gui.GUIItem;
@@ -264,6 +266,7 @@ public final class CaseRollGui extends KatzeGUI {
         Cosmetic cosmetic = ((CasePrize.Item) spin.prize()).cosmetic();
         int refund = CaseLoot.refund(cosmetic.rarity());
         if (store.winCosmetic(player, cosmetic, refund)) {
+            if (cosmetic.rarity() == Rarity.LEGENDARY) AchievementService.get().legendaryCase(player);
             Component won = Component.translatable("katze.cosmetics.won_cosmetic",
                     TextArg.component("cosmetic", cosmetic.styledName())).color(KatzeColor.LIME);
             return spin.pity() ? List.of(won, Component.translatable("katze.cosmetics.pity_won").color(KatzeColor.MAGENTA)) : List.of(won);

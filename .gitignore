@@ -118,3 +118,8 @@ runs/
 
 # Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
 !gradle-wrapper.jar
+
+AGENTS.md
+CLAUDE.md
+docs/
+core/src/main/resources/text-packs/achievements/custom.properties

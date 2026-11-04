@@ -107,10 +107,14 @@ public final class LevelStore {
     }
 
     private void changed(@NotNull UUID player, int xpBefore, int xpAfter) {
+        data.markDirty();
+        publishChange(player, xpBefore, xpAfter);
+    }
+
+    private void publishChange(@NotNull UUID player, int xpBefore, int xpAfter) {
         int oldLevel = LevelCurve.levelFor(xpBefore);
         int newLevel = LevelCurve.levelFor(xpAfter);
         levels.put(player, newLevel);
-        data.markDirty();
 
         if (newLevel > oldLevel) {
             for (LevelUpListener listener : List.copyOf(levelUpListeners)) {

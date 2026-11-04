@@ -1,6 +1,7 @@
 package gg.itzkatze.katze.game;
 
 import gg.itzkatze.katze.KatzeGames;
+import gg.itzkatze.katze.achievements.AchievementService;
 import gg.itzkatze.katze.challenges.ChallengeManager;
 import gg.itzkatze.katze.level.GameXp;
 import gg.itzkatze.katze.lobby.LobbyManager;
@@ -102,6 +103,7 @@ public class GameLifecycleManager implements Listener {
 
             player.getPlayer().playSound(player.getPlayer(), Sound.EVENT_RAID_HORN, SoundCategory.MASTER, 100, 1);
         }
+        AchievementService.get().begin();
     }
 
     private static void prepareWorlds() {
@@ -125,6 +127,7 @@ public class GameLifecycleManager implements Listener {
         KatzeGames.get().releasePause();
         KatzeGames.getTimer().stop();
         GameXp.onReset();
+        AchievementService.get().reset();
         ChallengeManager.resetGameState();
         SessionPersistence.delete();
         KatzePlayer.removeOfflinePlayers();

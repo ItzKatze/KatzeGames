@@ -1,6 +1,9 @@
 package gg.itzkatze.katze;
 
 import gg.itzkatze.katze.bossbar.BossbarManager;
+import gg.itzkatze.katze.achievements.AchievementService;
+import gg.itzkatze.katze.achievements.AchievementSampler;
+import gg.itzkatze.katze.achievements.AchievementGameplayListener;
 import gg.itzkatze.katze.challenges.ChallengeManager;
 import gg.itzkatze.katze.chat.LevelChat;
 import gg.itzkatze.katze.chat.TeamChatManager;
@@ -59,6 +62,7 @@ public final class KatzeGames extends JavaPlugin {
     private static final Logger logger = LoggerFactory.getLogger("KatzeGames");
     private static KatzeGames instance;
     private final PauseManager pauseManager = new PauseManager();
+    private AchievementSampler achievementSampler;
 
     public static KatzeGames get() {
         return instance;
@@ -89,6 +93,9 @@ public final class KatzeGames extends JavaPlugin {
         CosmeticStore.load();
         MusicChannel.register(this);
         LevelStore.load();
+        AchievementService.load();
+        achievementSampler = new AchievementSampler(AchievementService.get());
+        getServer().getPluginManager().registerEvents(new AchievementGameplayListener(AchievementService.get(), achievementSampler), this);
         PointsSidebar.install(CosmeticStore.get(), LevelStore.get());
         LevelUpNotice.install(LevelStore.get());
 
@@ -121,6 +128,7 @@ public final class KatzeGames extends JavaPlugin {
         new PlaytimeXp(afk).start();
 
         SessionPersistence.restore();
+        achievementSampler.start();
 
         logger.info("Successfully initialized KatzeGames.");
     }
@@ -133,6 +141,10 @@ public final class KatzeGames extends JavaPlugin {
         MusicManager.releaseAll();
         CaseRollGui.finishAllSilently();
         EventBlock.finishAllSilently();
+        if (achievementSampler != null) {
+            achievementSampler.stop();
+            AchievementService.get().retryPending();
+        }
         PlayerDataStore.flushInstalled();
         BossbarManager.stopTask();
         SessionPersistence.saveNow();

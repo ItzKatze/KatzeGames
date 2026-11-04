@@ -1,5 +1,7 @@
 package gg.itzkatze.katze.forcebattle;
 
+import gg.itzkatze.katze.achievements.AchievementService;
+
 import gg.itzkatze.katze.KatzeGames;
 import gg.itzkatze.katze.configuration.GlobalSetting;
 import gg.itzkatze.katze.forcebattle.tasks.*;
@@ -208,6 +210,7 @@ public class ForceBattleGameListener implements Listener {
         player.sendMessage(Component.translatable("katze.forcebattle.action.skipped_objective",
                 gg.itzkatze.katze.text.TextArg.component("objective", oldObjective.displayName())));
         player.updateObjective(true, true);
+        AchievementService.get().recordJoker(player.getUuid());
 
         player.addSkippedObjectiveToList(oldObjective);
 
@@ -260,6 +263,7 @@ public class ForceBattleGameListener implements Listener {
                 gg.itzkatze.katze.text.TextArg.component("objective", oldObjective.displayName())));
 
         team.updateObjective(katzePlayer, true, true);
+        AchievementService.get().recordJoker(katzePlayer.getUuid());
 
         katzePlayer.addSkippedObjectiveToList(oldObjective);
 
@@ -320,6 +324,7 @@ public class ForceBattleGameListener implements Listener {
 
         katzePlayer.setCurrentObjective(targetObjective, false, false);
         targetPlayer.setCurrentObjective(playerObjective, false, false);
+        AchievementService.get().recordJoker(katzePlayer.getUuid());
 
         targetPlayer.sendMessage(Component.translatable("katze.forcebattle.action.objective_swapped_by",
                 gg.itzkatze.katze.text.TextArg.text("player", katzePlayer.getName())));

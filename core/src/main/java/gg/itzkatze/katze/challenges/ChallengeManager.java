@@ -1,6 +1,7 @@
 package gg.itzkatze.katze.challenges;
 
 import gg.itzkatze.katze.KatzeGames;
+import gg.itzkatze.katze.achievements.AchievementService;
 import gg.itzkatze.katze.commands.framework.CommandHandler;
 import gg.itzkatze.katze.commands.framework.KatzeCommand;
 import gg.itzkatze.katze.game.GameTimer;
@@ -82,6 +83,7 @@ public class ChallengeManager {
         }
 
         activeChallenges.remove(challenge);
+        AchievementService.get().challengeDisabled(challenge.getType());
 
         challenge.onDisable();
 

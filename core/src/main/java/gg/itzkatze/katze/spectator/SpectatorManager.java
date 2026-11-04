@@ -1,6 +1,7 @@
 package gg.itzkatze.katze.spectator;
 
 import gg.itzkatze.katze.KatzeGames;
+import gg.itzkatze.katze.achievements.AchievementService;
 import gg.itzkatze.katze.challenges.ChallengeManager;
 import gg.itzkatze.katze.util.KatzeColor;
 import net.kyori.adventure.text.Component;
@@ -39,6 +40,7 @@ public final class SpectatorManager {
     }
 
     public static void choose(@NotNull UUID uuid) {
+        AchievementService.get().disqualify(uuid);
         REASONS.put(uuid, SpectatorReason.CHOSEN);
     }
 
@@ -48,6 +50,7 @@ public final class SpectatorManager {
 
     public static void eliminate(@NotNull UUID uuid) {
         if (REASONS.putIfAbsent(uuid, SpectatorReason.ELIMINATED) != null) return;
+        AchievementService.get().disqualify(uuid);
 
         Player player = Bukkit.getPlayer(uuid);
         if (player == null) return;
