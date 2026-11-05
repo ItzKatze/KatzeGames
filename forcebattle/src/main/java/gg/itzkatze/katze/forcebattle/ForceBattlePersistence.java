@@ -53,6 +53,7 @@ public final class ForceBattlePersistence {
     private static @NotNull SaveData snapshot() {
         SaveData data = new SaveData();
         data.startPhase = ForceBattleGameListener.startPhase;
+        data.round = ForceBattleHistory.current();
 
         ObjectiveTable table = new ObjectiveTable(data.objectives);
         ForceBattleObjective.all().forEach(table::indexOf);
@@ -76,6 +77,7 @@ public final class ForceBattlePersistence {
 
     private static void restore(@NotNull SaveData data) {
         ForceBattleGameListener.startPhase = data.startPhase;
+        ForceBattleHistory.restore(data.round);
 
         ForceBattleObjective.deleteAll();
         List<ForceBattleObjective> objectives = new ArrayList<>();
@@ -260,6 +262,7 @@ public final class ForceBattlePersistence {
     }
 
     private static final class SaveData {
+        ForceBattleHistory.Round round;
         boolean startPhase = true;
         List<ObjectiveData> objectives = new ArrayList<>();
         List<PlayerData> players = new ArrayList<>();

@@ -24,5 +24,8 @@ Operators can open `/settings` and right-click AllItems to choose the rules.
 | `/allitemsprogress` | Check your progress and missing objectives. |
 | `/leaderboard` | See how players or teams are doing. |
 | `/allitemssettings <team\|individual>` | Set the collection mode (operator). |
+| `/results` | Review saved rounds you played in. |
+
+Resetting a round saves its discoveries and category totals. In team mode, you can review the shared collection and each player's contributions.
 
 [Back to KatzeGames](../README.md)

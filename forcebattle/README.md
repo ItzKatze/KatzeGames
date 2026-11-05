@@ -43,9 +43,12 @@ By default, checks cover a 5,000-block radius; this is **not a world border** an
 | --- | --- |
 | `/backpack` or `/bp` | Open your personal or team backpack. |
 | `/recipe <item>` | Look up a crafting recipe. |
-| `/displayresults` | Show the final leaderboard. |
+| `/displayresults <player\|team>` | Show the final player or team leaderboard (operator). |
 | `/result player <name>` | View a player's objective history while the timer is paused or after the battle. |
 | `/result team <id>` | View a team's results. |
+| `/results` | Browse saved rounds you played in, including standings and objectives. |
+
+Completed rounds stay available after map resets and server restarts. Spectating a round does not add it to your history.
 
 Based on [nicolaigrv's original ForceBattle](https://github.com/nicolaigrv/ForceBattle).
 

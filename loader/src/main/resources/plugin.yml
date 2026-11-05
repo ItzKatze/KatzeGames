@@ -21,6 +21,7 @@ commands:
     recipe:
     reset:
     result:
+    results:
     settings:
         aliases: [ menu ]
     configsettings:

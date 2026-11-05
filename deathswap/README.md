@@ -14,4 +14,9 @@ Lava, a long fall, or a well-timed trap can finish someone off. Just make sure y
 
 Operators can change the **swap interval** in `/settings`: **1–60 minutes**, with **5 minutes** as the default.
 
+## Past rounds
+
+Use `/results` to review rounds you played in. Results are saved when a winner is decided,
+including placements, survival time, and swaps survived. Spectators do not gain access to the round.
+
 [Back to KatzeGames](../README.md)

@@ -12,6 +12,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.util.Comparator;
 import java.util.List;
@@ -35,10 +37,15 @@ public final class SeedGenerator {
     private int ticks;
     private BukkitTask task;
 
-    private record WorldSignature(String id, long seed, World.Environment environment, double spawnX, double spawnZ) {}
-    private record Certificate(List<WorldSignature> worlds, String serverVersion, int radius, List<SeedRequirement> requirements) {}
-    private record Witness(SeedFeature feature, SeedValidationResult.Position position) {}
-    private record Report(Certificate certificate, int attempts, List<Witness> witnesses) {}
+    record WorldSignature(String id, long seed, World.Environment environment, double spawnX, double spawnZ) {}
+    record Certificate(List<WorldSignature> worlds, String serverVersion, int radius, List<SeedRequirement> requirements) {
+        boolean matches(Path reportFile) throws IOException {
+            Report report = JsonFiles.read(reportFile, Report.class);
+            return report != null && equals(report.certificate());
+        }
+    }
+    record Witness(SeedFeature feature, SeedValidationResult.Position position) {}
+    record Report(Certificate certificate, int attempts, List<Witness> witnesses) {}
 
     private SeedGenerator(List<SeedRequirement> requirements, int radius, Runnable onSuccess, Consumer<String> onFailure) {
         this.requirements = requirements;
@@ -71,7 +78,7 @@ public final class SeedGenerator {
                 throw new IllegalArgumentException("seed-generator.diameter must be an even number between 2 and 60000");
             }
             int radius = diameter / 2;
-            if (requirements.isEmpty() || currentCertificate(radius, requirements).equals(certificate)) {
+            if (requirements.isEmpty() || isCertified(currentCertificate(radius, requirements))) {
                 onSuccess.run();
                 return;
             }
@@ -102,6 +109,22 @@ public final class SeedGenerator {
                 world.getUID().toString(), world.getSeed(), world.getEnvironment(),
                 world.getSpawnLocation().getX(), world.getSpawnLocation().getZ())).toList();
         return new Certificate(worlds, Bukkit.getVersion(), radius, requirements);
+    }
+
+    private static Path reportFile() {
+        return KatzeGames.get().getDataDirectory().toPath().resolve("data/seed-validation.json");
+    }
+
+    private static boolean isCertified(Certificate current) {
+        if (current.equals(certificate)) return true;
+        try {
+            if (!current.matches(reportFile())) return false;
+            certificate = current;
+            return true;
+        } catch (IOException | RuntimeException exception) {
+            KatzeGames.get().getLogger().log(Level.WARNING, "Failed to restore seed validation; the current map will be checked again.", exception);
+            return false;
+        }
     }
 
     private void beginCandidate() {
@@ -152,7 +175,7 @@ public final class SeedGenerator {
                 Certificate accepted = currentCertificate(radius, requirements);
                 List<Witness> witnesses = result.found().entrySet().stream()
                         .map(entry -> new Witness(entry.getKey(), entry.getValue())).toList();
-                JsonFiles.write(KatzeGames.get().getDataDirectory().toPath().resolve("data/seed-validation.json"),
+                JsonFiles.write(reportFile(),
                         new Report(accepted, budget.attempt(), witnesses));
                 certificate = accepted;
                 stop();

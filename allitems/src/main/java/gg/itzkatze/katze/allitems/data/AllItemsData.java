@@ -1,6 +1,7 @@
 package gg.itzkatze.katze.allitems.data;
 
 import gg.itzkatze.katze.KatzeGames;
+import gg.itzkatze.katze.results.ResultRoster;
 import gg.itzkatze.katze.allitems.AllItemsNames;
 import gg.itzkatze.katze.allitems.AllItemsObjective;
 import gg.itzkatze.katze.allitems.AllItemsObjectiveType;
@@ -25,6 +26,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +41,30 @@ import java.util.stream.Collectors;
 public class AllItemsData {
 
     private static final String DATA_FILE_NAME = "all_items_progress.json";
+    private ResultRoster resultRoster;
+
+    public ResultRoster getResultRoster() {
+        return resultRoster;
+    }
+
+    public void beginRound() {
+        resultRoster = ResultRoster.capture();
+    }
+
+    public List<AllItemsObjective> getRecordedDiscoveries(@Nullable UUID player) {
+        List<AllItemsObjective> discoveries = new ArrayList<>();
+        addDiscoveries(discoveries, AllItemsObjectiveType.ITEM, player == null ? teamFoundItems.keySet() : playerFoundItems.getOrDefault(player, Set.of()));
+        addDiscoveries(discoveries, AllItemsObjectiveType.BIOME, player == null ? teamFoundBiomes.keySet() : playerFoundBiomes.getOrDefault(player, Set.of()));
+        addDiscoveries(discoveries, AllItemsObjectiveType.MOB, player == null ? teamFoundMobs.keySet() : playerFoundMobs.getOrDefault(player, Set.of()));
+        addDiscoveries(discoveries, AllItemsObjectiveType.STRUCTURE, player == null ? teamFoundStructures.keySet() : playerFoundStructures.getOrDefault(player, Set.of()));
+        addDiscoveries(discoveries, AllItemsObjectiveType.ADVANCEMENT, player == null ? teamFoundAdvancements.keySet() : playerFoundAdvancements.getOrDefault(player, Set.of()));
+        return List.copyOf(discoveries);
+    }
+
+    private static void addDiscoveries(List<AllItemsObjective> discoveries, AllItemsObjectiveType type, Collection<? extends Enum<?>> values) {
+        values.stream().sorted(Comparator.comparing(Enum::name)).forEach(value ->
+                discoveries.add(new AllItemsObjective(type, value.name(), StringUtility.formatName(value.name()))));
+    }
     private static final DateTimeFormatter TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private final Map<Material, FoundEntry> teamFoundItems = new ConcurrentHashMap<>();
@@ -371,6 +397,7 @@ public class AllItemsData {
 
     public void saveToFile() {
         SaveData data = new SaveData();
+        data.resultRoster = resultRoster;
         data.gameMode = AllItemsSettings.getGameMode().name();
         data.teamItems = serializeFoundItems(teamFoundItems);
         data.teamBiomes = serializeFoundBiomes(teamFoundBiomes);
@@ -401,6 +428,7 @@ public class AllItemsData {
             }
 
             clearAllProgress();
+            resultRoster = data.resultRoster;
             if (data.teamItems != null) {
                 data.teamItems.forEach((key, entry) -> {
                     Material material = Material.matchMaterial(key);
@@ -482,6 +510,7 @@ public class AllItemsData {
     }
 
     public void clearAllProgress() {
+        resultRoster = null;
         teamFoundItems.clear();
         teamFoundBiomes.clear();
         teamFoundMobs.clear();
@@ -695,6 +724,7 @@ public class AllItemsData {
     }
 
     private static class SaveData {
+        ResultRoster resultRoster;
         String gameMode;
         Map<String, FoundEntryJson> teamItems;
         Map<String, FoundEntryJson> teamBiomes;

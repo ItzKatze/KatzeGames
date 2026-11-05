@@ -15,6 +15,9 @@ import gg.itzkatze.katze.spectator.SpectatorReason;
 import gg.itzkatze.katze.util.KatzeColor;
 import gg.itzkatze.katze.util.StringUtility;
 import gg.itzkatze.katze.util.WorldStorage;
+import gg.itzkatze.katze.results.ResultRoster;
+import gg.itzkatze.katze.results.ResultArchives;
+import gg.itzkatze.katze.deathswap.DeathSwapResults.Elimination;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
@@ -47,6 +50,9 @@ public class DeathSwapGameListener implements Listener {
     private boolean finished = false;
     private int swapCount = 0;
     private UUID winnerId = null;
+    private ResultRoster resultRoster;
+    private final List<Elimination> eliminations = new ArrayList<>();
+
 
     private ChallengeTimer elapsedTimer;
     private ChallengeTimer swapTimer;
@@ -61,6 +67,8 @@ public class DeathSwapGameListener implements Listener {
         finished = false;
         swapCount = 0;
         winnerId = null;
+        resultRoster = null;
+        eliminations.clear();
         lastIntervalMinutes = -1;
         elapsedSeconds = 0;
         lastPlayedCountdownSecond = -1;
@@ -75,6 +83,7 @@ public class DeathSwapGameListener implements Listener {
     public void startGame() {
         initialize();
         started = true;
+        resultRoster = ResultRoster.capture();
         elapsedTimer = new ChallengeTimer(1_000L);
         swapTimer = new ChallengeTimer(getSwapIntervalMillis());
     }
@@ -82,6 +91,8 @@ public class DeathSwapGameListener implements Listener {
     public void saveToFile() {
         SaveData data = new SaveData();
         data.started = started;
+        data.resultRoster = resultRoster;
+        data.eliminations = List.copyOf(eliminations);
         data.finished = finished;
         data.eliminated = eliminatedPlayers.stream().map(UUID::toString).toList();
         data.swapCount = swapCount;
@@ -97,6 +108,8 @@ public class DeathSwapGameListener implements Listener {
 
         initialize();
         started = data.started;
+        resultRoster = data.resultRoster;
+        if (data.eliminations != null) eliminations.addAll(data.eliminations);
         finished = data.finished;
         if (data.eliminated != null) {
             data.eliminated.stream().map(DeathSwapGameListener::parseUuid).filter(Objects::nonNull).forEach(eliminatedPlayers::add);
@@ -186,6 +199,7 @@ public class DeathSwapGameListener implements Listener {
         if (!started || finished || SpectatorManager.isSpectator(player.getUniqueId())) return;
         if (eliminatedPlayers.add(player.getUniqueId())) {
             SpectatorManager.eliminate(player.getUniqueId());
+            eliminations.add(new Elimination(player.getUniqueId(), getAlivePlayers().size() + 1, elapsedSeconds, swapCount));
             checkForWinner();
             SessionPersistence.requestSave(ChallengeType.DEATH_SWAP);
         }
@@ -254,6 +268,7 @@ public class DeathSwapGameListener implements Listener {
             return;
         }
         winnerId = winner.getUniqueId();
+        archiveResults();
         KatzePlayer winnerWrapper = KatzePlayer.adapt(winner);
         if (GameXp.claimNaturalEnd(ChallengeType.DEATH_SWAP) && winnerWrapper.isParticipating()) {
             AchievementService.get().naturalEnd(ChallengeType.DEATH_SWAP, Set.of(winner.getUniqueId()), Set.of());
@@ -276,6 +291,12 @@ public class DeathSwapGameListener implements Listener {
         return Math.max(1, DeathSwapSettings.getSwapIntervalMinutes()) * 60_000L;
     }
 
+    private void archiveResults() {
+        if (resultRoster == null) return;
+        ResultArchives.save(DeathSwapResults.snapshot(resultRoster, eliminations, winnerId,
+                elapsedSeconds, swapCount, System.currentTimeMillis()));
+    }
+
     private static @Nullable UUID parseUuid(@Nullable String raw) {
         if (raw == null) return null;
         try {
@@ -286,6 +307,8 @@ public class DeathSwapGameListener implements Listener {
     }
 
     private static final class SaveData {
+        ResultRoster resultRoster;
+        List<Elimination> eliminations = new ArrayList<>();
         boolean started;
         boolean finished;
         List<String> eliminated = new ArrayList<>();

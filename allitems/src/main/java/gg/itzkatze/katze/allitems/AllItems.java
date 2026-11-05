@@ -60,7 +60,13 @@ public class AllItems implements Challenge {
     }
 
     @Override
+    public void onGameStart() {
+        data.beginRound();
+    }
+
+    @Override
     public void onGameReset() {
+        AllItemsHistory.archive(data);
         WorldStorage.delete("all_items_progress.json");
         data.clearAllProgress();
     }

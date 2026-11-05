@@ -86,6 +86,7 @@ public class ForceBattle implements Challenge {
         Bukkit.getWorlds().forEach(world ->
                 world.setGameRule(GameRules.SHOW_ADVANCEMENT_MESSAGES, false));
         gameListener.startGame();
+        ForceBattleHistory.begin();
     }
 
     @Override
@@ -95,6 +96,7 @@ public class ForceBattle implements Challenge {
 
     @Override
     public void onGameReset() {
+        ForceBattleHistory.restore(null);
         ForceBattlePersistence.deleteData();
         ForceBattleGameListener.startPhase = true;
         gameListener.clearPendingRestores();
@@ -140,6 +142,9 @@ public class ForceBattle implements Challenge {
 
     @Override
     public void onTimerElapsed() {
+        if (KatzeGames.getTimer().getRemainingSeconds() == 0) {
+            ForceBattleHistory.finish();
+        }
         gameListener.handleBattleEnd();
         // A /reset stops the timer too, with time left; only a countdown that ran out is the battle's end.
         if (KatzeGames.getTimer().getRemainingSeconds() == 0 && GameXp.claimNaturalEnd(ChallengeType.FORCE_BATTLE)) {
