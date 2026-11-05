@@ -12,6 +12,7 @@ import gg.itzkatze.katze.commands.framework.CommandHandler;
 import gg.itzkatze.katze.commands.framework.CommandVisibilityListener;
 import gg.itzkatze.katze.game.GameLifecycleManager;
 import gg.itzkatze.katze.game.GameWorldManager;
+import gg.itzkatze.katze.game.seed.SeedGenerator;
 import gg.itzkatze.katze.game.GameWorldListener;
 import gg.itzkatze.katze.game.LimboBiomes;
 import gg.itzkatze.katze.game.GlobalGameplayListener;
@@ -142,6 +143,7 @@ public final class KatzeGames extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        SeedGenerator.cancel();
         SignInput.closeAll();
         pauseManager.shutdown();
         StructureScanner.clear();

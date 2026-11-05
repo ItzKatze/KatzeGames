@@ -1,47 +1,52 @@
 # ForceBattle
 
-**ForceBattle** is a multiplayer gamemode where players compete to complete randomized objectives and earn points.  
-The player or team with the most points after the timer ends wins the battle!
+Complete random objectives before time runs out. The player or team with the most points wins.
 
-*(Based on the original ForceBattle gamemode by nicolaigrv which is available [here](https://github.com/nicolaigrv/ForceBattle)).*
+## Your next objective
 
----
-## ✨ Features
+| Type | What to do |
+| --- | --- |
+| Item | Collect the requested item. |
+| Mob | Kill the requested mob. |
+| Biome | Find the requested biome. |
+| Advancement | Complete the requested advancement. |
+| Height | Reach the requested height. |
+| Coordinates | Travel to the requested coordinates. |
+| Structure | Find the requested structure. |
+| Death | Die from the requested damage type. |
 
-- **Chain Mode**: Force all players to complete the exact same sequence of objectives.
-- **Joker Items**: Use Skip items to bypass difficult objectives or Swap items to trade objectives with opponents.
-- **Team Backpacks**: Shared inventory storage for team members.
-- **Leaderboards & Results**: Detailed end-game results and live leaderboard tracking.
+## A little help
 
----
+- **Skip jokers** replace a difficult personal or team objective.
+- **Swap jokers** trade your personal objective with an opponent's.
+- **Backpacks** give you extra storage, shared with your teammates when you're in a team.
+- **Recipes** are a command away if you forget how to craft something.
 
-## 🎯 Objective Types
+Right-click a joker item to use it.
 
-| Objective Type       | Description                          |
-|:---------------------|:-------------------------------------|
-| **ForceItem**        | Collect a specific item              |
-| **ForceMob**         | Kill a specific mob                  |
-| **ForceBiome**       | Discover a specific biome            |
-| **ForceAdvancement** | Complete a specific advancement      |
-| **ForceHeight**      | Reach a specific height              |
-| **ForceCoords**      | Reach specific coordinates           |
-| **ForceStructure**   | Discover a specific structure        |
-| **ForceDeath**       | Get killed by a specific damage type |
+## Set up the battle
 
-Objective types can be enabled or disabled individually via the in-game settings menu.
+Operators can use `/settings` to choose objective types for players, teams, or both.
 
----
+- Turn on **chain mode** to give players the same objective sequence, with a separate sequence for teams.
+- Exclude categories such as End content or armor templates from the objective pool.
+- Adjust shared objective rules, including simplified objectives and duplicates.
+- Enable or disable backpacks.
 
-## 📋 Commands
+Before the countdown, the plugin checks for biomes and structures needed by the selected objectives
+and rerolls unsuitable maps. Everyone waits in the lobby during preparation.
+By default, checks cover a 5,000-block radius; this is **not a world border** and does not guarantee rare loot or mob spawns.
 
-| Command                          | Description                                           |
-|:---------------------------------|:------------------------------------------------------|
-| `/backpack`                      | Opens the personal or team backpack                   |
-| `/displayresults`                | Shows the final leaderboard                           |
-| `/exclude <player>`              | Excludes a player from the battle                     |
-| `/joker <player> <amount>`       | Gives or adjusts jokers for a player                  |
-| `/points <player> <amount>`      | Modifies a player's points                            |
-| `/randomteams <teamsize> <mode>` | Creates random teams with a specific size             |
-| `/recipe <item>`                 | Displays the crafting recipe for an item              |
-| `/result <player>`               | Shows detailed objective results for a player         |
-| `/skip <player>`                 | Skips a player's current objective (Admin)            |
+## Commands
+
+| Command | What it does |
+| --- | --- |
+| `/backpack` or `/bp` | Open your personal or team backpack. |
+| `/recipe <item>` | Look up a crafting recipe. |
+| `/displayresults` | Show the final leaderboard. |
+| `/result player <name>` | View a player's objective history while the timer is paused or after the battle. |
+| `/result team <id>` | View a team's results. |
+
+Based on [nicolaigrv's original ForceBattle](https://github.com/nicolaigrv/ForceBattle).
+
+[Back to KatzeGames](../README.md)

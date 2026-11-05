@@ -28,6 +28,7 @@ public final class GameWorldManager {
     @Getter
     private static boolean resetting;
     private static boolean ready;
+    private static boolean preparingSeed;
 
     private record State(long seed, boolean pendingReset) {}
 
@@ -90,7 +91,9 @@ public final class GameWorldManager {
         return ENVIRONMENTS.stream().map(GameWorldManager::getWorld).filter(Objects::nonNull).toList();
     }
 
-    public static boolean isReady() { return ready && !resetting; }
+    public static boolean isReady() { return ready && !resetting && !preparingSeed; }
+
+    public static void setPreparingSeed(boolean preparing) { preparingSeed = preparing; }
 
     public static boolean isLimbo(World world) { return world.getKey().equals(LIMBO); }
 

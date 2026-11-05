@@ -11,6 +11,7 @@ import gg.itzkatze.katze.challenges.ChallengeType;
 import gg.itzkatze.katze.challenges.TimerSpec;
 import gg.itzkatze.katze.game.GameTimer;
 import gg.itzkatze.katze.game.SessionPersistence;
+import gg.itzkatze.katze.game.seed.SeedRequirement;
 import gg.itzkatze.katze.level.GameXp;
 import gg.itzkatze.katze.forcebattle.bossbar.ForceBattlePlayerObjectiveBossbar;
 import gg.itzkatze.katze.forcebattle.bossbar.ForceBattleTeamObjectiveBossbar;
@@ -85,6 +86,11 @@ public class ForceBattle implements Challenge {
         Bukkit.getWorlds().forEach(world ->
                 world.setGameRule(GameRules.SHOW_ADVANCEMENT_MESSAGES, false));
         gameListener.startGame();
+    }
+
+    @Override
+    public List<SeedRequirement> getSeedRequirements() {
+        return ForceBattleSeedRequirements.current();
     }
 
     @Override

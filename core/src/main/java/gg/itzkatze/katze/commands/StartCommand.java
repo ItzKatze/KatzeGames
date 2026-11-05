@@ -10,8 +10,10 @@ import gg.itzkatze.katze.game.GameWorldManager;
 import gg.itzkatze.katze.game.GameTimer;
 import gg.itzkatze.katze.game.SessionPersistence;
 import gg.itzkatze.katze.game.StartCountdown;
+import gg.itzkatze.katze.game.seed.SeedGenerator;
 import gg.itzkatze.katze.spectator.SpectatorManager;
 import gg.itzkatze.katze.util.KatzeColor;
+import gg.itzkatze.katze.text.TextArg;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -42,8 +44,11 @@ public class StartCommand extends KatzeCommand {
         }
         if (!canStart(caller)) return;
 
-        caller.sendMessage(Component.translatable("katze.game.start.countdown", gg.itzkatze.katze.text.TextArg.number("seconds", StartCountdown.SECONDS)).color(KatzeColor.LIME));
-        StartCountdown.begin(() -> start(caller));
+        SeedGenerator.prepare(() -> {
+            if (!canStart(caller)) return;
+            caller.sendMessage(Component.translatable("katze.game.start.countdown", TextArg.number("seconds", StartCountdown.SECONDS)).color(KatzeColor.LIME));
+            StartCountdown.begin(() -> start(caller));
+        }, reason -> caller.sendMessage(Component.text(reason).color(KatzeColor.RED)));
     }
 
     private static boolean canStart(@NotNull CommandCaller caller) {
@@ -68,6 +73,13 @@ public class StartCommand extends KatzeCommand {
     }
 
     private static void start(@NotNull CommandCaller caller) {
+        if (!canStart(caller)) return;
+
+        SeedGenerator.prepare(() -> startPrepared(caller),
+                reason -> caller.sendMessage(Component.text(reason).color(KatzeColor.RED)));
+    }
+
+    private static void startPrepared(@NotNull CommandCaller caller) {
         if (!canStart(caller)) return;
 
         GameLifecycleManager.startGame();

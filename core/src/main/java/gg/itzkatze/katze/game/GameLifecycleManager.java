@@ -9,6 +9,7 @@ import gg.itzkatze.katze.player.KatzePlayer;
 import gg.itzkatze.katze.spectator.SpectatorManager;
 import gg.itzkatze.katze.util.KatzeColor;
 import gg.itzkatze.katze.util.StructureScanner;
+import gg.itzkatze.katze.game.seed.SeedGenerator;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
@@ -126,6 +127,7 @@ public class GameLifecycleManager implements Listener {
     }
 
     public static void resetGame(Runnable onSuccess, Runnable onFailure) {
+        SeedGenerator.cancel();
         if (GameWorldManager.isResetting()) return;
         StartCountdown.cancel();
         KatzeGames.get().releasePause();

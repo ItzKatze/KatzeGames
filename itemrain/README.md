@@ -1,20 +1,22 @@
 # ItemRain
 
-**ItemRain** lets random items periodically rain down from the sky or land directly into players' inventories.
+Get a random item every few seconds. Use what turns up, whether it's exactly what you need or completely useless.
 
----
+## Where the items go
 
-## ✨ Features & Settings
+- **Inventory mode:** items arrive directly in your inventory.
+- **Sky drops:** items fall above and around you, so you'll need to pick them up.
 
-- **Configurable Item Interval**: Adjust the frequency (in seconds) of item drops.
-- **Sky Drop Mode**: Toggle between receiving items directly in inventory or dropping them from the sky above players.
-- **Drop Radius**: Customize the block radius around players where sky drops land.
+## Settings
 
----
+Operators can adjust these in `/settings`.
 
-## ⚙️ Settings Menu
+| Setting | Range | Default |
+| --- | --- | --- |
+| Time between drops | 1–300 seconds | 10 seconds |
+| Sky drops | On / off | Off |
+| Sky drop radius | 0–32 blocks | 5 blocks |
 
-Access ItemRain settings via `/settings` in-game to adjust:
-- **Item Interval**: Set seconds between drops (1 to 300 seconds).
-- **Sky Drop Mode**: Turn sky drops ON or OFF.
-- **Sky Drop Radius**: Set the drop radius (0 to 32 blocks).
+The radius only affects sky drops. Set it to **0** to drop items directly above each player.
+
+[Back to KatzeGames](../README.md)

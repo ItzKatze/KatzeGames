@@ -7,6 +7,7 @@ import gg.itzkatze.katze.commands.framework.KatzeCommand;
 import gg.itzkatze.katze.game.GameLifecycleManager;
 import gg.itzkatze.katze.game.GameWorldManager;
 import gg.itzkatze.katze.game.StartCountdown;
+import gg.itzkatze.katze.game.seed.SeedGenerator;
 import gg.itzkatze.katze.player.KatzePlayer;
 import gg.itzkatze.katze.util.KatzeColor;
 import net.kyori.adventure.text.Component;
@@ -52,17 +53,32 @@ public final class MapCommand extends KatzeCommand {
             case "end" -> World.Environment.THE_END;
             default -> World.Environment.NORMAL;
         };
-        World world = GameWorldManager.getWorld(environment);
-        if (world == null) {
-            caller.sendMessage(Component.translatable("katze.game.reset.not_ready").color(KatzeColor.RED));
+
+        SeedGenerator.prepare(() -> visit(player, environment),
+                reason -> caller.sendMessage(Component.text(reason).color(KatzeColor.RED)));
+    }
+
+    private static void visit(KatzePlayer player, World.Environment environment) {
+        Player online = player.getPlayer();
+        if (online == null || !online.isOnline()) return;
+        if (ChallengeManager.isGameStarted() || StartCountdown.isRunning()) {
+            player.sendMessage(Component.translatable("katze.game.map.game_started").color(KatzeColor.RED));
             return;
         }
-        Player online = player.getPlayer();
+        if (!GameWorldManager.isReady()) {
+            player.sendMessage(Component.translatable("katze.game.reset.not_ready").color(KatzeColor.RED));
+            return;
+        }
+        World world = GameWorldManager.getWorld(environment);
+        if (world == null) {
+            player.sendMessage(Component.translatable("katze.game.reset.not_ready").color(KatzeColor.RED));
+            return;
+        }
         online.closeInventory();
         if (!online.teleport(world.getSpawnLocation())) return;
         online.getInventory().clear();
         online.setGameMode(GameMode.CREATIVE);
-        caller.sendMessage(Component.translatable("katze.game.map.visiting").color(KatzeColor.LIME));
+        player.sendMessage(Component.translatable("katze.game.map.visiting").color(KatzeColor.LIME));
     }
 
     @Override

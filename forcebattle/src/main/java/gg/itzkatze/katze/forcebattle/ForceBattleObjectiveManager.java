@@ -1,7 +1,10 @@
 package gg.itzkatze.katze.forcebattle;
 
 import gg.itzkatze.katze.configuration.GlobalSetting;
+import gg.itzkatze.katze.KatzeGames;
 import gg.itzkatze.katze.game.GameWorldManager;
+import gg.itzkatze.katze.game.seed.SeedSearchArea;
+import gg.itzkatze.katze.game.seed.WorldSeedSearch;
 import gg.itzkatze.katze.configuration.SettingsManager;
 import gg.itzkatze.katze.configuration.states.PlayerTeamBothState;
 import gg.itzkatze.katze.configuration.states.SettingStateType;
@@ -20,6 +23,7 @@ import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -191,7 +195,7 @@ public class ForceBattleObjectiveManager {
     }
 
     public Location getRandomLocation(KatzePlayer katzePlayer) {
-        org.bukkit.entity.Player player = katzePlayer.getPlayer();
+        Player player = katzePlayer.getPlayer();
         if (player == null) return new Location(GameWorldManager.getWorld(), 0, 0, 0);
 
         int maxDistance = 2000;
@@ -203,6 +207,15 @@ public class ForceBattleObjectiveManager {
 
         int x = (int) base.getX() + offsetX;
         int z = (int) base.getZ() + offsetZ;
+
+        int radius = KatzeGames.get().getConfig().getInt("seed-generator.diameter", 10000) / 2;
+        SeedSearchArea area = new WorldSeedSearch(radius).area(player.getWorld().getEnvironment());
+        if (!area.contains(x, z)) {
+            do {
+                x = (int) Math.floor(area.x()) + ThreadLocalRandom.current().nextInt(-radius, radius + 1);
+                z = (int) Math.floor(area.z()) + ThreadLocalRandom.current().nextInt(-radius, radius + 1);
+            } while (!area.contains(x, z));
+        }
 
         int y = player.getWorld().getHighestBlockYAt(x, z);
 

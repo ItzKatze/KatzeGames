@@ -3,6 +3,7 @@ package gg.itzkatze.katze.challenges;
 import gg.itzkatze.katze.bossbar.BossbarContent;
 import gg.itzkatze.katze.commands.framework.KatzeCommand;
 import gg.itzkatze.katze.player.KatzePlayer;
+import gg.itzkatze.katze.game.seed.SeedRequirement;
 import gg.itzkatze.katze.scoreboard.ScoreboardContent;
 import net.kyori.adventure.text.Component;
 import org.bukkit.event.Listener;
@@ -21,6 +22,10 @@ public interface Challenge extends ChallengeSettings {
     default void onGameStart() {}
 
     default void onGameReset() {}
+
+    default List<SeedRequirement> getSeedRequirements() {
+        return List.of();
+    }
 
     default void onLobbyJoin(@NotNull KatzePlayer player) {}
 

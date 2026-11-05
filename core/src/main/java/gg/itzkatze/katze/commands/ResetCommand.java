@@ -5,6 +5,7 @@ import gg.itzkatze.katze.commands.framework.CommandCaller;
 import gg.itzkatze.katze.commands.framework.KatzeCommand;
 import gg.itzkatze.katze.game.GameLifecycleManager;
 import gg.itzkatze.katze.game.GameWorldManager;
+import gg.itzkatze.katze.game.seed.SeedGenerator;
 import gg.itzkatze.katze.util.KatzeColor;
 import net.kyori.adventure.text.Component;
 import org.bukkit.permissions.PermissionDefault;
@@ -27,6 +28,7 @@ public class ResetCommand extends KatzeCommand {
 
     @Override
     public void executeCommand(@NotNull CommandCaller caller, String[] args) {
+        SeedGenerator.cancel();
         if (GameWorldManager.isResetting()) {
             caller.sendMessage(Component.translatable("katze.game.reset.in_progress").color(KatzeColor.RED));
             return;

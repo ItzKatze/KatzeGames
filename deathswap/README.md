@@ -1,19 +1,17 @@
 # DeathSwap
 
-**DeathSwap** is a fast-paced survival gamemode where players are randomly swapped with each other at set time intervals.  
-Use traps, fall damage, lava, and timing to eliminate your opponents before you die!
+Prepare a trap, then let the next swap bring someone into it. Stay alive until you're the last player standing.
 
----
+## How it works
 
-## ✨ Features & Settings
+- Surviving players swap positions at regular intervals.
+- A countdown and sound cues warn you during the final 10 seconds.
+- When you die, you become a spectator for the rest of the round.
 
-- **Configurable Swap Interval**: Change how frequently players swap positions (in minutes).
-- **Actionbar Countdown & Sound**: A 10-second warning countdown with sound alerts notifies players before every swap.
-- **Last Player Standing**: Eliminated players automatically switch to spectator mode until a single winner remains.
+Lava, a long fall, or a well-timed trap can finish someone off. Just make sure you survive until the swap.
 
----
+## Settings
 
-## ⚙️ Settings Menu
+Operators can change the **swap interval** in `/settings`: **1–60 minutes**, with **5 minutes** as the default.
 
-Access DeathSwap settings via `/settings` in-game to adjust:
-- **Swap Interval**: Set the duration between swaps (1 to 60 minutes).
+[Back to KatzeGames](../README.md)

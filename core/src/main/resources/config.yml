@@ -17,3 +17,9 @@ exclude:
     deaths:
 
 forcebattle-duration-minutes: 60
+
+seed-generator:
+    diameter: 10000
+    max-attempts: 100
+    timeout-seconds: 300
+    tick-budget-millis: 8
