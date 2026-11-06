@@ -45,6 +45,7 @@ import java.util.Map;
 public class ResultGUI extends KatzeGUI {
 
     private static final int SPACES_ON_PAGE = 45;
+    private static final int PREVIEW_SLOT = 4;
 
     private final ResultType resultType;
     private final int page;
@@ -174,7 +175,13 @@ public class ResultGUI extends KatzeGUI {
                     return;
                 }
 
+                if (index > startIndex) {
+                    setObjectiveItem(9 + ((index - 1) % SPACES_ON_PAGE), objectives.get(index - 1));
+                }
+
                 if (index >= objectives.size()) {
+                    fill(ItemStackCreator.fillerItem(), PREVIEW_SLOT, PREVIEW_SLOT, true);
+                    updateInventory(viewer);
                     cancel();
                     activeAnimations.remove(viewer);
 
@@ -191,8 +198,6 @@ public class ResultGUI extends KatzeGUI {
                 }
 
                 int currentPage = (index / SPACES_ON_PAGE) + 1;
-                int slot = 9 + (index % SPACES_ON_PAGE);
-
                 ForceBattleObjective objective = objectives.get(index);
 
                 if (currentPage != page) {
@@ -207,12 +212,7 @@ public class ResultGUI extends KatzeGUI {
                     return;
                 }
 
-                set(new GUIItem(slot) {
-                    @Override
-                    public ItemStack getItem(KatzePlayer player) {
-                        return ResultCommandUtils.buildObjectiveItem(objective, false);
-                    }
-                });
+                setObjectiveItem(PREVIEW_SLOT, objective);
 
                 updateInventory(viewer);
                 index++;
@@ -222,6 +222,15 @@ public class ResultGUI extends KatzeGUI {
         final int animationDelayTicks = 15;
         task.runTaskTimer(KatzeGames.get(), 0L, animationDelayTicks);
         activeAnimations.put(viewer, task);
+    }
+
+    private void setObjectiveItem(int slot, ForceBattleObjective objective) {
+        set(new GUIItem(slot) {
+            @Override
+            public ItemStack getItem(KatzePlayer player) {
+                return ResultCommandUtils.buildObjectiveItem(objective, false);
+            }
+        });
     }
 
     @Override
@@ -375,6 +384,9 @@ public class ResultGUI extends KatzeGUI {
                 }
             } else {
                 lore.add(Component.translatable("katze.forcebattle.results.unfinished").color(KatzeColor.YELLOW));
+                unfinishedPlayers(objective).forEach(player -> lore.add(
+                        Component.translatable("katze.forcebattle.results.player",
+                                TextArg.text("player", player.getName())).color(KatzeColor.LIGHT_GRAY)));
             }
             if (objective.hasBeenSkipped()) {
                 lore.add(Component.empty());
@@ -386,6 +398,23 @@ public class ResultGUI extends KatzeGUI {
                     .append(objective.displayName().color(KatzeColor.BLUE));
 
             return ItemStackCreator.getStack(name, material, lore);
+        }
+
+        private static List<KatzePlayer> unfinishedPlayers(ForceBattleObjective objective) {
+            List<KatzePlayer> players = new ArrayList<>();
+            for (KatzePlayer player : KatzePlayer.PLAYERS) {
+                if (player instanceof ForceBattlePlayer battlePlayer
+                        && (battlePlayer.getObjective() == objective || battlePlayer.getLastObjective() == objective)) {
+                    players.add(player);
+                }
+            }
+            for (KatzeTeam team : KatzeTeam.teams) {
+                if (team instanceof ForceBattleTeam battleTeam
+                        && (battleTeam.getObjective() == objective || battleTeam.getLastObjective() == objective)) {
+                    team.getPlayers().stream().filter(player -> !players.contains(player)).forEach(players::add);
+                }
+            }
+            return players;
         }
     }
 }

@@ -131,7 +131,7 @@ public final class SavedResultsGUI extends KatzeGUI {
             if (player.teamId() != null && battle.game() != SavedBattle.Game.ALL_ITEMS) {
                 lore.add(Component.translatable("katze.results.team", TextArg.number("id", player.teamId())));
             }
-            entries.add(new Entry(ItemStackCreator.getStack(Component.text(player.name(), KatzeColor.LIGHT_BLUE), Material.PLAYER_HEAD, lore),
+            entries.add(new Entry(ItemStackCreator.getPlayerSkull(player.id(), Component.text(player.name(), KatzeColor.LIGHT_BLUE), 1, lore.toArray(Component[]::new)),
                     viewer -> new SavedResultsGUI(roundId, player.id(), null, 0).open(viewer)));
         }
         return entries;

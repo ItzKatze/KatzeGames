@@ -12,6 +12,8 @@ import gg.itzkatze.katze.util.KatzeColor;
 import gg.itzkatze.katze.util.WorldStorage;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.translation.GlobalTranslator;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -21,6 +23,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -61,21 +64,26 @@ public final class AchievementService {
     private static void notifyPlayer(UUID id, Unlock unlock) {
         Player player = Bukkit.getPlayer(id);
         if (player == null) return;
+        player.sendMessage(get().unlockMessage(id, unlock, player.locale()));
+        if (unlock.newLevel() > unlock.oldLevel()) {
+            player.sendMessage(Component.translatable("katze.achievements.level_up", TextArg.number("level", unlock.newLevel())));
+        }
+    }
+
+    Component unlockMessage(UUID id, Unlock unlock, Locale locale) {
         boolean staged = unlock.achievement().stages().size() > 1;
-        Component name = get().title(id, unlock.achievement());
+        Component name = title(id, unlock.achievement());
         Component requirement = unlock.achievement().description(unlock.stages().getLast());
         if (staged) {
             Component stages = Component.join(JoinConfiguration.separator(Component.text(", ")), unlock.stages().stream()
                     .map(stage -> Component.translatable("katze.achievements.stage", TextArg.text("stage", stage.id()))).toList());
             name = name.append(Component.text(" (")).append(stages).append(Component.text(")"));
         }
-        Component tooltip = requirement.color(KatzeColor.LIGHT_GRAY).append(Component.newline())
-                .append(Component.translatable("katze.achievements.unlock_xp", TextArg.number("xp", unlock.xp())).color(KatzeColor.LIME));
+        Component tooltip = GlobalTranslator.render(Component.empty().decoration(TextDecoration.OBFUSCATED, false)
+                .append(requirement.color(KatzeColor.LIGHT_GRAY)).append(Component.newline())
+                .append(Component.translatable("katze.achievements.unlock_xp", TextArg.number("xp", unlock.xp())).color(KatzeColor.LIME)), locale);
         Component achievement = name.color(KatzeColor.GOLD).hoverEvent(tooltip);
-        player.sendMessage(Component.translatable("katze.achievements.unlocked", TextArg.component("achievement", achievement)));
-        if (unlock.newLevel() > unlock.oldLevel()) {
-            player.sendMessage(Component.translatable("katze.achievements.level_up", TextArg.number("level", unlock.newLevel())));
-        }
+        return GlobalTranslator.render(Component.translatable("katze.achievements.unlocked", TextArg.component("achievement", achievement)), locale);
     }
 
     public AchievementProfile profile(UUID player) {

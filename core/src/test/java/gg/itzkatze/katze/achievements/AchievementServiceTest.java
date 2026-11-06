@@ -5,6 +5,12 @@ import com.google.gson.JsonObject;
 import gg.itzkatze.katze.challenges.ChallengeType;
 import gg.itzkatze.katze.level.LevelStore;
 import gg.itzkatze.katze.player.data.PlayerDataStore;
+import gg.itzkatze.katze.text.TextStyle;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.minimessage.translation.MiniMessageTranslationStore;
 import org.bukkit.Material;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.TranslatableComponent;
@@ -16,13 +22,17 @@ import org.junit.jupiter.api.io.TempDir;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.Properties;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -358,7 +368,7 @@ final class AchievementServiceTest {
         }
         assertEquals("Sortierung à la Nied", assertInstanceOf(TextComponent.class, pack.title(Achievement.BUNDLES)).content());
         assertEquals("I have become Death. The Destroyer of Villages.", assertInstanceOf(TextComponent.class, pack.title(Achievement.START_RAID)).content());
-        assertEquals("Ein Königreich für eine Kohle (Name WIP)", assertInstanceOf(TextComponent.class, pack.title(Achievement.DEEPSLATE_COAL)).content());
+        assertEquals("Ein Königreich für eine Kohle", assertInstanceOf(TextComponent.class, pack.title(Achievement.DEEPSLATE_COAL)).content());
     }
 
     @Test
@@ -470,5 +480,51 @@ final class AchievementServiceTest {
         PlayerDataStore reloaded = new PlayerDataStore(file, (task, ticks) -> {});
         assertEquals(150, reloaded.find(player).achievements().xp());
         assertFalse(new Gson().toJsonTree(reloaded.find(player).achievements()).getAsJsonObject().has("xp"));
+    }
+
+    @Test
+    void unlockHoverShowsBothLocalizedLinesForNormalAndCustomNames() throws Exception {
+        MiniMessageTranslationStore store = MiniMessageTranslationStore.create(Key.key("katzegames", "hover-test"), TextStyle.miniMessage());
+        store.defaultLocale(Locale.ENGLISH);
+        for (String language : List.of("en", "de")) {
+            Properties properties = new Properties();
+            try (InputStreamReader reader = new InputStreamReader(getClass().getResourceAsStream("/lang/achievements/" + language + ".properties"), StandardCharsets.UTF_8)) {
+                properties.load(reader);
+            }
+            store.registerAll(Locale.forLanguageTag(language), properties.stringPropertyNames().stream().collect(Collectors.toMap(key -> key, properties::getProperty)));
+        }
+        GlobalTranslator.translator().addSource(store);
+        try {
+            for (boolean custom : List.of(false, true)) {
+                assertTrue(service.setCustomNames(player, "Katze", custom));
+                for (Locale locale : List.of(Locale.ENGLISH, Locale.GERMAN)) {
+                    for (Achievement achievement : List.of(Achievement.ENTER_NETHER, Achievement.BUNDLES)) {
+                        AchievementStage stage = achievement.stages().get(achievement.stages().size() > 1 ? 1 : 0);
+                        Component message = service.unlockMessage(player, new AchievementService.Unlock(achievement,
+                                List.of(stage), 25, 1, 1), locale);
+                        Component hover = findHover(message);
+                        assertNotNull(hover);
+                        String requirement = achievement == Achievement.ENTER_NETHER
+                                ? locale.equals(Locale.GERMAN) ? "Betrete den Nether." : "Enter the Nether."
+                                : locale.equals(Locale.GERMAN) ? "Trage 5 Bündel gleichzeitig." : "Carry 5 bundles at the same time.";
+                        String reward = locale.equals(Locale.GERMAN) ? "Erhaltene Errungenschafts-XP: +25 XP" : "Achievement XP awarded: +25 XP";
+                        assertEquals(requirement + "\n" + reward, PlainTextComponentSerializer.plainText().serialize(hover));
+                        assertEquals(TextDecoration.State.FALSE, hover.decoration(TextDecoration.OBFUSCATED));
+                    }
+                }
+            }
+        } finally {
+            GlobalTranslator.translator().removeSource(store);
+        }
+    }
+
+    private Component findHover(Component component) {
+        HoverEvent<?> event = component.hoverEvent();
+        if (event != null && event.action() == HoverEvent.Action.SHOW_TEXT) return (Component) event.value();
+        for (Component child : component.children()) {
+            Component hover = findHover(child);
+            if (hover != null) return hover;
+        }
+        return null;
     }
 }

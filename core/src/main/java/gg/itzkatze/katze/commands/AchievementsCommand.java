@@ -16,7 +16,7 @@ import java.util.Locale;
 
 public final class AchievementsCommand extends KatzeCommand {
     public AchievementsCommand() {
-        super("achievements", List.of(), CallerType.PLAYER, "/achievements [names <auto|custom>]", PermissionDefault.TRUE, "Browse your achievements");
+        super("achievements", List.of("achievement", "ach"), CallerType.PLAYER, "/achievements [names <auto|custom>]", PermissionDefault.TRUE, "Browse your achievements");
     }
 
     @Override
