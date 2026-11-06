@@ -194,11 +194,12 @@ public final class CosmeticCategoryGui extends KatzeGUI {
                 : Component.translatable("katze.cosmetics.default." + category.name().toLowerCase(java.util.Locale.ROOT)).color(KatzeColor.WHITE);
 
         Material icon = entry.random() ? Material.HOPPER : cosmetic != null
-                ? owned ? cosmetic.icon() : Material.GRAY_DYE
+                ? owned || category == CosmeticCategory.HIGHLIGHT ? cosmetic.icon() : Material.GRAY_DYE
                 : switch (category) {
                     case BLOCK -> Material.LIME_CONCRETE;
                     case SOUND -> Material.EXPERIENCE_BOTTLE;
                     case MUSIC -> Material.BARRIER;
+                    case HIGHLIGHT -> Material.BARRIER;
                 };
 
         ItemStack stack = ItemStackCreator.getStack(name, icon, lore);

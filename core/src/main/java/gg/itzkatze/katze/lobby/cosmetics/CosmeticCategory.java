@@ -8,7 +8,8 @@ public enum CosmeticCategory {
 
     BLOCK(Material.GRASS_BLOCK),
     SOUND(Material.NOTE_BLOCK),
-    MUSIC(Material.JUKEBOX);
+    MUSIC(Material.JUKEBOX),
+    HIGHLIGHT(Material.YELLOW_DYE);
 
     private final Material icon;
 

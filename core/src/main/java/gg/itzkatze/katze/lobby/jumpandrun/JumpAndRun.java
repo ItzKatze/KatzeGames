@@ -16,6 +16,7 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import org.bukkit.GameMode;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -70,10 +71,12 @@ public class JumpAndRun implements LobbyFeature, Listener {
     private final RunMultiplier runMultiplier = new RunMultiplier();
     private final MusicManager musicManager;
     private final Plugin plugin;
+    private final BlockHighlights highlights;
 
     public JumpAndRun(@NotNull Vector platePosition, @NotNull Plugin plugin) {
         this.platePosition = platePosition.clone();
         this.plugin = plugin;
+        this.highlights = new BlockHighlights(plugin);
         this.musicManager = new MusicManager(KatzeGames.get());
     }
 
@@ -198,6 +201,7 @@ public class JumpAndRun implements LobbyFeature, Listener {
             lastColors.put(id, look.color());
         }
         reservations.set(id, HopPlanner.reservation(block, start.first()));
+        highlight(run);
         PointsSidebar.refresh(id);
         player.sendMessage(look.startMessage());
         player.playSound(PLATE_CLICK);
@@ -220,12 +224,16 @@ public class JumpAndRun implements LobbyFeature, Listener {
                 return;
             }
         }
+        for (Cell cell : support) {
+            if (run.touchSlime(cell)) highlight(run);
+        }
         if (run.getNext() != null && support.contains(run.getNext())) {
             land(arena, run);
         }
     }
 
     private void land(@NotNull Arena arena, @NotNull JumpRun run) {
+        highlights.remove(run.getId());
         HopDifficulty landed = run.getNextDifficulty();
         removeBlock(arena, run.getCurrent(), run.getCurrentBlock());
         if (run.getSlime() != null) {
@@ -266,6 +274,17 @@ public class JumpAndRun implements LobbyFeature, Listener {
         place(arena, hop.block(), nextEvent ? EventBlock.MATERIAL : run.getLook().block());
         run.setNext(hop, nextEvent);
         reservations.set(run.getId(), HopPlanner.reservation(standing, hop));
+        highlight(run);
+    }
+
+    private void highlight(@NotNull JumpRun run) {
+        Cell target = run.target();
+        Color color = run.getHighlightColor();
+        if (target != null && color != null) {
+            highlights.show(run.getPlayer(), target, color);
+        } else {
+            highlights.remove(run.getId());
+        }
     }
 
     private void payEvent(@NotNull Arena arena, @NotNull JumpRun run, @NotNull CosmeticStore store, @NotNull Random random) {
@@ -280,6 +299,7 @@ public class JumpAndRun implements LobbyFeature, Listener {
 
     private void end(@NotNull Arena arena, @NotNull JumpRun run, @NotNull Ending ending) {
         runs.remove(run.getId());
+        highlights.remove(run.getId());
         AchievementService.get().jumpEnded(run.getId());
         reservations.release(run.getId());
         removeBlock(arena, run.getCurrent(), run.getCurrentBlock());

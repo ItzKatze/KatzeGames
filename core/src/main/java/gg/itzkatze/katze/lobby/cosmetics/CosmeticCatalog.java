@@ -48,6 +48,7 @@ public final class CosmeticCatalog {
             Collections.addAll(cosmetics, BlockCosmetic.values());
             Collections.addAll(cosmetics, SoundCosmetic.values());
             Collections.addAll(cosmetics, MusicCosmetic.values());
+            Collections.addAll(cosmetics, BlockHighlightCosmetic.values());
             standard = new CosmeticCatalog(cosmetics);
         }
         return standard;

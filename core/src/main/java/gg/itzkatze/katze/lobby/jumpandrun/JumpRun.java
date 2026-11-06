@@ -3,10 +3,12 @@ package gg.itzkatze.katze.lobby.jumpandrun;
 import gg.itzkatze.katze.lobby.cosmetics.BlockCosmetic;
 import gg.itzkatze.katze.lobby.cosmetics.CosmeticCategory;
 import gg.itzkatze.katze.lobby.cosmetics.CosmeticStore;
+import gg.itzkatze.katze.lobby.cosmetics.BlockHighlightCosmetic;
 import gg.itzkatze.katze.lobby.cosmetics.SoundCosmetic;
 import lombok.Getter;
 import net.kyori.adventure.sound.Sound;
 import org.bukkit.Material;
+import org.bukkit.Color;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,11 +24,13 @@ final class JumpRun {
     private final UUID id;
     private RunLook look;
     private Sound landingSound;
+    private @Nullable Color highlightColor;
     private final BitSet visited = new BitSet();
     private Cell current;
     private Material currentBlock;
     private @Nullable Cell next;
     private @Nullable Cell slime;
+    private boolean slimeTouched;
     private HopDifficulty nextDifficulty = HopDifficulty.NORMAL;
     private boolean nextEvent;
     private @Nullable HopSteering.Leg leg;
@@ -42,6 +46,8 @@ final class JumpRun {
         this.landingSound = CosmeticStore.get().selectForRun(id, CosmeticCategory.SOUND)
                 .map(SoundCosmetic.class::cast).map(SoundCosmetic::sound).orElse(SoundCosmetic.DEFAULT);
         this.current = start;
+        this.highlightColor = CosmeticStore.get().selectForRun(id, CosmeticCategory.HIGHLIGHT)
+                .map(BlockHighlightCosmetic.class::cast).map(BlockHighlightCosmetic::color).orElse(null);
         this.currentBlock = look.block();
         this.next = next;
     }
@@ -54,6 +60,7 @@ final class JumpRun {
         currentBlock = look.block();
         next = null;
         slime = null;
+        slimeTouched = false;
         nextEvent = false;
         return event;
     }
@@ -68,6 +75,10 @@ final class JumpRun {
             landingSound = store.selectForRun(id, CosmeticCategory.SOUND)
                     .map(SoundCosmetic.class::cast).map(SoundCosmetic::sound).orElse(SoundCosmetic.DEFAULT);
         }
+        if (store.isRandomPerJump(id, CosmeticCategory.HIGHLIGHT)) {
+            highlightColor = store.selectForRun(id, CosmeticCategory.HIGHLIGHT)
+                    .map(BlockHighlightCosmetic.class::cast).map(BlockHighlightCosmetic::color).orElse(null);
+        }
     }
 
     void setNext(@NotNull HopPlanner.Hop hop, boolean event) {
@@ -75,6 +86,17 @@ final class JumpRun {
         nextDifficulty = hop.difficulty();
         nextEvent = event;
         slime = hop.slime();
+        slimeTouched = false;
+    }
+
+    @Nullable Cell target() {
+        return slime != null && !slimeTouched ? slime : next;
+    }
+
+    boolean touchSlime(@NotNull Cell cell) {
+        if (slimeTouched || !cell.equals(slime)) return false;
+        slimeTouched = true;
+        return true;
     }
 
     boolean isSlimeDue() {

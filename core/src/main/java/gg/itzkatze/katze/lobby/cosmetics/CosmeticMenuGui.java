@@ -40,9 +40,10 @@ public final class CosmeticMenuGui extends KatzeGUI {
 
     private static int slotOf(@NotNull CosmeticCategory category) {
         return switch (category) {
-            case BLOCK -> 11;
-            case SOUND -> 13;
-            case MUSIC -> 15;
+            case BLOCK -> 10;
+            case SOUND -> 12;
+            case MUSIC -> 14;
+            case HIGHLIGHT -> 16;
         };
     }
 

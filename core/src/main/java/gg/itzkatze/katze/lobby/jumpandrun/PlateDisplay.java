@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 final class PlateDisplay {
 
-    private static final NamespacedKey TAG = new NamespacedKey("katze", "lobby_jump_and_run");
+    static final NamespacedKey TAG = new NamespacedKey("katze", "lobby_jump_and_run");
     private static final double HEIGHT = 1.6;
     private static final Component TEXT = Component.textOfChildren(
             Component.translatable("katze.cosmetics.jump_and_run.title").color(KatzeColor.GOLD).decorate(TextDecoration.BOLD),

@@ -1,7 +1,9 @@
 package gg.itzkatze.katze.lobby.jumpandrun;
 
 import gg.itzkatze.katze.lobby.cosmetics.CosmeticCatalog;
+import gg.itzkatze.katze.lobby.cosmetics.CosmeticCategory;
 import gg.itzkatze.katze.lobby.cosmetics.CosmeticStore;
+import gg.itzkatze.katze.lobby.cosmetics.BlockHighlightCosmetic;
 import gg.itzkatze.katze.player.data.PlayerDataStore;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
@@ -37,6 +39,7 @@ class JumpRunTest {
     @Test
     void slimeAndFinalBlockFormOneScoringJump() {
         JumpRun run = run();
+        assertEquals(run.getNext(), run.target());
 
         for (HopDifficulty difficulty : new HopDifficulty[]{HopDifficulty.SLIME_EASY, HopDifficulty.SLIME_HARD}) {
             int before = run.getScore();
@@ -46,13 +49,22 @@ class JumpRunTest {
 
             assertEquals(before, run.getScore());
             assertEquals(slime, run.getSlime());
+            assertEquals(slime, run.target());
             assertEquals(target, run.getNext());
             assertNotEquals(slime, run.getNext());
+            assertFalse(run.touchSlime(run.getCurrent()));
+            assertEquals(slime, run.target());
+            assertTrue(run.touchSlime(slime));
+            assertEquals(target, run.target());
+            assertEquals(before, run.getScore());
+            assertFalse(run.touchSlime(slime));
+            assertEquals(target, run.target());
             assertTrue(run.land());
             assertEquals(before + 1, run.getScore());
             assertEquals(target, run.getCurrent());
             assertNull(run.getSlime());
             assertNull(run.getNext());
+            assertNull(run.target());
             assertFalse(run.isNextEvent());
         }
     }
@@ -80,6 +92,37 @@ class JumpRunTest {
         assertTrue(run.isSlimeDue());
     }
 
+    @Test
+    void highlightsUseTheEquippedColorAndSupportRandomPerJump() {
+        PlayerDataStore data = new PlayerDataStore(directory.resolve("highlights.json"), (task, ticks) -> {});
+        CosmeticStore store = new CosmeticStore(data, CosmeticCatalog.standard());
+        CosmeticStore.install(store);
+        JumpRun defaultRun = run();
+        assertNull(defaultRun.getHighlightColor());
+        Player player = defaultRun.getPlayer();
+        store.winCosmetic(player, BlockHighlightCosmetic.RED, 0);
+        assertTrue(store.equip(player, BlockHighlightCosmetic.RED));
+        JumpRun coloredRun = new JumpRun(player, defaultRun.getLook(), defaultRun.getCurrent(), defaultRun.getNext());
+        assertEquals(BlockHighlightCosmetic.RED.color(), coloredRun.getHighlightColor());
+
+        store.equipRandom(player, CosmeticCategory.HIGHLIGHT);
+        defaultRun.refreshCosmetics();
+        assertNull(defaultRun.getHighlightColor());
+        store.equipRandom(player, CosmeticCategory.HIGHLIGHT);
+        defaultRun.refreshCosmetics();
+        assertEquals(BlockHighlightCosmetic.RED.color(), defaultRun.getHighlightColor());
+
+        Cell slime = coloredRun.getCurrent().add(4, -2, 0);
+        Cell target = slime.add(4, 1, 0);
+        coloredRun.setNext(new HopPlanner.Hop(target, Set.of(slime, target), HopDifficulty.SLIME_EASY, slime), false);
+        assertTrue(coloredRun.touchSlime(slime));
+        assertEquals(BlockHighlightCosmetic.RED.color(), coloredRun.getHighlightColor());
+
+        store.unequip(player, CosmeticCategory.HIGHLIGHT);
+        JumpRun clearedRun = new JumpRun(player, coloredRun.getLook(), coloredRun.getCurrent(), target);
+        assertNull(clearedRun.getHighlightColor());
+    }
+
     private void complete(JumpRun run, HopDifficulty difficulty) {
         Cell target = run.getCurrent().add(8, -1, 0);
         Cell slime = difficulty.isSlime() ? run.getCurrent().add(4, -2, 0) : null;
@@ -92,6 +135,7 @@ class JumpRunTest {
         Player player = (Player) Proxy.newProxyInstance(Player.class.getClassLoader(), new Class<?>[]{Player.class},
                 (proxy, method, arguments) -> {
                     if (method.getName().equals("getUniqueId")) return id;
+                    if (method.getName().equals("getName")) return "Runner";
                     throw new UnsupportedOperationException(method.getName());
                 });
         Cell start = new Cell(0, 20, 0);
