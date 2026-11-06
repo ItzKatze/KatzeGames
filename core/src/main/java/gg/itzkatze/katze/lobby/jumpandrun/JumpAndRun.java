@@ -215,7 +215,7 @@ public class JumpAndRun implements LobbyFeature, Listener {
     private void checkSupport(@NotNull Arena arena, @NotNull JumpRun run, @NotNull Location to) {
         List<Cell> support = RunSupport.standingOn(to);
         for (Cell cell : support) {
-            if (!cell.equals(run.getCurrent()) && !cell.equals(run.getNext())) {
+            if (!cell.equals(run.getCurrent()) && !cell.equals(run.getNext()) && !cell.equals(run.getSlime())) {
                 end(arena, run, Ending.FAILED);
                 return;
             }
@@ -228,6 +228,9 @@ public class JumpAndRun implements LobbyFeature, Listener {
     private void land(@NotNull Arena arena, @NotNull JumpRun run) {
         HopDifficulty landed = run.getNextDifficulty();
         removeBlock(arena, run.getCurrent(), run.getCurrentBlock());
+        if (run.getSlime() != null) {
+            removeBlock(arena, run.getSlime(), Material.SLIME_BLOCK);
+        }
         boolean onEvent = run.land();
         CosmeticStore store = CosmeticStore.get();
         run.refreshCosmetics();
@@ -250,15 +253,18 @@ public class JumpAndRun implements LobbyFeature, Listener {
         HopSteering.Leg leg = HopSteering.advance(run.getLeg(), standing, arena.playArea(), run.getVisited(), random);
         run.setLeg(leg);
         HopPlanner.Hop hop = HopPlanner.next(standing, new WorldSpace(arena.world(), reservations, run.getId()), arena.playArea(), Set.of(), random,
-                HopReach.roll(landed, random), leg.destination());
+                HopReach.roll(landed, store.best(run.getId()), run.isSlimeDue(), random), leg.destination());
         if (hop == null) {
             end(arena, run, Ending.NO_ROOM);
             return;
         }
 
         boolean nextEvent = EventBlock.rolls(onEvent, random);
+        if (hop.slime() != null) {
+            place(arena, hop.slime(), Material.SLIME_BLOCK);
+        }
         place(arena, hop.block(), nextEvent ? EventBlock.MATERIAL : run.getLook().block());
-        run.setNext(hop.block(), hop.difficulty(), nextEvent);
+        run.setNext(hop, nextEvent);
         reservations.set(run.getId(), HopPlanner.reservation(standing, hop));
     }
 
@@ -277,6 +283,9 @@ public class JumpAndRun implements LobbyFeature, Listener {
         AchievementService.get().jumpEnded(run.getId());
         reservations.release(run.getId());
         removeBlock(arena, run.getCurrent(), run.getCurrentBlock());
+        if (run.getSlime() != null) {
+            removeBlock(arena, run.getSlime(), Material.SLIME_BLOCK);
+        }
         if (run.getNext() != null) {
             removeBlock(arena, run.getNext(), run.isNextEvent() ? EventBlock.MATERIAL : run.getLook().block());
         }

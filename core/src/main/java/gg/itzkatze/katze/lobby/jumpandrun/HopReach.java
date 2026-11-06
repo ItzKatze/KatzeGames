@@ -12,6 +12,9 @@ final class HopReach {
 
     private static final double HARD_CHANCE = 0.25;
     private static final double EXTREME_CHANCE = 0.18;
+    private static final int HARD_START_BEST = 75;
+    private static final int EXTREME_START_BEST = 150;
+    private static final int FULL_DIFFICULTY_BEST = 300;
     private static final double MIN_DISTANCE = 2.5;
     private static final double MAX_FLAT = 3.7;
     private static final double MAX_UP = 3.1;
@@ -51,15 +54,20 @@ final class HopReach {
             case NORMAL -> NORMAL;
             case HARD -> HARD;
             case EXTREME -> EXTREME;
+            case SLIME_EASY, SLIME_HARD -> SlimePlanner.approaches(difficulty);
         };
     }
 
-    static @NotNull HopDifficulty roll(@NotNull HopDifficulty previous, @NotNull Random random) {
+    static @NotNull HopDifficulty roll(@NotNull HopDifficulty previous, int best, boolean slimeDue, @NotNull Random random) {
+        double hardChance = HARD_CHANCE * Math.clamp((best - (double) HARD_START_BEST) / (EXTREME_START_BEST - HARD_START_BEST), 0, 1);
+        if (slimeDue) return random.nextDouble() < hardChance ? HopDifficulty.SLIME_HARD : HopDifficulty.SLIME_EASY;
         if (previous != HopDifficulty.NORMAL) return HopDifficulty.NORMAL;
 
+        double extremeChance = EXTREME_CHANCE * Math.clamp((best - (double) EXTREME_START_BEST) / (FULL_DIFFICULTY_BEST - EXTREME_START_BEST), 0, 1);
         double roll = random.nextDouble();
-        if (roll < EXTREME_CHANCE) return HopDifficulty.EXTREME;
-        return roll < EXTREME_CHANCE + HARD_CHANCE ? HopDifficulty.HARD : HopDifficulty.NORMAL;
+        if (roll < extremeChance) return HopDifficulty.EXTREME;
+        if (roll < extremeChance + hardChance) return HopDifficulty.HARD;
+        return HopDifficulty.NORMAL;
     }
 
     private static @NotNull List<Cell> scan(int dy, double maxDistance) {

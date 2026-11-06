@@ -30,13 +30,17 @@ final class HopPlanner {
         boolean isReserved(@NotNull Cell cell);
     }
 
-    record Hop(@NotNull Cell block, @NotNull Set<Cell> reserved, @NotNull HopDifficulty difficulty) {
+    record Hop(@NotNull Cell block, @NotNull Set<Cell> reserved, @NotNull HopDifficulty difficulty, @Nullable Cell slime) {
+
+        Hop(@NotNull Cell block, @NotNull Set<Cell> reserved, @NotNull HopDifficulty difficulty) {
+            this(block, reserved, difficulty, null);
+        }
     }
 
     record Start(@NotNull Cell block, @NotNull Hop first) {
     }
 
-    // A hard or extreme request falls back to a normal hop when none of its kind fits.
+    // A special request falls back to a normal hop when none of its kind fits.
     static @Nullable Hop next(@NotNull Cell from, @NotNull Space space, @NotNull CellBox playArea, @NotNull Set<Cell> exempt, @NotNull Random random,
                               @NotNull HopDifficulty difficulty, @Nullable Cell destination) {
         if (difficulty != HopDifficulty.NORMAL) {
@@ -102,6 +106,8 @@ final class HopPlanner {
 
     private static @Nullable Hop pick(@NotNull Cell from, @NotNull Space space, @NotNull CellBox playArea, @NotNull Set<Cell> exempt, @NotNull Random random,
                                       @NotNull HopDifficulty difficulty, @Nullable Cell destination) {
+        if (difficulty.isSlime()) return SlimePlanner.next(from, space, playArea, exempt, random, difficulty, destination);
+
         Hop fallback = null;
         for (Cell offset : HopSteering.order(HopReach.groups(difficulty), from, destination, random)) {
             Hop hop = tryHop(from, from.add(offset.x(), offset.y(), offset.z()), space, playArea, exempt, difficulty);
@@ -115,7 +121,7 @@ final class HopPlanner {
     }
 
     // A block the run can't leave again ends it: prefer a hop whose block has a normal hop of its own, once the block we leave is gone.
-    private static boolean hasWayOn(@NotNull Cell block, @NotNull Cell behind, @NotNull Set<Cell> exempt, @NotNull Space space, @NotNull CellBox playArea) {
+    static boolean hasWayOn(@NotNull Cell block, @NotNull Cell behind, @NotNull Set<Cell> exempt, @NotNull Space space, @NotNull CellBox playArea) {
         Set<Cell> gone = new HashSet<>(exempt);
         gone.add(behind);
         for (HopReach.Group group : HopReach.groups(HopDifficulty.NORMAL)) {

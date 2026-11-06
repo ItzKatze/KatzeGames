@@ -26,10 +26,12 @@ final class JumpRun {
     private Cell current;
     private Material currentBlock;
     private @Nullable Cell next;
+    private @Nullable Cell slime;
     private HopDifficulty nextDifficulty = HopDifficulty.NORMAL;
     private boolean nextEvent;
     private @Nullable HopSteering.Leg leg;
     private int score;
+    private int nextSlimeJump = 10;
     private int eventBlocks;
     private int eventPoints;
 
@@ -47,9 +49,11 @@ final class JumpRun {
     boolean land() {
         boolean event = nextEvent;
         score++;
+        if (nextDifficulty.isSlime()) nextSlimeJump = score + 10;
         current = Objects.requireNonNull(next);
         currentBlock = look.block();
         next = null;
+        slime = null;
         nextEvent = false;
         return event;
     }
@@ -66,10 +70,15 @@ final class JumpRun {
         }
     }
 
-    void setNext(@NotNull Cell next, @NotNull HopDifficulty difficulty, boolean event) {
-        this.next = next;
-        this.nextDifficulty = difficulty;
-        this.nextEvent = event;
+    void setNext(@NotNull HopPlanner.Hop hop, boolean event) {
+        next = hop.block();
+        nextDifficulty = hop.difficulty();
+        nextEvent = event;
+        slime = hop.slime();
+    }
+
+    boolean isSlimeDue() {
+        return score + 1 >= nextSlimeJump;
     }
 
     void recordEvent(int applied) {
