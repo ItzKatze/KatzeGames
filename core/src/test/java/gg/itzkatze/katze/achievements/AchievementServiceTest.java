@@ -54,7 +54,7 @@ final class AchievementServiceTest {
     }
 
     private AchievementService service(PlayerDataStore store) {
-        return new AchievementService(store, (id, unlock) -> notices.add(unlock), id -> {});
+        return new AchievementService(store, (id, unlock) -> notices.add(unlock), id -> {}, AchievementNamePackFixtures.custom());
     }
 
     @Test
@@ -353,7 +353,7 @@ final class AchievementServiceTest {
         assertInstanceOf(TranslatableComponent.class, service.title(player, Achievement.TAME_ANIMAL));
         assertTrue(service.setCustomNames(player, "Katze", true));
         for (Locale locale : List.of(Locale.ENGLISH, Locale.GERMAN, Locale.FRENCH)) {
-            assertEquals("Ich habe einen neuen Teammate!", PlainTextComponentSerializer.plainText()
+            assertEquals("Custom tame_animal", PlainTextComponentSerializer.plainText()
                     .serialize(GlobalTranslator.render(service.title(player, Achievement.TAME_ANIMAL), locale)));
         }
         UUID other = UUID.randomUUID();
@@ -389,14 +389,22 @@ final class AchievementServiceTest {
     }
 
     @Test
-    void customNamePackContainsEveryOriginalName() {
-        AchievementNamePack pack = AchievementNamePack.custom();
+    void customNamePackSupportsEveryAchievementName() {
+        AchievementNamePack pack = AchievementNamePackFixtures.custom();
         for (Achievement achievement : Achievement.values()) {
             assertFalse(assertInstanceOf(TextComponent.class, pack.title(achievement)).content().isBlank());
         }
-        assertEquals("Sortierung à la Nied", assertInstanceOf(TextComponent.class, pack.title(Achievement.BUNDLES)).content());
-        assertEquals("I have become Death. The Destroyer of Villages.", assertInstanceOf(TextComponent.class, pack.title(Achievement.START_RAID)).content());
-        assertEquals("Ein Königreich für eine Kohle", assertInstanceOf(TextComponent.class, pack.title(Achievement.DEEPSLATE_COAL)).content());
+        assertEquals("Custom bundles", assertInstanceOf(TextComponent.class, pack.title(Achievement.BUNDLES)).content());
+        assertEquals("Custom start_raid", assertInstanceOf(TextComponent.class, pack.title(Achievement.START_RAID)).content());
+        assertEquals("Custom deepslate_coal", assertInstanceOf(TextComponent.class, pack.title(Achievement.DEEPSLATE_COAL)).content());
+    }
+
+    @Test
+    void missingCustomPackDoesNotBreakSavedCustomNamePreferences() throws Exception {
+        AchievementService fallback = new AchievementService(data, (id, unlock) -> notices.add(unlock), id -> {}, AchievementNamePack.read(null));
+        assertTrue(fallback.setCustomNames(player, "Katze", true));
+        assertTrue(fallback.usesCustomNames(player));
+        for (Achievement achievement : Achievement.values()) assertEquals(achievement.title(), fallback.title(player, achievement));
     }
 
     @Test

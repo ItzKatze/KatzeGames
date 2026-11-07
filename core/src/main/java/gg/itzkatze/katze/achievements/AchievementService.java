@@ -36,7 +36,7 @@ public final class AchievementService {
 
     private static AchievementService installed;
     private final PlayerDataStore data;
-    private final AchievementNamePack customNames = AchievementNamePack.custom();
+    private final AchievementNamePack customNames;
     private final BiConsumer<UUID, Unlock> notice;
     private final Consumer<UUID> refresh;
     private final Map<UUID, Integer> jumpStreaks = new HashMap<>();
@@ -44,7 +44,12 @@ public final class AchievementService {
     private AchievementRound round;
 
     public AchievementService(PlayerDataStore data, BiConsumer<UUID, Unlock> notice, Consumer<UUID> refresh) {
+        this(data, notice, refresh, AchievementNamePack.custom());
+    }
+
+    AchievementService(PlayerDataStore data, BiConsumer<UUID, Unlock> notice, Consumer<UUID> refresh, AchievementNamePack customNames) {
         this.data = data;
+        this.customNames = customNames;
         this.notice = notice;
         this.refresh = refresh;
         data.profiles().forEach((id, profile) -> {

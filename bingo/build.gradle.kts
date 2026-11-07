@@ -16,7 +16,7 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
-    inputs.dir("src/main/item-icons")
+    inputs.files(fileTree("src/main/item-icons"))
 }
 
 tasks.register<JavaExec>("generateBingoPack") {

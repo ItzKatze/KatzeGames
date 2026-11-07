@@ -22,7 +22,7 @@ jobs:
                   cache: gradle
 
             - name: Build
-              run: .\gradlew.bat :bingo:check :core:test :loader:shadowJar :clientmod:assemble
+              run: .\gradlew.bat :bingo:check :core:test :loader:test :clientmod:assemble
 
             - name: Upload jar
               uses: actions/upload-artifact@v7

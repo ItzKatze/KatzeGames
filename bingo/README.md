@@ -39,7 +39,7 @@ Finished competitors spectate until reset. Once all matches finish, the round ti
 
 `gradlew.bat :bingo:test :core:test :loader:shadowJar` checks board generation, match outcomes, save/restore, bilingual texts, pack metadata, and all icon mappings. Generated assets are checked in, so a normal build does not need Minecraft downloads or image tooling.
 
-Native item exports are checked in under `src/main/item-icons/26.3/`, so ordinary builds require no GPU or running Minecraft client. To regenerate every registered item icon and rebuild the pack's fonts and translations, run:
+The native export cache under `src/main/item-icons/26.3/` is local and ignored by Git. Only required icon PNGs in the resource pack and a small item-registry text file are tracked. Ordinary builds and CI validate the packaged icons without requiring the cache, a GPU, or a running Minecraft client. When a local cache exists, tests additionally verify the exports and compare them with the packaged PNGs. To regenerate every registered item icon and rebuild the pack's fonts and translations, run:
 
 ```text
 gradlew.bat :clientmod:generateBingoPack

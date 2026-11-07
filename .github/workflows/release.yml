@@ -57,7 +57,7 @@ jobs:
               # an env var instead of -PreleaseVersion=..., which PowerShell can split at the first dot
               env:
                   ORG_GRADLE_PROJECT_releaseVersion: ${{ steps.version.outputs.version }}
-              run: .\gradlew.bat :bingo:check :core:test :loader:shadowJar :clientmod:assemble
+              run: .\gradlew.bat :bingo:check :core:test :loader:test :clientmod:assemble
 
             - name: Publish release
               shell: bash

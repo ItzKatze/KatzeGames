@@ -11,9 +11,9 @@ import gg.itzkatze.katze.objective.ObjectiveExclusion;
 import gg.itzkatze.katze.objective.ObjectiveFilter;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.junit.jupiter.api.Test;
-import com.google.gson.JsonParser;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -28,8 +28,12 @@ class BingoObjectiveCatalogTest {
     @Test void completeCatalogIncludesAllInventoryItemsStructuresAndAdvancementsWithOneItemPerObjective() throws Exception {
         BingoObjectiveCatalog catalog = new BingoObjectiveCatalog();
         Set<String> items = targets(catalog, BingoObjective.Category.ITEM);
-        var manifest = JsonParser.parseString(Files.readString(Path.of("src/main/item-icons/26.3/manifest.json"))).getAsJsonObject();
-        for (var item : manifest.getAsJsonArray("items")) assertTrue(items.contains(item.getAsString().replace("minecraft:", "").toUpperCase(Locale.ROOT)), item.getAsString());
+        try (var registry = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/bingo/item-registry.txt"), StandardCharsets.UTF_8))) {
+            var registeredItems = registry.lines().toList();
+            assertFalse(registeredItems.isEmpty());
+            assertEquals(registeredItems.size(), items.size());
+            for (String item : registeredItems) assertTrue(items.contains(item.toUpperCase(Locale.ROOT)), item);
+        }
         Set<String> structures = targets(catalog, BingoObjective.Category.STRUCTURE);
         for (KatzeStructure structure : KatzeStructure.values()) assertTrue(structures.contains(structure.getKey().getKey()), structure.name());
         Set<String> advancements = targets(catalog, BingoObjective.Category.ADVANCEMENT);

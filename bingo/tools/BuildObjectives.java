@@ -38,6 +38,7 @@ final class BuildObjectives {
     private void generate(Path exports) throws IOException {
         var manifest = JsonParser.parseString(Files.readString(exports.resolve("manifest.json"))).getAsJsonObject();
         manifest.getAsJsonArray("items").forEach(item -> items.add(item.getAsString().substring("minecraft:".length())));
+        Files.write(module.resolve("src/main/resources/bingo/item-registry.txt"), items.stream().sorted().toList(), StandardCharsets.UTF_8);
         Path base = module.resolve("src/main/resources/bingo/objectives-base.tsv");
         boolean hasBase = Files.isRegularFile(base);
         for (String line : Files.readAllLines(hasBase ? base : module.resolve("src/main/resources/bingo/objectives.tsv"), StandardCharsets.UTF_8)) {

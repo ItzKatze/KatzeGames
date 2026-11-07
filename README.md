@@ -67,3 +67,5 @@ Late joiners play again after a reset. If you chose `/spectate`, use it again in
 Menus and messages support English and German.
 
 Lobby builds: **q8h** (classic) and **IchmagYorkleffs** (balloninsel, inselmithaus).
+
+The optional local achievement-name file `core/src/main/resources/text-packs/achievements/custom.properties` is ignored by Git. If it is absent, custom-name preferences fall back to the normal translated achievement titles. Tests use separate generated name data.
