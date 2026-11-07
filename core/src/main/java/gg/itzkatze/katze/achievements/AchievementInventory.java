@@ -50,7 +50,7 @@ public final class AchievementInventory {
     }
 
     public static void inspect(Player player, AchievementService service) {
-        if (!service.eligible(player)) return;
+        if (!service.forceBattleEligible(player)) return;
         Set<Material> present = EnumSet.noneOf(Material.class);
         int bundles = 0;
         for (ItemStack item : player.getInventory().getContents()) {

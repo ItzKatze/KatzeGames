@@ -2,6 +2,7 @@ package gg.itzkatze.katze.commands;
 
 import gg.itzkatze.katze.KatzeGames;
 import gg.itzkatze.katze.challenges.ChallengeManager;
+import gg.itzkatze.katze.challenges.Challenge;
 import gg.itzkatze.katze.commands.framework.CallerType;
 import gg.itzkatze.katze.commands.framework.CommandCaller;
 import gg.itzkatze.katze.commands.framework.KatzeCommand;
@@ -52,6 +53,10 @@ public class StartCommand extends KatzeCommand {
     }
 
     private static boolean canStart(@NotNull CommandCaller caller) {
+        if (SessionPersistence.isRecoveryFailed()) {
+            caller.sendMessage(Component.translatable("katze.game.start.recovery_failed").color(KatzeColor.RED));
+            return false;
+        }
         if (!GameWorldManager.isReady()) {
             caller.sendMessage(Component.translatable("katze.game.reset.not_ready").color(KatzeColor.RED));
             return false;
@@ -68,6 +73,13 @@ public class StartCommand extends KatzeCommand {
         if (!online.isEmpty() && online.stream().allMatch(player -> SpectatorManager.isSpectator(player.getUniqueId()))) {
             caller.sendMessage(Component.translatable("katze.game.start.everyone_spectating").color(KatzeColor.RED));
             return false;
+        }
+        for (Challenge challenge : ChallengeManager.getActiveChallenges()) {
+            Component error = challenge.getStartError();
+            if (error != null) {
+                caller.sendMessage(error.color(KatzeColor.RED));
+                return false;
+            }
         }
         return true;
     }

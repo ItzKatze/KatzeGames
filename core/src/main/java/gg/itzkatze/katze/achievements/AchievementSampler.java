@@ -51,7 +51,7 @@ public final class AchievementSampler {
         service.retryPending();
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (service.round() != null && !service.round().finished() && !KatzePlayer.adapt(player).isParticipating()) service.disqualify(player.getUniqueId());
-            if (!service.eligible(player) || player.isDead()) {
+            if (!service.forceBattleEligible(player) || player.isDead()) {
                 invalidate(player.getUniqueId());
                 continue;
             }
@@ -88,7 +88,7 @@ public final class AchievementSampler {
 
     public void boatMoved(Player player, double distance) {
         checkRound();
-        if (!service.eligible(player) || distance <= 0 || distance > 16) return;
+        if (!service.forceBattleEligible(player) || distance <= 0 || distance > 16) return;
         UUID id = player.getUniqueId();
         distance += boatRemainders.getOrDefault(id, 0.0);
         boatRemainders.put(id, distance % 1);

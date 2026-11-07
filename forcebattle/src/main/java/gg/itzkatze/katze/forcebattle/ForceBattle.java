@@ -22,6 +22,7 @@ import gg.itzkatze.katze.commands.framework.KatzeCommand;
 import gg.itzkatze.katze.configuration.ChallengeSettingsManager;
 import gg.itzkatze.katze.gui.KatzeGUI;
 import gg.itzkatze.katze.scoreboard.ScoreboardContent;
+import gg.itzkatze.katze.recipe.RecipeCommand;
 import gg.itzkatze.katze.spectator.PlayerViewGui;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -59,6 +60,7 @@ public class ForceBattle implements Challenge {
     @Override
     public void onDisable() {
         saveData();
+        Bukkit.getOnlinePlayers().forEach(ForceBattleGuideBook::remove);
         ForceBattleGameListener.startPhase = true;
         gameListener.clearPendingRestores();
         gameListener.resetWalking();
@@ -160,10 +162,12 @@ public class ForceBattle implements Challenge {
 
     @Override
     @NotNull public List<KatzeCommand> getCommands() {
-        return gg.itzkatze.katze.KatzeGames.loopThroughPackage(
+        List<KatzeCommand> commands = new ArrayList<>(KatzeGames.loopThroughPackage(
                 "gg.itzkatze.katze.forcebattle.commands",
                 KatzeCommand.class
-        ).toList();
+        ).toList());
+        commands.add(new RecipeCommand());
+        return commands;
     }
 
     @Override

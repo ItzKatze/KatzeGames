@@ -22,7 +22,7 @@ jobs:
                   cache: gradle
 
             - name: Build
-              run: .\gradlew.bat :loader:shadowJar :clientmod:assemble
+              run: .\gradlew.bat :bingo:check :core:test :loader:shadowJar :clientmod:assemble
 
             - name: Upload jar
               uses: actions/upload-artifact@v7
@@ -35,5 +35,12 @@ jobs:
               uses: actions/upload-artifact@v7
               with:
                   path: clientmod/build/libs/KatzeGames-Client-*.jar
+                  archive: false
+                  if-no-files-found: error
+
+            - name: Upload Bingo resource pack
+              uses: actions/upload-artifact@v7
+              with:
+                  path: bingo/build/pack/KatzeGames-Bingo.zip
                   archive: false
                   if-no-files-found: error

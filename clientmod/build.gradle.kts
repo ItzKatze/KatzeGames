@@ -1,4 +1,5 @@
 import java.util.Properties
+import net.fabricmc.loom.LoomGradleExtension
 
 plugins {
     id("net.fabricmc.fabric-loom")
@@ -82,6 +83,51 @@ val generateLanguageFiles = tasks.register("generateLanguageFiles") {
 
 sourceSets.main {
     resources.srcDir(generateLanguageFiles)
+}
+
+val itemExportDirectory = rootProject.layout.projectDirectory.dir("bingo/src/main/item-icons/$minecraftVersion")
+
+loom {
+    runs {
+        register("itemExport") {
+            client()
+            runDir("../bingo/build/item-export-client")
+            vmArg("-Dkatzegames.itemExport.output=${itemExportDirectory.asFile.absolutePath}")
+            programArgs("--width", "1536", "--height", "1024", "--username", "ItemExporter")
+        }
+    }
+}
+
+tasks.named("runItemExport") {
+    doFirst {
+        val manifest = itemExportDirectory.file("manifest.json").asFile
+        if (manifest.exists() && !manifest.delete()) throw GradleException("Could not invalidate the previous item export manifest")
+    }
+}
+
+val exportItemIcons = tasks.register("exportItemIcons") {
+    dependsOn("runItemExport")
+    doLast {
+        val manifest = itemExportDirectory.file("manifest.json").asFile
+        if (!manifest.isFile) throw GradleException("Native item export failed; see bingo/build/item-export-client/logs/latest.log")
+    }
+}
+
+evaluationDependsOn(":bingo")
+val clientProject = project
+val bingoProject = project(":bingo")
+bingoProject.tasks.named<JavaExec>("generateBingoPack") {
+    mustRunAfter(exportItemIcons)
+    doFirst {
+        if (args.isNullOrEmpty()) {
+            val minecraftClientJar = clientProject.providers.gradleProperty("minecraftClientJar").orNull
+                ?: LoomGradleExtension.get(clientProject).minecraftProvider.minecraftClientJar.absolutePath
+            setArgs(listOf(bingoProject.projectDir.absolutePath, minecraftClientJar))
+        }
+    }
+}
+tasks.register("generateBingoPack") {
+    dependsOn(exportItemIcons, ":bingo:generateBingoPack")
 }
 
 spotless {

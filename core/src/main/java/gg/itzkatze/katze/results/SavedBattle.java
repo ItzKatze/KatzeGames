@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 public record SavedBattle(UUID id, long startedAt, long endedAt, int durationSeconds,
-                         List<Player> players, List<Team> teams, Game game) {
+                         List<Player> players, List<Team> teams, Game game, Bingo bingo) {
 
     public SavedBattle {
         players = List.copyOf(players);
@@ -16,8 +16,19 @@ public record SavedBattle(UUID id, long startedAt, long endedAt, int durationSec
         this(id, startedAt, endedAt, durationSeconds, players, teams, Game.FORCE_BATTLE);
     }
 
+    public SavedBattle(UUID id, long startedAt, long endedAt, int durationSeconds, List<Player> players, List<Team> teams, Game game) {
+        this(id, startedAt, endedAt, durationSeconds, players, teams, game, null);
+    }
+
+    public record Bingo(List<String> competitors, int winner, String reason, List<Integer> winningLine, List<BingoCell> cells) {}
+    public record BingoCell(String name, String difficulty, String icon, int owner, String contributor, int claimedAt, String itemModel) {
+        public BingoCell(String name, String difficulty, String icon, int owner, String contributor, int claimedAt) {
+            this(name, difficulty, icon, owner, contributor, claimedAt, null);
+        }
+    }
+
     public enum Game {
-        FORCE_BATTLE("ForceBattle"), ALL_ITEMS("AllItems"), DEATH_SWAP("DeathSwap");
+        FORCE_BATTLE("ForceBattle"), ALL_ITEMS("AllItems"), DEATH_SWAP("DeathSwap"), BINGO("Bingo");
 
         private final String displayName;
 

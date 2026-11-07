@@ -7,6 +7,7 @@ import gg.itzkatze.katze.commands.framework.KatzeCommand;
 import gg.itzkatze.katze.game.GameTimer;
 import gg.itzkatze.katze.game.TaskManager;
 import lombok.Getter;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -44,10 +45,27 @@ public class ChallengeManager {
             return; // Already loaded
         }
 
+        if (gameStarted && (challenge.getType() == ChallengeType.BINGO || isChallengeActive(ChallengeType.BINGO))) {
+            KatzeGames.broadcast(Component.translatable("katze.bingo.error.locked"));
+            return;
+        }
+
+        Component error = challenge.getEnableError();
+        if (error != null) {
+            KatzeGames.broadcast(error);
+            return;
+        }
+
         activeChallenges.add(challenge);
 
         // Initialize the challenge
-        challenge.onEnable();
+        try {
+            challenge.onEnable();
+        } catch (RuntimeException exception) {
+            activeChallenges.remove(challenge);
+            challenge.onDisable();
+            throw exception;
+        }
 
         // Register commands and track for unregister on disable
         List<KatzeCommand> commands = new ArrayList<>(challenge.getCommands());
@@ -80,6 +98,11 @@ public class ChallengeManager {
     public static void unloadChallenge(@NotNull Challenge challenge) {
         if (!activeChallenges.contains(challenge)) {
             return; // Not loaded
+        }
+
+        if (gameStarted && challenge.getType() == ChallengeType.BINGO) {
+            KatzeGames.broadcast(Component.translatable("katze.bingo.error.locked"));
+            return;
         }
 
         activeChallenges.remove(challenge);

@@ -142,7 +142,7 @@ public final class AchievementGameplayListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onConsume(PlayerItemConsumeEvent event) {
         Player player = event.getPlayer();
-        if (!service.eligible(player)) return;
+        if (!service.forceBattleEligible(player)) return;
         Material material = event.getItem().getType();
         if (material.isEdible()) {
             service.participant(player).food(AchievementInventory.vegan(material));
@@ -158,7 +158,7 @@ public final class AchievementGameplayListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onDeath(PlayerDeathEvent event) {
         Player player = event.getEntity();
-        if (!service.eligible(player)) return;
+        if (!service.forceBattleEligible(player)) return;
         service.add(player, Achievement.ROUND_DEATHS, 1);
         if (player.getLastDamageCause() != null) service.distinct(player, Achievement.FIVE_DEATH_CAUSES, player.getLastDamageCause().getCause().name());
         service.snapshot(player, Achievement.MINING_FATIGUE, 0);
@@ -199,7 +199,7 @@ public final class AchievementGameplayListener implements Listener {
     public void onPlace(BlockPlaceEvent event) {
         Block block = event.getBlockPlaced();
         if (block.getType() == Material.DEEPSLATE_COAL_ORE) markPlacedCoal(block);
-        if (block.getType() == Material.LIGHTNING_ROD && service.eligible(event.getPlayer())) {
+        if (block.getType() == Material.LIGHTNING_ROD && service.forceBattleEligible(event.getPlayer())) {
             service.round().rods().put(position(block), event.getPlayer().getUniqueId());
         }
     }
@@ -291,7 +291,7 @@ public final class AchievementGameplayListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onMove(PlayerMoveEvent event) {
-        if (!event.hasChangedBlock() || !service.eligible(event.getPlayer())) return;
+        if (!event.hasChangedBlock() || !service.forceBattleEligible(event.getPlayer())) return;
         String biome = event.getTo().getBlock().getBiome().getKey().toString();
         service.distinct(event.getPlayer(), Achievement.BIOMES, biome);
         if (biome.equals("minecraft:mushroom_fields")) service.record(event.getPlayer(), Achievement.MUSHROOM_FIELDS);

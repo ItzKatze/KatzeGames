@@ -13,6 +13,7 @@ public enum ChallengeType {
     DEATH_SWAP(new GUIMaterial(Material.ENDER_PEARL)),
     RANDOMIZER(new GUIMaterial(Material.SNIFFER_EGG)),
     ITEM_RAIN(new GUIMaterial(Material.DROPPER)),
+    BINGO(new GUIMaterial(Material.MAP)),
     ;
 
     private final GUIMaterial material;

@@ -1,5 +1,7 @@
 package gg.itzkatze.katze.client;
 
+import gg.itzkatze.katze.client.export.ItemIconExporter;
+
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
@@ -11,6 +13,7 @@ public final class KatzeGamesClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        ItemIconExporter.initialize();
         PayloadTypeRegistry.clientboundPlay().register(MusicPayload.TYPE, MusicPayload.CODEC);
         PayloadTypeRegistry.serverboundPlay().register(MusicPayload.TYPE, MusicPayload.CODEC);
         ClientPlayNetworking.registerGlobalReceiver(MusicPayload.TYPE, (payload, context) -> context.client().execute(() -> handle(payload)));

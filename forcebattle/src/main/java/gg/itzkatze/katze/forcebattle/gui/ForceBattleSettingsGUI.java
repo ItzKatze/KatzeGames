@@ -12,7 +12,8 @@ import gg.itzkatze.katze.forcebattle.ForceBattle;
 import gg.itzkatze.katze.forcebattle.ForceBattleSettings;
 import gg.itzkatze.katze.game.GameLifecycleManager;
 import gg.itzkatze.katze.gui.GUIClickableItem;
-import gg.itzkatze.katze.gui.KatzeGUI;
+import gg.itzkatze.katze.gui.SettingsMenu;
+import gg.itzkatze.katze.gui.impl.SettingsGUI;
 import gg.itzkatze.katze.gui.sign.NumberSignInput;
 import gg.itzkatze.katze.player.KatzePlayer;
 import gg.itzkatze.katze.text.TextArg;
@@ -28,28 +29,28 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class ForceBattleSettingsGUI extends KatzeGUI {
+public class ForceBattleSettingsGUI extends SettingsMenu {
 
     public ForceBattleSettingsGUI() {
-        super(Component.translatable("katze.forcebattle.gui.settings_title"), 27);
+        super(Component.translatable("katze.forcebattle.gui.settings_title"), 36);
     }
 
     @Getter
     public enum SettingButton {
-        FORCE_ITEM(0, Material.ITEM_FRAME, ForceBattleSettings.FORCE_ITEM, true),
-        FORCE_MOB(1, Material.DIAMOND_SWORD, ForceBattleSettings.FORCE_MOB, true),
-        FORCE_BIOME(2, Material.GRASS_BLOCK, ForceBattleSettings.FORCE_BIOME, true),
-        FORCE_ADVANCEMENT(3, Material.BREWING_STAND, ForceBattleSettings.FORCE_ADVANCEMENT, true),
-        FORCE_HEIGHT(4, Material.SCAFFOLDING, ForceBattleSettings.FORCE_HEIGHT, true),
-        FORCE_COORDS(5, Material.FILLED_MAP, ForceBattleSettings.FORCE_COORDS, true),
-        FORCE_STRUCTURE(6, Material.STRUCTURE_BLOCK, ForceBattleSettings.FORCE_STRUCTURE, true),
-        FORCE_DEATH(7, Material.SKELETON_SKULL, ForceBattleSettings.FORCE_DEATH, true),
+        FORCE_ITEM(10, Material.ITEM_FRAME, ForceBattleSettings.FORCE_ITEM, true),
+        FORCE_MOB(11, Material.DIAMOND_SWORD, ForceBattleSettings.FORCE_MOB, true),
+        FORCE_BIOME(12, Material.GRASS_BLOCK, ForceBattleSettings.FORCE_BIOME, true),
+        FORCE_ADVANCEMENT(13, Material.BREWING_STAND, ForceBattleSettings.FORCE_ADVANCEMENT, true),
+        FORCE_HEIGHT(14, Material.SCAFFOLDING, ForceBattleSettings.FORCE_HEIGHT, true),
+        FORCE_COORDS(15, Material.FILLED_MAP, ForceBattleSettings.FORCE_COORDS, true),
+        FORCE_STRUCTURE(16, Material.STRUCTURE_BLOCK, ForceBattleSettings.FORCE_STRUCTURE, true),
+        FORCE_DEATH(19, Material.SKELETON_SKULL, ForceBattleSettings.FORCE_DEATH, true),
 
-        BATTLE_DURATION(18, Material.CLOCK, null, false),
-        CHAIN_MODE(19, Material.IRON_CHAIN, ForceBattleSettings.CHAIN_MODE, false),
-        BACKPACK(20, Material.CHEST, ForceBattleSettings.BACKPACK, false),
+        BATTLE_DURATION(21, Material.CLOCK, null, false),
+        CHAIN_MODE(22, Material.IRON_CHAIN, ForceBattleSettings.CHAIN_MODE, false),
+        BACKPACK(23, Material.CHEST, ForceBattleSettings.BACKPACK, false),
 
-        RESET(26, Material.BARRIER, null, false);
+        RESET(27, Material.BARRIER, null, false);
 
         private final int slot;
         private final Material material;
@@ -75,7 +76,7 @@ public class ForceBattleSettingsGUI extends KatzeGUI {
                 loreLines.add(Component.translatable("katze.forcebattle.gui.current", TextArg.component("state",
                         Component.translatable("katze.forcebattle.duration_minutes", TextArg.number("minutes", minutes)).color(KatzeColor.LIGHT_BLUE))));
                 return ItemStackCreator.getStack(
-                        Component.translatable("katze.forcebattle.gui.button." + name().toLowerCase(Locale.ROOT)).color(KatzeColor.BLUE),
+                        Component.translatable("katze.forcebattle.gui.button." + name().toLowerCase(Locale.ROOT)).color(KatzeColor.LIGHT_BLUE),
                         material,
                         1,
                         loreLines
@@ -96,7 +97,7 @@ public class ForceBattleSettingsGUI extends KatzeGUI {
                     TextArg.component("state", getSettingState().getDisplayName())));
 
             return ItemStackCreator.getStack(
-                    Component.translatable("katze.forcebattle.gui.button." + name().toLowerCase(Locale.ROOT)).color(KatzeColor.BLUE),
+                    Component.translatable("katze.forcebattle.gui.button." + name().toLowerCase(Locale.ROOT)).color(KatzeColor.LIGHT_BLUE),
                     material,
                     1,
                     loreLines
@@ -160,7 +161,7 @@ public class ForceBattleSettingsGUI extends KatzeGUI {
 
             KatzeGames.broadcast(Component.translatable(
                     "katze.forcebattle.gui.setting_changed",
-                    TextArg.component("name", Component.translatable("katze.forcebattle.gui.button." + name().toLowerCase(Locale.ROOT)).color(KatzeColor.BLUE)),
+                    TextArg.component("name", Component.translatable("katze.forcebattle.gui.button." + name().toLowerCase(Locale.ROOT)).color(KatzeColor.LIGHT_BLUE)),
                     TextArg.component("state", getSettingState().getDisplayName())
             ));
 
@@ -171,7 +172,8 @@ public class ForceBattleSettingsGUI extends KatzeGUI {
     @Override
     public void setItems(KatzePlayer player) {
         fill(ItemStackCreator.fillerItem());
-        set(GUIClickableItem.getGoForthItem(8, new ConfigSettingsGUI()));
+        setBack(new SettingsGUI());
+        setForward(new ConfigSettingsGUI());
 
         for (SettingButton button : SettingButton.values()) {
             set(new GUIClickableItem(button.getSlot()) {
@@ -186,10 +188,5 @@ public class ForceBattleSettingsGUI extends KatzeGUI {
                 }
             });
         }
-    }
-
-    @Override
-    public boolean allowItemMoving() {
-        return false;
     }
 }

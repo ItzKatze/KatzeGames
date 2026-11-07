@@ -1,5 +1,7 @@
 package gg.itzkatze.katze.itemrain.gui;
 
+import gg.itzkatze.katze.text.TextArg;
+
 import gg.itzkatze.katze.challenges.Challenge;
 import gg.itzkatze.katze.challenges.ChallengeRegistry;
 import gg.itzkatze.katze.challenges.ChallengeType;
@@ -7,7 +9,7 @@ import gg.itzkatze.katze.configuration.ChallengeSettingsManager;
 import gg.itzkatze.katze.configuration.states.OnOffState;
 import gg.itzkatze.katze.configuration.states.SettingStateType;
 import gg.itzkatze.katze.gui.GUIClickableItem;
-import gg.itzkatze.katze.gui.KatzeGUI;
+import gg.itzkatze.katze.gui.SettingsMenu;
 import gg.itzkatze.katze.gui.impl.SettingsGUI;
 import gg.itzkatze.katze.gui.sign.NumberSignInput;
 import gg.itzkatze.katze.itemrain.ItemRainSettings;
@@ -21,17 +23,17 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
-public class ItemRainSettingsGUI extends KatzeGUI {
+public class ItemRainSettingsGUI extends SettingsMenu {
 
     public ItemRainSettingsGUI() {
-        super(Component.translatable("katze.itemrain.gui.title"), 36);
+        super(Component.translatable("katze.itemrain.gui.title"), 27);
     }
 
     @Override
     public void setItems(KatzePlayer player) {
         fill(ItemStackCreator.fillerItem());
 
-        set(new GUIClickableItem(13) {
+        set(new GUIClickableItem(11) {
             @Override
             public void run(InventoryClickEvent event, KatzePlayer player) {
                 ItemRainSettings.ItemIntervalState state = getIntervalState();
@@ -59,15 +61,15 @@ public class ItemRainSettingsGUI extends KatzeGUI {
                         Material.CLOCK,
                         1,
                         List.of(
-                                Component.translatable("katze.itemrain.gui.current", gg.itzkatze.katze.text.TextArg.component("state", status)),
+                                Component.translatable("katze.itemrain.gui.current", TextArg.component("state", status)),
                                 Component.empty(),
-                                Component.translatable("katze.itemrain.gui.set_seconds").color(KatzeColor.YELLOW)
+                                Component.translatable("katze.itemrain.gui.set_seconds").color(KatzeColor.LIGHT_GRAY)
                         )
                 );
             }
         });
 
-        set(new GUIClickableItem(15) {
+        set(new GUIClickableItem(13) {
             @Override
             public void run(InventoryClickEvent event, KatzePlayer player) {
                 SettingStateType current = getState(ItemRainSettings.ItemRainSetting.SKY_DROP_MODE);
@@ -85,15 +87,15 @@ public class ItemRainSettingsGUI extends KatzeGUI {
                         Material.ELYTRA,
                         1,
                         List.of(
-                                Component.translatable("katze.itemrain.gui.current", gg.itzkatze.katze.text.TextArg.component("state", status)),
+                                Component.translatable("katze.itemrain.gui.current", TextArg.component("state", status)),
                                 Component.empty(),
-                                Component.translatable("katze.itemrain.gui.toggle").color(KatzeColor.YELLOW)
+                                Component.translatable("katze.itemrain.gui.toggle").color(KatzeColor.LIGHT_GRAY)
                         )
                 );
             }
         });
 
-        set(new GUIClickableItem(17) {
+        set(new GUIClickableItem(15) {
             @Override
             public void run(InventoryClickEvent event, KatzePlayer player) {
                 ItemRainSettings.DropRadiusState state = getRadiusState();
@@ -121,15 +123,15 @@ public class ItemRainSettingsGUI extends KatzeGUI {
                         Material.WIND_CHARGE,
                         1,
                         List.of(
-                                Component.translatable("katze.itemrain.gui.current", gg.itzkatze.katze.text.TextArg.component("state", status)),
+                                Component.translatable("katze.itemrain.gui.current", TextArg.component("state", status)),
                                 Component.empty(),
-                                Component.translatable("katze.itemrain.gui.set_radius").color(KatzeColor.YELLOW)
+                                Component.translatable("katze.itemrain.gui.set_radius").color(KatzeColor.LIGHT_GRAY)
                         )
                 );
             }
         });
 
-        set(GUIClickableItem.getGoBackItem(27, new SettingsGUI()));
+        setBack(new SettingsGUI());
     }
 
     private ItemRainSettings.ItemIntervalState getIntervalState() {
@@ -181,10 +183,5 @@ public class ItemRainSettingsGUI extends KatzeGUI {
         }
         updateSetting(ItemRainSettings.ItemRainSetting.SKY_DROP_RADIUS, state);
         new ItemRainSettingsGUI().open(player);
-    }
-
-    @Override
-    public boolean allowItemMoving() {
-        return false;
     }
 }

@@ -46,7 +46,9 @@ public class ScoreboardManager {
 
         boolean lobbyDue = lobbySidebarDue();
         for (KatzePlayer katzePlayer : KatzePlayer.getOnlinePlayers()) {
-            boolean shouldHaveScoreboard = katzePlayer.isParticipating() && gameActive;
+            boolean retained = ChallengeManager.isGameStarted() && ChallengeManager.getActiveChallenges().stream()
+                    .anyMatch(challenge -> challenge.showScoreboard(katzePlayer));
+            boolean shouldHaveScoreboard = retained || katzePlayer.isParticipating() && gameActive;
             boolean showScoreboard = SettingsManager.isEnabled(GlobalSetting.SHOW_SCOREBOARD);
 
             if (shouldHaveScoreboard && showScoreboard) {
@@ -95,6 +97,11 @@ public class ScoreboardManager {
     }
 
     private static void render(@NotNull KatzePlayer player, @NotNull ScoreboardContent content) {
+        Component[] lines = content.getLines(player);
+        if (lines.length == 0) {
+            removeSidebar(player);
+            return;
+        }
         Scoreboard scoreboard = getOrCreateScoreboard(player);
 
         Component title = Texts.render(styleTitle(content.getTitle()), player.getPlayer());
@@ -110,7 +117,6 @@ public class ScoreboardManager {
         Map<Integer, Component> newLines = new HashMap<>();
 
         // Get lines from the challenge's scoreboard content
-        Component[] lines = content.getLines(player);
 
         // Add lines from top to bottom (scoreboard shows from bottom to top)
         int lineNumber = 15;

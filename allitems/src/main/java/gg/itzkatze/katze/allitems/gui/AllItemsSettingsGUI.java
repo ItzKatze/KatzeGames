@@ -1,12 +1,14 @@
 package gg.itzkatze.katze.allitems.gui;
 
+import gg.itzkatze.katze.text.TextArg;
+
 import gg.itzkatze.katze.allitems.AllItems;
 import gg.itzkatze.katze.allitems.AllItemsSettings;
 import gg.itzkatze.katze.configuration.SettingsManager;
 import gg.itzkatze.katze.configuration.states.SettingStateType;
 import gg.itzkatze.katze.gui.impl.SettingsGUI;
 import gg.itzkatze.katze.gui.GUIClickableItem;
-import gg.itzkatze.katze.gui.KatzeGUI;
+import gg.itzkatze.katze.gui.SettingsMenu;
 import gg.itzkatze.katze.player.KatzePlayer;
 import gg.itzkatze.katze.util.ItemStackCreator;
 import gg.itzkatze.katze.util.KatzeColor;
@@ -18,22 +20,22 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
-public class AllItemsSettingsGUI extends KatzeGUI {
+public class AllItemsSettingsGUI extends SettingsMenu {
 
     public AllItemsSettingsGUI() {
-        super(Component.translatable("katze.allitems.settings.title"), 45);
+        super(Component.translatable("katze.allitems.settings.title"), 36);
     }
 
     private enum SettingButton {
         MODE(10, Material.PLAYER_HEAD, "katze.allitems.mode.title", AllItemsSettingsGUI::toggleGameMode, null),
-        ITEMS(12, Material.CHEST, "katze.allitems.category.items", null, AllItemsSettings.AllItemsSetting.ITEMS),
-        BIOMES(13, Material.GRASS_BLOCK, "katze.allitems.category.biomes", null, AllItemsSettings.AllItemsSetting.BIOMES),
-        MOBS(14, Material.ZOMBIE_SPAWN_EGG, "katze.allitems.category.mobs", null, AllItemsSettings.AllItemsSetting.MOBS),
-        STRUCTURES(15, Material.STRUCTURE_BLOCK, "katze.allitems.category.structures", null, AllItemsSettings.AllItemsSetting.STRUCTURES),
-        ADVANCEMENTS(16, Material.BOOK, "katze.allitems.category.advancements", null, AllItemsSettings.AllItemsSetting.ADVANCEMENTS),
-        CHAIN_MODE(28, Material.IRON_CHAIN, "katze.allitems.setting.chain_mode", null, AllItemsSettings.AllItemsSetting.CHAIN_MODE),
-        MISSING(30, Material.MAP, "katze.allitems.menu.missing", AllItemsSettingsGUI::openMissing, null),
-        LEADERBOARD(32, Material.NAME_TAG, "katze.allitems.menu.leaderboard", AllItemsSettingsGUI::openLeaderboard, null);
+        ITEMS(11, Material.CHEST, "katze.allitems.category.items", null, AllItemsSettings.AllItemsSetting.ITEMS),
+        BIOMES(12, Material.GRASS_BLOCK, "katze.allitems.category.biomes", null, AllItemsSettings.AllItemsSetting.BIOMES),
+        MOBS(13, Material.ZOMBIE_SPAWN_EGG, "katze.allitems.category.mobs", null, AllItemsSettings.AllItemsSetting.MOBS),
+        STRUCTURES(14, Material.STRUCTURE_BLOCK, "katze.allitems.category.structures", null, AllItemsSettings.AllItemsSetting.STRUCTURES),
+        ADVANCEMENTS(15, Material.BOOK, "katze.allitems.category.advancements", null, AllItemsSettings.AllItemsSetting.ADVANCEMENTS),
+        CHAIN_MODE(16, Material.IRON_CHAIN, "katze.allitems.setting.chain_mode", null, AllItemsSettings.AllItemsSetting.CHAIN_MODE),
+        MISSING(21, Material.MAP, "katze.allitems.menu.missing", AllItemsSettingsGUI::openMissing, null),
+        LEADERBOARD(23, Material.NAME_TAG, "katze.allitems.menu.leaderboard", AllItemsSettingsGUI::openLeaderboard, null);
 
         private final int slot;
         private final Material material;
@@ -89,7 +91,7 @@ public class AllItemsSettingsGUI extends KatzeGUI {
         }
 
         // Go back button
-        set(GUIClickableItem.getGoBackItem(36, new SettingsGUI()));
+        setBack(new SettingsGUI());
     }
 
     private static void toggleGameMode(AllItemsSettingsGUI gui, KatzePlayer player) {
@@ -101,7 +103,7 @@ public class AllItemsSettingsGUI extends KatzeGUI {
         AllItemsSettings.setGameMode(newMode);
 
         Component modeName = Component.translatable(newMode == AllItemsSettings.GameMode.TEAM ? "katze.allitems.mode.team" : "katze.allitems.mode.individual");
-        player.sendMessage(Component.translatable("katze.allitems.mode.changed", gg.itzkatze.katze.text.TextArg.component("mode", modeName)).color(KatzeColor.LIME));
+        player.sendMessage(Component.translatable("katze.allitems.mode.changed", TextArg.component("mode", modeName)).color(KatzeColor.LIME));
 
         // Refresh the GUI
         gui.open(player);
@@ -141,9 +143,9 @@ public class AllItemsSettingsGUI extends KatzeGUI {
                 button.material,
                 1,
                 List.of(
-                        Component.translatable("katze.allitems.gui.current", gg.itzkatze.katze.text.TextArg.component("state", modeName.color(color))),
+                        Component.translatable("katze.allitems.gui.current", TextArg.component("state", modeName.color(color))),
                         Component.empty(),
-                        Component.translatable("katze.allitems.gui.toggle").color(KatzeColor.YELLOW),
+                        Component.translatable("katze.allitems.gui.toggle").color(KatzeColor.LIGHT_GRAY),
                         Component.empty(),
                         Component.translatable("katze.allitems.mode.team.description"),
                         Component.translatable("katze.allitems.mode.individual.description")
@@ -159,7 +161,7 @@ public class AllItemsSettingsGUI extends KatzeGUI {
                 List.of(
                         Component.translatable("katze.allitems.menu.missing.description").color(KatzeColor.LIGHT_GRAY),
                         Component.empty(),
-                        Component.translatable("katze.allitems.gui.open").color(KatzeColor.YELLOW)
+                        Component.translatable("katze.allitems.gui.open").color(KatzeColor.LIGHT_GRAY)
                 )
         );
     }
@@ -172,7 +174,7 @@ public class AllItemsSettingsGUI extends KatzeGUI {
                 List.of(
                         Component.translatable("katze.allitems.menu.leaderboard.description").color(KatzeColor.LIGHT_GRAY),
                         Component.empty(),
-                        Component.translatable("katze.allitems.gui.open").color(KatzeColor.YELLOW)
+                        Component.translatable("katze.allitems.gui.open").color(KatzeColor.LIGHT_GRAY)
                 )
         );
     }
@@ -181,13 +183,13 @@ public class AllItemsSettingsGUI extends KatzeGUI {
         SettingStateType state = SettingsManager.getSettingState(button.setting);
         Component status = state == null ? Component.translatable("katze.allitems.gui.unknown") : state.getDisplayName();
         return ItemStackCreator.getStack(
-                Component.translatable(button.label).color(KatzeColor.BLUE),
+                Component.translatable(button.label).color(KatzeColor.LIGHT_BLUE),
                 button.material,
                 1,
                 List.of(
-                        Component.translatable("katze.allitems.gui.current", gg.itzkatze.katze.text.TextArg.component("state", status)),
+                        Component.translatable("katze.allitems.gui.current", TextArg.component("state", status)),
                         Component.empty(),
-                        Component.translatable("katze.allitems.gui.toggle").color(KatzeColor.YELLOW)
+                        Component.translatable("katze.allitems.gui.toggle").color(KatzeColor.LIGHT_GRAY)
                 )
         );
     }
@@ -197,10 +199,5 @@ public class AllItemsSettingsGUI extends KatzeGUI {
                 button.material,
                 Component.translatable(button.label).color(KatzeColor.RED)
         );
-    }
-
-    @Override
-    public boolean allowItemMoving() {
-        return false;
     }
 }

@@ -32,7 +32,11 @@ dependencies {
     implementation(project(":deathswap"))
     implementation(project(":randomizer"))
     implementation(project(":itemrain"))
+    implementation(project(":bingo"))
     compileOnly("io.papermc.paper:paper-api:$paperVersion")
+    testImplementation("io.papermc.paper:paper-api:$paperVersion")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.10.2")
 }
 
 tasks.withType<JavaCompile>().configureEach {
@@ -57,4 +61,12 @@ tasks.processResources {
     filesMatching("plugin.yml") {
         expand(props)
     }
+}
+
+val pluginJar = tasks.named<Jar>("shadowJar")
+tasks.test {
+    useJUnitPlatform()
+    dependsOn(pluginJar)
+    inputs.file(pluginJar.flatMap { it.archiveFile })
+    systemProperty("katzegames.test.pluginJar", pluginJar.get().archiveFile.get().asFile.absolutePath)
 }

@@ -8,6 +8,7 @@ import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.Bukkit;
 import org.bukkit.GameRules;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
@@ -185,6 +186,10 @@ public class PauseManager implements Listener {
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
+        if (event.getPlayer().getGameMode() == GameMode.SPECTATOR) {
+            frozenLocations.remove(event.getPlayer().getUniqueId());
+            return;
+        }
         if (!isPausedGameplay()) return;
 
         Location from = event.getFrom();

@@ -10,7 +10,7 @@ import gg.itzkatze.katze.data.KatzeDamageType;
 import gg.itzkatze.katze.data.KatzeStructure;
 import gg.itzkatze.katze.data.MobsSimplified;
 import gg.itzkatze.katze.data.StructureSimplified;
-import gg.itzkatze.katze.forcebattle.exclusion.ObjectiveFilter;
+import gg.itzkatze.katze.objective.ObjectiveFilter;
 import gg.itzkatze.katze.game.seed.SeedFeature;
 import gg.itzkatze.katze.game.seed.SeedRequirement;
 import io.papermc.paper.registry.RegistryAccess;

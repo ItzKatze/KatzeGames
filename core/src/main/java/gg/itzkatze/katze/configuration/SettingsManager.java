@@ -22,7 +22,8 @@ public class SettingsManager {
     }
 
     public static SettingStateType getState(Setting setting) {
-        return GLOBAL_SETTINGS_MANAGER.getState(setting);
+        ChallengeSettingsManager manager = findSettingsManagerFor(setting);
+        return manager == null ? setting.getDefaultState() : manager.getState(setting);
     }
 
     public static void setState(Setting setting, SettingStateType state) {

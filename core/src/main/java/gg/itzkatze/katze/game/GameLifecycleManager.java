@@ -22,11 +22,19 @@ import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.world.WorldSaveEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class GameLifecycleManager implements Listener {
+
+    @EventHandler
+    public void onPlayerLogin(@NotNull PlayerLoginEvent event) {
+        if (SessionPersistence.isRecoveryFailed()) {
+            event.disallow(PlayerLoginEvent.Result.KICK_OTHER, Component.translatable("katze.game.start.recovery_failed"));
+        }
+    }
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerJoin(@NotNull PlayerJoinEvent event) {

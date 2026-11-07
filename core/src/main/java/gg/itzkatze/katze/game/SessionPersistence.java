@@ -46,6 +46,7 @@ public final class SessionPersistence {
 
     // Saving before the restore ran would replace the saved session with an empty one, e.g. when onEnable fails early.
     private static boolean restoreDone = false;
+    private static boolean recoveryFailed = false;
     private static boolean awaitingResume = false;
     private static @Nullable BukkitTask pendingSave;
     private static final Set<ChallengeType> dirtyChallenges = EnumSet.noneOf(ChallengeType.class);
@@ -61,15 +62,17 @@ public final class SessionPersistence {
                 restore(session);
             }
         } catch (RuntimeException e) {
-            logger.warn("Failed to restore the saved game session, starting fresh.", e);
+            recoveryFailed = true;
+            logger.warn("Failed to restore the saved game session; automatic saves will remain disabled.", e);
         }
         if (ChallengeManager.isGameStarted()) {
             GameXp.restore();
-        } else {
+        } else if (!recoveryFailed) {
             GameXp.delete();
             AchievementService.get().reset();
         }
-        restoreDone = true;
+        restoreDone = !recoveryFailed;
+        if (recoveryFailed) logger.error("Session recovery failed. Automatic saves are disabled to preserve the saved round. Repair the cause and restart, or use /reset to discard it.");
     }
 
     public static void requestSave() {
@@ -127,6 +130,8 @@ public final class SessionPersistence {
     }
 
     public static void delete() {
+        recoveryFailed = false;
+        restoreDone = true;
         if (pendingSave != null) {
             pendingSave.cancel();
             pendingSave = null;
@@ -144,11 +149,13 @@ public final class SessionPersistence {
         return awaitingResume;
     }
 
+    public static boolean isRecoveryFailed() { return recoveryFailed; }
+
     private static void restore(@NotNull SessionData session) {
         restoreSettings(session.settings);
         restoreParticipants(session);
-        boolean challengeRestored = restoreChallenges(session.activeChallenges);
-        if (session.gameStarted && challengeRestored) {
+        boolean challengeRestored = restoreChallenges(session.activeChallenges, session.gameStarted);
+        if (session.gameStarted && challengeRestored && !recoveryFailed) {
             ChallengeManager.markGameStarted();
         }
         restoreTimer(session.timer);
@@ -197,7 +204,7 @@ public final class SessionPersistence {
         }
     }
 
-    private static boolean restoreChallenges(@Nullable List<String> typeNames) {
+    private static boolean restoreChallenges(@Nullable List<String> typeNames, boolean gameStarted) {
         boolean challengeRestored = false;
         for (String typeName : Objects.requireNonNullElse(typeNames, List.<String>of())) {
             Challenge challenge = findChallenge(typeName);
@@ -207,8 +214,15 @@ public final class SessionPersistence {
             }
             try {
                 ChallengeManager.loadChallenge(challenge);
-                challengeRestored = true;
+                if (!ChallengeManager.isChallengeActive(challenge.getType())) {
+                    if (gameStarted) recoveryFailed = true;
+                    continue;
+                }
+                if (gameStarted) challenge.validateRestoredGame();
+                challengeRestored |= ChallengeManager.isChallengeActive(challenge.getType());
             } catch (RuntimeException e) {
+                if (gameStarted) recoveryFailed = true;
+                ChallengeManager.unloadChallenge(challenge);
                 logger.warn("Failed to restore challenge {}.", typeName, e);
             }
         }

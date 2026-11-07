@@ -64,7 +64,7 @@ final class AchievementServiceTest {
         assertEquals(78, Arrays.stream(Achievement.values()).mapToInt(achievement -> achievement.stages().size()).sum());
         assertEquals(3700, Arrays.stream(Achievement.values()).flatMap(achievement -> achievement.stages().stream()).mapToInt(stage -> stage.rarity().xp()).sum());
         assertEquals(List.of(4, 10, 15, 20, 25), Achievement.ROUND_DEATHS.stages().stream().map(AchievementStage::target).toList());
-        assertEquals(7, AchievementCategory.values().length);
+        assertEquals(8, AchievementCategory.values().length);
     }
 
     @Test
@@ -198,11 +198,39 @@ final class AchievementServiceTest {
         service.begin(Set.of(ChallengeType.FORCE_BATTLE, ChallengeType.DEATH_SWAP), Map.of(player, "Katze"));
         service.round().player(player).food(true);
         service.naturalEnd(ChallengeType.DEATH_SWAP, Set.of(player), Set.of());
-        assertEquals(100, service.profile(player).xp());
+        assertEquals(0, service.profile(player).xp());
         service.naturalEnd(ChallengeType.FORCE_BATTLE, Set.of(player), Set.of());
         assertEquals(350, service.profile(player).xp());
         service.naturalEnd(ChallengeType.FORCE_BATTLE, Set.of(player), Set.of());
         assertEquals(350, service.profile(player).xp());
+    }
+
+    @Test
+    void bingoDoesNotTrackOrAwardForceBattleAchievements() {
+        service.begin(Set.of(ChallengeType.BINGO), Map.of(player, "Katze"));
+        service.round().player(player).food(true);
+        for (Achievement achievement : Achievement.in(AchievementCategory.FORCE_BATTLE)) {
+            assertFalse(service.tracks(achievement), achievement.id());
+            service.record(null, achievement);
+            service.snapshot(null, achievement, achievement.maximum());
+            service.add(null, achievement, achievement.maximum());
+            service.distinct(null, achievement, "bingo");
+            assertEquals(0, service.current(player, achievement));
+        }
+        service.naturalEnd(ChallengeType.FORCE_BATTLE, Set.of(player), Set.of(player));
+        assertFalse(service.round().finished());
+        service.naturalEnd(ChallengeType.BINGO, Set.of(player), Set.of(player));
+        assertTrue(service.round().finished());
+        assertTrue(notices.isEmpty());
+        assertEquals(0, service.profile(player).xp());
+    }
+
+    @Test
+    void forceBattleTrackingStopsWhenItsRoundEnds() {
+        service.begin(Set.of(ChallengeType.FORCE_BATTLE), Map.of(player, "Katze"));
+        for (Achievement achievement : Achievement.in(AchievementCategory.FORCE_BATTLE)) assertTrue(service.tracks(achievement));
+        service.naturalEnd(ChallengeType.FORCE_BATTLE, Set.of(), Set.of());
+        for (Achievement achievement : Achievement.in(AchievementCategory.FORCE_BATTLE)) assertFalse(service.tracks(achievement));
     }
 
     @Test

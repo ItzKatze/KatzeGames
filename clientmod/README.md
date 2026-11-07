@@ -1,5 +1,7 @@
 # KatzeGames Client Mod
 
+Developers can run `gradlew.bat :clientmod:exportItemIcons` to export every registered item's real inventory icon for the Bingo resource pack. The hidden client uses its own world/run directory and exits after saving transparent 64×64 PNGs rendered at GUI scale 4 under `bingo/src/main/item-icons/<minecraft-version>/`. This mode activates only when the dedicated Gradle task sets its export property; normal clients continue to run the music features described below. Players do not need the mod for Bingo's exported pictures.
+
 An optional Fabric mod for the lobby's Jump & Run music. You can play every challenge without it.
 
 ## What it adds

@@ -10,6 +10,8 @@ Minecraft challenges with teams, a shared lobby, and fresh maps between rounds.
 
 [ItemRain](itemrain/README.md) · [Randomizer](randomizer/README.md) · [Optional client mod](clientmod/README.md)
 
+[Bingo](bingo/README.md) · Exclusive objective races on a shared 5×5 board; requires the Bingo resource pack.
+
 ## Get a round going
 
 1. An operator opens `/settings` to choose the challenges, timer, and rules.

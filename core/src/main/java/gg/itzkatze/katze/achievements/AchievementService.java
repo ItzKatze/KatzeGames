@@ -210,18 +210,25 @@ public final class AchievementService {
     }
 
     public boolean forceBattleEligible(Player player) {
-        return eligible(player) && ChallengeManager.isChallengeActive(ChallengeType.FORCE_BATTLE)
-                && !round.ended().contains(ChallengeType.FORCE_BATTLE);
+        return eligible(player, Achievement.INDIVIDUAL_POINTS);
+    }
+
+    boolean tracks(Achievement achievement) {
+        ChallengeType challenge = achievement.category().challenge();
+        return challenge == null || round != null && round.initialChallenges().contains(challenge) && !round.ended().contains(challenge);
+    }
+
+    private boolean eligible(Player player, Achievement achievement) {
+        ChallengeType challenge = achievement.category().challenge();
+        return tracks(achievement) && (challenge == null || ChallengeManager.isChallengeActive(challenge)) && eligible(player);
     }
 
     public void record(Player player, Achievement achievement) {
-        if (!eligible(player)) return;
-        if (achievement.category() == AchievementCategory.FORCE_BATTLE && !forceBattleEligible(player)) return;
         snapshot(player, achievement, 1);
     }
 
     public void snapshot(Player player, Achievement achievement, int value) {
-        if (!eligible(player)) return;
+        if (!eligible(player, achievement)) return;
         AchievementRound.Participant state = participant(player);
         if (state.value(achievement) == value) return;
         state.set(achievement, value);
@@ -231,7 +238,7 @@ public final class AchievementService {
     }
 
     public void add(Player player, Achievement achievement, int amount) {
-        if (!eligible(player) || amount <= 0) return;
+        if (!eligible(player, achievement) || amount <= 0) return;
         AchievementRound.Participant state = participant(player);
         int value = state.add(achievement, amount);
         progress(player.getUniqueId(), player.getName(), achievement, value);
@@ -240,7 +247,7 @@ public final class AchievementService {
     }
 
     public void distinct(Player player, Achievement achievement, String key) {
-        if (!eligible(player)) return;
+        if (!eligible(player, achievement)) return;
         AchievementRound.Participant state = participant(player);
         int before = state.value(achievement);
         int value = state.distinct(achievement, key);
@@ -285,14 +292,14 @@ public final class AchievementService {
     }
 
     public void naturalEnd(ChallengeType challenge, Set<UUID> winners, Set<UUID> teamWinners) {
-        if (round == null) return;
-        boolean firstEnd = !round.finished();
+        if (round == null || !round.initialChallenges().contains(challenge)) return;
         if (!round.end(challenge)) return;
-        if (firstEnd) round.players().forEach((id, state) -> {
+        if (Achievement.VEGAN_ROUND.category().challenge() == challenge) round.players().forEach((id, state) -> {
             if (state.vegan()) progress(id, state.name(), Achievement.VEGAN_ROUND, 1);
         });
         Map<UUID, AchievementRound.Participant> players = round.players();
         winners.forEach(id -> {
+            if (Achievement.WIN_GAME.category().challenge() != challenge) return;
             AchievementRound.Participant state = round.player(id);
             progress(id, state.name(), Achievement.WIN_GAME, 1);
             if (challenge != ChallengeType.FORCE_BATTLE) return;

@@ -1,12 +1,16 @@
 package gg.itzkatze.katze.randomizer.gui;
 
+import java.util.ArrayList;
+
+import gg.itzkatze.katze.text.TextArg;
+
 import gg.itzkatze.katze.challenges.Challenge;
 import gg.itzkatze.katze.challenges.ChallengeRegistry;
 import gg.itzkatze.katze.challenges.ChallengeType;
 import gg.itzkatze.katze.configuration.ChallengeSettingsManager;
 import gg.itzkatze.katze.configuration.states.SettingStateType;
 import gg.itzkatze.katze.gui.GUIClickableItem;
-import gg.itzkatze.katze.gui.KatzeGUI;
+import gg.itzkatze.katze.gui.SettingsMenu;
 import gg.itzkatze.katze.gui.impl.SettingsGUI;
 import gg.itzkatze.katze.player.KatzePlayer;
 import gg.itzkatze.katze.randomizer.RandomizerSettings;
@@ -19,7 +23,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
-public class RandomizerSettingsGUI extends KatzeGUI {
+public class RandomizerSettingsGUI extends SettingsMenu {
 
     public RandomizerSettingsGUI() {
         super(Component.translatable("katze.randomizer.gui.title"), 27);
@@ -73,11 +77,11 @@ public class RandomizerSettingsGUI extends KatzeGUI {
                 public ItemStack getItem(KatzePlayer p) {
                     SettingStateType state = getState(button.setting);
                     Component status = state == null ? Component.translatable("katze.randomizer.gui.unknown") : state.getDisplayName();
-                    List<Component> lore = new java.util.ArrayList<>(button.description);
+                    List<Component> lore = new ArrayList<>(button.description);
                     lore.add(Component.empty());
-                    lore.add(Component.translatable("katze.randomizer.gui.current", gg.itzkatze.katze.text.TextArg.component("state", status)));
+                    lore.add(Component.translatable("katze.randomizer.gui.current", TextArg.component("state", status)));
                     lore.add(Component.empty());
-                    lore.add(Component.translatable("katze.randomizer.gui.toggle").color(KatzeColor.YELLOW));
+                    lore.add(Component.translatable("katze.randomizer.gui.toggle").color(KatzeColor.LIGHT_GRAY));
                     return ItemStackCreator.getStack(
                             Component.translatable(button.label).color(KatzeColor.LIGHT_BLUE),
                             button.material,
@@ -88,7 +92,7 @@ public class RandomizerSettingsGUI extends KatzeGUI {
             });
         }
 
-        set(GUIClickableItem.getGoBackItem(18, new SettingsGUI()));
+        setBack(new SettingsGUI());
     }
 
     private SettingStateType getState(RandomizerSettings.RandomizerSetting setting) {
@@ -102,10 +106,5 @@ public class RandomizerSettingsGUI extends KatzeGUI {
         if (challenge == null || challenge.getSettingsManager() == null) return;
         ChallengeSettingsManager manager = challenge.getSettingsManager();
         manager.setState(setting, state);
-    }
-
-    @Override
-    public boolean allowItemMoving() {
-        return false;
     }
 }

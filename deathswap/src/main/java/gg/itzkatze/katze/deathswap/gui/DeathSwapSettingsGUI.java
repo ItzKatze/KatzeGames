@@ -7,7 +7,7 @@ import gg.itzkatze.katze.configuration.ChallengeSettingsManager;
 import gg.itzkatze.katze.configuration.states.SettingStateType;
 import gg.itzkatze.katze.deathswap.DeathSwapSettings;
 import gg.itzkatze.katze.gui.GUIClickableItem;
-import gg.itzkatze.katze.gui.KatzeGUI;
+import gg.itzkatze.katze.gui.SettingsMenu;
 import gg.itzkatze.katze.gui.sign.NumberSignInput;
 import gg.itzkatze.katze.gui.impl.SettingsGUI;
 import gg.itzkatze.katze.player.KatzePlayer;
@@ -21,7 +21,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
-public class DeathSwapSettingsGUI extends KatzeGUI {
+public class DeathSwapSettingsGUI extends SettingsMenu {
 
     public DeathSwapSettingsGUI() {
         super(Component.translatable("katze.deathswap.gui.title"), 27);
@@ -61,13 +61,13 @@ public class DeathSwapSettingsGUI extends KatzeGUI {
                         List.of(
                                 Component.translatable("katze.deathswap.gui.current", TextArg.component("state", status)),
                                 Component.empty(),
-                                Component.translatable("katze.deathswap.gui.set_minutes").color(KatzeColor.YELLOW)
+                                Component.translatable("katze.deathswap.gui.set_minutes").color(KatzeColor.LIGHT_GRAY)
                         )
                 );
             }
         });
 
-        set(GUIClickableItem.getGoBackItem(18, new SettingsGUI()));
+        setBack(new SettingsGUI());
     }
 
     private DeathSwapSettings.SwapIntervalState getIntervalState() {
@@ -97,10 +97,5 @@ public class DeathSwapSettingsGUI extends KatzeGUI {
         }
         updateSetting(state);
         new DeathSwapSettingsGUI().open(player);
-    }
-
-    @Override
-    public boolean allowItemMoving() {
-        return false;
     }
 }

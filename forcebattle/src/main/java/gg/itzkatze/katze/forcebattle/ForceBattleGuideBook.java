@@ -60,4 +60,13 @@ public final class ForceBattleGuideBook {
             inventory.setItem(slot, item);
         }
     }
+
+    public static void remove(@NotNull Player player) {
+        PlayerInventory inventory = player.getInventory();
+        for (int slot = 0; slot < inventory.getSize(); slot++) {
+            ItemStack item = inventory.getItem(slot);
+            if (item != null && isGuideBook(item)) inventory.setItem(slot, null);
+        }
+        if (isGuideBook(player.getItemOnCursor())) player.setItemOnCursor(null);
+    }
 }

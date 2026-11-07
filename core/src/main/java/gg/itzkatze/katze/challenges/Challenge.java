@@ -17,6 +17,12 @@ public interface Challenge extends ChallengeSettings {
 
     default void onEnable() {}
 
+    @Nullable default Component getEnableError() { return null; }
+
+    @Nullable default Component getStartError() { return null; }
+
+    default boolean showScoreboard(@NotNull KatzePlayer player) { return false; }
+
     default void onDisable() {}
 
     default void onGameStart() {}
@@ -32,6 +38,8 @@ public interface Challenge extends ChallengeSettings {
     default void saveData() {}
 
     default void loadData() {}
+
+    default void validateRestoredGame() {}
 
     @Nullable default TimerSpec getTimerSpec() {
         return null;

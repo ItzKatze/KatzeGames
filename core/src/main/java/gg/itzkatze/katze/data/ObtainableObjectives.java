@@ -23,7 +23,11 @@ public final class ObtainableObjectives {
     private ObtainableObjectives() {}
 
     public static boolean isItem(Material material) {
-        return material.isItem() && !material.isAir() && !material.isLegacy()
+        return material.isItem() && isInventoryItem(material);
+    }
+
+    public static boolean isInventoryItem(Material material) {
+        return material != Material.AIR && material != Material.CAVE_AIR && material != Material.VOID_AIR && !material.isLegacy()
                 && !UNOBTAINABLE_ITEMS.contains(material)
                 && !material.name().startsWith("INFESTED_") && !material.name().endsWith("_SPAWN_EGG");
     }

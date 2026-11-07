@@ -18,6 +18,11 @@ exclude:
 
 forcebattle-duration-minutes: 60
 
+bingo:
+    resource-pack:
+        url: ''
+        timeout-seconds: 120
+
 seed-generator:
     diameter: 10000
     max-attempts: 100

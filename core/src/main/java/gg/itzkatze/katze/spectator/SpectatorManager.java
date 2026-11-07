@@ -64,6 +64,12 @@ public final class SpectatorManager {
         REASONS.remove(uuid);
     }
 
+    public static void finish(@NotNull UUID uuid) {
+        REASONS.putIfAbsent(uuid, SpectatorReason.FINISHED);
+        Player player = Bukkit.getPlayer(uuid);
+        if (player != null && !player.isDead() && player.getGameMode() != GameMode.SPECTATOR) enterSpectatorMode(player);
+    }
+
     public static boolean isBattleRunning() {
         return ChallengeManager.isGameStarted() && !KatzeGames.getTimer().hasHitZero();
     }

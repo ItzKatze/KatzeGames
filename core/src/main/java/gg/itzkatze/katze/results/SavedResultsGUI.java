@@ -111,6 +111,15 @@ public final class SavedResultsGUI extends KatzeGUI {
 
     private List<Entry> standings(SavedBattle battle) {
         List<Entry> entries = new ArrayList<>();
+        if (battle.game() == SavedBattle.Game.BINGO && battle.bingo() != null) {
+            SavedBattle.Bingo bingo = battle.bingo();
+            Component result = bingo.winner() < 0 ? Component.translatable("katze.bingo.draw")
+                    : Component.translatable("katze.bingo.winner", TextArg.text("winner", bingo.competitors().get(bingo.winner())));
+            entries.add(new Entry(ItemStackCreator.getStack(Component.text(String.join(" vs ", bingo.competitors())), Material.MAP,
+                    List.of(result, Component.translatable("katze.bingo.result." + bingo.reason()), Component.translatable("katze.results.open"))),
+                    viewer -> new SavedBingoGUI(battle).open(viewer)));
+            return entries;
+        }
         List<SavedBattle.Team> teams = battle.teams().stream().sorted(Comparator.comparingInt(SavedBattle.Team::points).reversed()).toList();
         for (SavedBattle.Team team : teams) {
             Component name = battle.game() == SavedBattle.Game.ALL_ITEMS ? Component.translatable("katze.results.shared_collection")

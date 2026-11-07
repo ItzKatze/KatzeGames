@@ -13,6 +13,7 @@ public enum AchievementCategory {
     DEATH_SWAP(Material.ENDER_PEARL, ChallengeType.DEATH_SWAP),
     RANDOMIZER(Material.SNIFFER_EGG, ChallengeType.RANDOMIZER),
     ITEM_RAIN(Material.DROPPER, ChallengeType.ITEM_RAIN),
+    BINGO(Material.MAP, ChallengeType.BINGO),
     LOBBY(Material.FEATHER, null);
 
     private final Material icon;

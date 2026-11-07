@@ -7,7 +7,8 @@ import org.jetbrains.annotations.Nullable;
 public enum SpectatorReason {
     CHOSEN("chosen", false),
     LATE_JOIN("late_join", false),
-    ELIMINATED("eliminated", true);
+    ELIMINATED("eliminated", true),
+    FINISHED("finished", true);
 
     private final String id;
     private final boolean ranked;
