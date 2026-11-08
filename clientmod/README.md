@@ -2,6 +2,8 @@
 
 Developers can run `gradlew.bat :clientmod:exportItemIcons` to export every registered item's real inventory icon for the Bingo resource pack. The hidden client uses its own world/run directory and exits after saving transparent 64×64 PNGs rendered at GUI scale 4 in the Git-ignored local cache at `bingo/src/main/item-icons/<minecraft-version>/`. Only the required generated icons in the resource pack are committed. This mode activates only when the dedicated Gradle task sets its export property; normal clients continue to run the music features described below. Players do not need the mod for Bingo's exported pictures.
 
+Developers can also run `gradlew.bat :clientmod:exportMobIcons` for transparent 128×128 portraits rendered from Minecraft's mob models. The export frames each mob individually and keeps its cache local at `bingo/src/main/mob-icons/<minecraft-version>/`. Run `gradlew.bat :clientmod:generateBingoPack` to export both items and mobs and regenerate the pack. Mob portraits appear on the Bingo overlay; the inventory GUI keeps spawn eggs.
+
 An optional Fabric mod for the lobby's Jump & Run music. You can play every challenge without it.
 
 ## What it adds

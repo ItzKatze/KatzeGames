@@ -86,6 +86,7 @@ sourceSets.main {
 }
 
 val itemExportDirectory = rootProject.layout.projectDirectory.dir("bingo/src/main/item-icons/$minecraftVersion")
+val mobExportDirectory = rootProject.layout.projectDirectory.dir("bingo/src/main/mob-icons/$minecraftVersion")
 
 loom {
     runs {
@@ -94,6 +95,12 @@ loom {
             runDir("../bingo/build/item-export-client")
             vmArg("-Dkatzegames.itemExport.output=${itemExportDirectory.asFile.absolutePath}")
             programArgs("--width", "1536", "--height", "1024", "--username", "ItemExporter")
+        }
+        register("mobExport") {
+            client()
+            runDir("../bingo/build/mob-export-client")
+            vmArg("-Dkatzegames.mobExport.output=${mobExportDirectory.asFile.absolutePath}")
+            programArgs("--width", "1536", "--height", "1024", "--username", "MobExporter")
         }
     }
 }
@@ -113,11 +120,28 @@ val exportItemIcons = tasks.register("exportItemIcons") {
     }
 }
 
+tasks.named("runMobExport") {
+    mustRunAfter(exportItemIcons)
+    doFirst {
+        val manifest = mobExportDirectory.file("manifest.json").asFile
+        if (manifest.exists() && !manifest.delete()) throw GradleException("Could not invalidate the previous mob export manifest")
+    }
+}
+
+val exportMobIcons = tasks.register("exportMobIcons") {
+    dependsOn("runMobExport")
+    doLast {
+        if (!mobExportDirectory.file("manifest.json").asFile.isFile)
+            throw GradleException("Native mob export failed; see bingo/build/mob-export-client/logs/latest.log")
+    }
+}
+
 evaluationDependsOn(":bingo")
 val clientProject = project
 val bingoProject = project(":bingo")
 bingoProject.tasks.named<JavaExec>("generateBingoPack") {
     mustRunAfter(exportItemIcons)
+    mustRunAfter(exportMobIcons)
     doFirst {
         if (args.isNullOrEmpty()) {
             val minecraftClientJar = clientProject.providers.gradleProperty("minecraftClientJar").orNull
@@ -127,7 +151,7 @@ bingoProject.tasks.named<JavaExec>("generateBingoPack") {
     }
 }
 tasks.register("generateBingoPack") {
-    dependsOn(exportItemIcons, ":bingo:generateBingoPack")
+    dependsOn(exportItemIcons, exportMobIcons, ":bingo:generateBingoPack")
 }
 
 spotless {

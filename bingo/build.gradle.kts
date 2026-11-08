@@ -4,19 +4,29 @@ val packTools = sourceSets.create("packTools") {
     java.srcDir("tools")
 }
 
+repositories {
+    exclusiveContent {
+        forRepository { maven("https://repo.nexomc.com/releases/") }
+        filter { includeModule("team.unnamed", "creative-api"); includeModule("team.unnamed", "creative-serializer-minecraft") }
+    }
+}
+
 dependencies {
     implementation(project(":core"))
     testImplementation("io.papermc.paper:paper-api:${providers.gradleProperty("paperVersion").get()}")
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.10.2")
     add(packTools.implementationConfigurationName, "com.google.code.gson:gson:2.13.2")
+    add(packTools.implementationConfigurationName, "team.unnamed:creative-serializer-minecraft:1.15.4")
     testImplementation(packTools.output)
+    testImplementation("team.unnamed:creative-serializer-minecraft:1.15.4")
     testRuntimeOnly(project(":forcebattle"))
 }
 
 tasks.test {
     useJUnitPlatform()
     inputs.files(fileTree("src/main/item-icons"))
+    inputs.files(fileTree("src/main/mob-icons"))
 }
 
 tasks.register<JavaExec>("generateBingoPack") {

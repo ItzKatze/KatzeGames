@@ -34,6 +34,10 @@ gradlew.bat :bingo:check :core:test :loader:test
 
 This builds the plugin, checks the packaged board icons, and validates translations from the final JAR. Normal builds use the committed resource-pack assets and do not need a running Minecraft client.
 
+Pack assets are generated with [Nexo Creative](https://github.com/Nexo-MC/creative), pinned to version 1.15.4. It is a build-tool dependency and is not bundled into the server plugin. Creative writes the font definitions, textures, and pack icon; Gradle packages the generated directory into a reproducible ZIP. Native inventory PNGs are copied unchanged.
+
+The writer keeps a small compatibility step for Minecraft's `97.1` pack format because Creative 1.15.4 serializes only the major format number. Regression tests cover the exact metadata, negative font offsets, supplementary Unicode glyphs, vanilla texture references, and PNG preservation.
+
 ## Regenerate the icons and pack assets
 
 ```text
@@ -41,11 +45,13 @@ gradlew.bat :clientmod:generateBingoPack
 gradlew.bat :loader:shadowJar
 ```
 
-The first command launches a hidden developer Minecraft client in an isolated run directory. It renders inventory icons at GUI scale 4 as transparent 64×64 PNGs, rebuilds the objective catalog, and generates the pack assets. A graphics device and display session are required. The second command packages the ZIP and matching plugin.
+The first command launches hidden developer Minecraft clients in isolated run directories. They render inventory icons at GUI scale 4 as transparent 64×64 PNGs and mob portraits from Minecraft entity models as transparent 128×128 PNGs. Portraits use a fixed three-quarter view, automatic cropping, and consistent padding. The command then rebuilds the objective catalog and generates the pack assets. Spawn eggs remain the icons in the inventory GUI; portraits appear only on the scoreboard board. A graphics device and display session are required. The second command packages the ZIP and matching plugin.
 
-The full export cache at `bingo/src/main/item-icons/<minecraft-version>/` stays local and is ignored by Git. Only the required PNGs in the resource pack and a small item-ID list are committed. CI validates the packaged assets without the export cache; local tests also compare them with the exports when available.
+The full export caches at `bingo/src/main/item-icons/<minecraft-version>/` and `bingo/src/main/mob-icons/<minecraft-version>/` stay local and are ignored by Git. Only the required PNGs in the resource pack and a small item-ID list are committed. CI validates the packaged assets without the export cache; local tests also compare them with the exports when available.
 
-To regenerate pack assets from an existing export cache:
+To export only mob portraits, run `gradlew.bat :clientmod:exportMobIcons`. No client mod is needed by players for these static portraits.
+
+To regenerate pack assets from existing item and mob export caches:
 
 ```text
 gradlew.bat :bingo:generateBingoPack "-PminecraftClientJar=<path-to-minecraft-client.jar>"

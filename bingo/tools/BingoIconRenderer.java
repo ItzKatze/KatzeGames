@@ -33,4 +33,11 @@ final class BingoIconRenderer {
         return entry[5];
     }
 
+    String mob(String[] entry) throws IOException {
+        if (!entry[1].equals("MOB")) return null;
+        String egg = material(entry).toLowerCase(Locale.ROOT);
+        if (!egg.endsWith("_spawn_egg")) throw new IOException("Mob objective has no spawn egg: " + entry[0]);
+        return egg.substring(0, egg.length() - "_spawn_egg".length());
+    }
+
 }

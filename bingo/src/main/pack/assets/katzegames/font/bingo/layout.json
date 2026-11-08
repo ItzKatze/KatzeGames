@@ -2,14 +2,13 @@
   "providers": [
     {
       "type": "bitmap",
-      "file": "minecraft:font/ascii.png",
-      "height": 8,
+      "file": "font/ascii.png",
       "ascent": 7,
       "chars": [
         "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
         "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
-        " !\"#$%\u0026\u0027()*+,-./",
-        "0123456789:;\u003c\u003d\u003e?",
+        " !\"#$%&'()*+,-./",
+        "0123456789:;<=>?",
         "@ABCDEFGHIJKLMNO",
         "PQRSTUVWXYZ[\\]^_",
         "`abcdefghijklmno",
