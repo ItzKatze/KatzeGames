@@ -23,13 +23,13 @@ import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerAdvancementDoneEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerItemConsumeEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 
 public final class BingoListener implements Listener {
     private final BingoMatchManager matches;
@@ -62,7 +62,7 @@ public final class BingoListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onInteract(PlayerInteractEvent event) { if (matches.frozen(event.getPlayer())) event.setCancelled(true); }
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
-    public void onInteractEntity(PlayerInteractEntityEvent event) { if (matches.frozen(event.getPlayer())) event.setCancelled(true); }
+    public void onInteractEntity(PlayerInteractAtEntityEvent event) { if (matches.frozen(event.getPlayer())) event.setCancelled(true); }
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onDrop(PlayerDropItemEvent event) { if (matches.frozen(event.getPlayer())) event.setCancelled(true); }
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)

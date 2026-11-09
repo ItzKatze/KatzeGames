@@ -7,11 +7,13 @@ import gg.itzkatze.katze.commands.framework.KatzeCommand;
 import gg.itzkatze.katze.player.KatzePlayer;
 import gg.itzkatze.katze.util.KatzeColor;
 import gg.itzkatze.katze.util.StringUtility;
-import java.util.ArrayList;
-import java.util.List;
 import net.kyori.adventure.text.Component;
 import org.bukkit.permissions.PermissionDefault;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 public class ChatCommand extends KatzeCommand {
 
@@ -38,7 +40,7 @@ public class ChatCommand extends KatzeCommand {
             return;
         }
 
-        switch (args[0].toLowerCase()) {
+        switch (args[0].toLowerCase(Locale.ROOT)) {
             case "team" -> {
                 if (!player.isInTeam()) {
                     caller.sendMessage(Component.translatable("katze.team.not_in_team").color(KatzeColor.RED));

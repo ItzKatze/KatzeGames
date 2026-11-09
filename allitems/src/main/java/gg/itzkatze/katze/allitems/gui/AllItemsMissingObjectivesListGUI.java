@@ -10,6 +10,7 @@ import gg.itzkatze.katze.data.StructureSimplified;
 import gg.itzkatze.katze.gui.GUIClickableItem;
 import gg.itzkatze.katze.gui.KatzeGUI;
 import gg.itzkatze.katze.player.KatzePlayer;
+import gg.itzkatze.katze.text.TextArg;
 import gg.itzkatze.katze.util.ItemStackCreator;
 import gg.itzkatze.katze.util.KatzeColor;
 import net.kyori.adventure.text.Component;
@@ -20,6 +21,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 public class AllItemsMissingObjectivesListGUI extends KatzeGUI {
@@ -30,7 +32,7 @@ public class AllItemsMissingObjectivesListGUI extends KatzeGUI {
     private final int page;
 
     public AllItemsMissingObjectivesListGUI(AllItemsObjectiveType type, int page) {
-        super(Component.translatable("katze.allitems.missing.list_title", gg.itzkatze.katze.text.TextArg.component("type", Component.translatable("katze.allitems.type." + type.name().toLowerCase(java.util.Locale.ROOT)))), 54);
+        super(Component.translatable("katze.allitems.missing.list_title", TextArg.component("type", Component.translatable("katze.allitems.type." + type.name().toLowerCase(Locale.ROOT)))), 54);
         this.type = type;
         this.page = page;
     }

@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDate;
+import java.util.Locale;
 
 public interface Cosmetic {
 
@@ -14,7 +15,7 @@ public interface Cosmetic {
     @NotNull CosmeticCategory category();
 
     default @NotNull Component displayName() {
-        return Component.translatable("katze.cosmetics.cosmetic." + category().name().toLowerCase(java.util.Locale.ROOT) + "." + id());
+        return Component.translatable("katze.cosmetics.cosmetic." + category().name().toLowerCase(Locale.ROOT) + "." + id());
     }
 
     @NotNull Rarity rarity();

@@ -1,11 +1,13 @@
 package gg.itzkatze.katze.achievements;
 
 import gg.itzkatze.katze.challenges.ChallengeType;
+import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 
 import java.util.Locale;
 
+@Getter
 public enum AchievementCategory {
     GENERAL(Material.BOOK, null),
     FORCE_BATTLE(Material.DIAMOND_SWORD, ChallengeType.FORCE_BATTLE),
@@ -22,14 +24,6 @@ public enum AchievementCategory {
     AchievementCategory(Material icon, ChallengeType challenge) {
         this.icon = icon;
         this.challenge = challenge;
-    }
-
-    public Material icon() {
-        return icon;
-    }
-
-    public ChallengeType challenge() {
-        return challenge;
     }
 
     public Component title() {

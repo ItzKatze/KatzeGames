@@ -3,8 +3,8 @@ package gg.itzkatze.katze.scoreboard;
 import gg.itzkatze.katze.KatzeGames;
 import gg.itzkatze.katze.challenges.Challenge;
 import gg.itzkatze.katze.challenges.ChallengeManager;
-import gg.itzkatze.katze.configuration.SettingsManager;
 import gg.itzkatze.katze.configuration.GlobalSetting;
+import gg.itzkatze.katze.configuration.SettingsManager;
 import gg.itzkatze.katze.game.GameTimer;
 import gg.itzkatze.katze.lobby.LobbyManager;
 import gg.itzkatze.katze.lobby.PointsSidebar;
@@ -15,6 +15,7 @@ import io.papermc.paper.scoreboard.numbers.NumberFormat;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
+import org.bukkit.scoreboard.Criteria;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
@@ -23,7 +24,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-
 
 public class ScoreboardManager {
 
@@ -107,7 +107,7 @@ public class ScoreboardManager {
         Component title = Texts.render(styleTitle(content.getTitle()), player.getPlayer());
         Objective obj = scoreboard.getObjective(SIDEBAR_OBJECTIVE);
         if (obj == null) {
-            obj = scoreboard.registerNewObjective(SIDEBAR_OBJECTIVE, "dummy", title);
+            obj = scoreboard.registerNewObjective(SIDEBAR_OBJECTIVE, Criteria.DUMMY, title);
             obj.setDisplaySlot(DisplaySlot.SIDEBAR);
         } else if (!title.equals(obj.displayName())) {
             obj.displayName(title);

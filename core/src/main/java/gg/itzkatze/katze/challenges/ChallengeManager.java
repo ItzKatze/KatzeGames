@@ -2,7 +2,6 @@ package gg.itzkatze.katze.challenges;
 
 import gg.itzkatze.katze.KatzeGames;
 import gg.itzkatze.katze.achievements.AchievementService;
-import gg.itzkatze.katze.commands.framework.CommandHandler;
 import gg.itzkatze.katze.commands.framework.KatzeCommand;
 import gg.itzkatze.katze.game.GameTimer;
 import gg.itzkatze.katze.game.TaskManager;
@@ -20,6 +19,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 public class ChallengeManager {
@@ -70,9 +70,6 @@ public class ChallengeManager {
         // Register commands and track for unregister on disable
         List<KatzeCommand> commands = new ArrayList<>(challenge.getCommands());
         commandsByChallenge.put(challenge, commands);
-        for (KatzeCommand command : commands) {
-            CommandHandler.register(command);
-        }
         refreshCommandListForAllPlayers();
 
         // Register listeners
@@ -230,7 +227,7 @@ public class ChallengeManager {
     private static boolean applyTimerSpec() {
         List<TimerSpec> specs = activeChallenges.stream()
                 .map(Challenge::getTimerSpec)
-                .filter(java.util.Objects::nonNull)
+                .filter(Objects::nonNull)
                 .toList();
 
         GameTimer timer = KatzeGames.getTimer();

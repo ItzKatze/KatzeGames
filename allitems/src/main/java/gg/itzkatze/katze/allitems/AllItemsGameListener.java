@@ -2,17 +2,19 @@ package gg.itzkatze.katze.allitems;
 
 import gg.itzkatze.katze.KatzeGames;
 import gg.itzkatze.katze.allitems.data.AllItemsData;
-import gg.itzkatze.katze.data.ObjectiveNames;
 import gg.itzkatze.katze.data.BiomeSimplified;
 import gg.itzkatze.katze.data.KatzeAdvancement;
 import gg.itzkatze.katze.data.KatzeStructure;
+import gg.itzkatze.katze.data.ObjectiveNames;
+import gg.itzkatze.katze.data.ObtainableObjectives;
 import gg.itzkatze.katze.data.StructureSimplified;
 import gg.itzkatze.katze.level.LevelStore;
 import gg.itzkatze.katze.player.KatzePlayer;
 import gg.itzkatze.katze.text.TextArg;
 import gg.itzkatze.katze.util.KatzeColor;
 import gg.itzkatze.katze.util.StructureScanner;
-import gg.itzkatze.katze.data.ObtainableObjectives;
+import io.papermc.paper.registry.RegistryAccess;
+import io.papermc.paper.registry.RegistryKey;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
@@ -29,13 +31,12 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.generator.structure.Structure;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
-import org.bukkit.generator.structure.Structure;
-import io.papermc.paper.registry.RegistryAccess;
-import io.papermc.paper.registry.RegistryKey;
 
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -232,7 +233,7 @@ public class AllItemsGameListener implements Listener {
     }
 
     private void announceDiscovery(Player player, AllItemsObjectiveType type, Component objective) {
-        Component translatedType = Component.translatable("katze.allitems.discovery.type." + type.name().toLowerCase(java.util.Locale.ROOT));
+        Component translatedType = Component.translatable("katze.allitems.discovery.type." + type.name().toLowerCase(Locale.ROOT));
         if (AllItemsSettings.isTeamMode()) {
             KatzeGames.broadcast(Component.translatable("katze.allitems.discovery.team",
                     TextArg.text("player", player.getName()),

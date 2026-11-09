@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Locale;
 import java.util.UUID;
 
 public final class Toast {
@@ -86,7 +87,7 @@ public final class Toast {
                 "        \"title\": " + titleJson + ",\n" +
                 "        \"description\": {\"text\": \"\"},\n" +
                 "        \"background\": \"minecraft:textures/gui/advancements/backgrounds/adventure.png\",\n" +
-                "        \"frame\": \"" + style.toString().toLowerCase() + "\",\n" +
+                "        \"frame\": \"" + style.toString().toLowerCase(Locale.ROOT) + "\",\n" +
                 "        \"announce_to_chat\": false,\n" +
                 "        \"show_toast\": true,\n" +
                 "        \"hidden\": true\n" +
@@ -149,7 +150,7 @@ public final class Toast {
         }
 
         public Builder icon(@NotNull Material icon) {
-            this.icon = icon.name().toLowerCase();
+            this.icon = icon.name().toLowerCase(Locale.ROOT);
             return this;
         }
 

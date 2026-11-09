@@ -6,6 +6,7 @@ import gg.itzkatze.katze.commands.framework.KatzeCommand;
 import gg.itzkatze.katze.lobby.Lobby;
 import gg.itzkatze.katze.lobby.LobbyManager;
 import gg.itzkatze.katze.player.KatzePlayer;
+import gg.itzkatze.katze.text.TextArg;
 import gg.itzkatze.katze.util.KatzeColor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -68,11 +69,11 @@ public class LobbyPosCommand extends KatzeCommand {
         String arguments = "new Vector(" + x + ", " + y + ", " + z + "), " + yaw;
 
         return Component.translatable("katze.command.lobbypos.position",
-                        gg.itzkatze.katze.text.TextArg.text("island", islandId),
-                        gg.itzkatze.katze.text.TextArg.decimal("x", x),
-                        gg.itzkatze.katze.text.TextArg.number("y", (long) y),
-                        gg.itzkatze.katze.text.TextArg.decimal("z", z),
-                        gg.itzkatze.katze.text.TextArg.number("yaw", yaw)).color(KatzeColor.YELLOW)
+                        TextArg.text("island", islandId),
+                        TextArg.decimal("x", x),
+                        TextArg.number("y", (long) y),
+                        TextArg.decimal("z", z),
+                        TextArg.number("yaw", yaw)).color(KatzeColor.YELLOW)
                 .append(Component.translatable("katze.command.lobbypos.copy").color(KatzeColor.LIME)
                         .clickEvent(ClickEvent.copyToClipboard(arguments))
                         .hoverEvent(HoverEvent.showText(Component.translatable("katze.command.lobbypos.copy_hint"))));

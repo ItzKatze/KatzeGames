@@ -9,6 +9,8 @@ import gg.itzkatze.katze.util.ItemStackCreator;
 import gg.itzkatze.katze.util.KatzeColor;
 import gg.itzkatze.katze.util.Skull;
 import gg.itzkatze.katze.util.StringUtility;
+import io.papermc.paper.registry.RegistryAccess;
+import io.papermc.paper.registry.RegistryKey;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -17,6 +19,7 @@ import org.bukkit.inventory.BlastingRecipe;
 import org.bukkit.inventory.CampfireRecipe;
 import org.bukkit.inventory.CookingRecipe;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.ItemType;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
@@ -195,7 +198,9 @@ public class CraftingRecipeGUI extends KatzeGUI {
 
     private ItemStack getChoiceItem(RecipeChoice choice) {
         return switch (choice) {
-            case RecipeChoice.MaterialChoice mat when !mat.getChoices().isEmpty() -> new ItemStack(mat.getChoices().getFirst());
+            case RecipeChoice.ItemTypeChoice items -> items.itemTypes()
+                    .resolve(RegistryAccess.registryAccess().getRegistry(RegistryKey.ITEM))
+                    .stream().findFirst().map(ItemType::createItemStack).orElse(null);
             case RecipeChoice.ExactChoice exact when !exact.getChoices().isEmpty() -> exact.getChoices().getFirst().clone();
             case null, default -> null;
         };

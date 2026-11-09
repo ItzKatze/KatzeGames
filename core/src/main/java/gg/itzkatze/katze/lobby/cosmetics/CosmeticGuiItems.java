@@ -2,6 +2,7 @@ package gg.itzkatze.katze.lobby.cosmetics;
 
 import gg.itzkatze.katze.gui.GUIItem;
 import gg.itzkatze.katze.player.KatzePlayer;
+import gg.itzkatze.katze.text.TextArg;
 import gg.itzkatze.katze.util.ItemStackCreator;
 import gg.itzkatze.katze.util.KatzeColor;
 import net.kyori.adventure.sound.Sound;
@@ -23,7 +24,7 @@ final class CosmeticGuiItems {
             @Override
             public ItemStack getItem(KatzePlayer viewer) {
                 return ItemStackCreator.getStack(Component.translatable("katze.cosmetics.points",
-                                gg.itzkatze.katze.text.TextArg.number("points", CosmeticStore.get().points(viewer.getUuid()))).color(KatzeColor.GOLD), Material.GOLD_NUGGET,
+                                TextArg.number("points", CosmeticStore.get().points(viewer.getUuid()))).color(KatzeColor.GOLD), Material.GOLD_NUGGET,
                         List.of(Component.translatable("katze.cosmetics.points_earned").color(KatzeColor.LIGHT_GRAY),
                                 Component.translatable("katze.cosmetics.points_spent").color(KatzeColor.LIGHT_GRAY)));
             }

@@ -1,4 +1,6 @@
 package gg.itzkatze.katze.commands.framework;
+
+import gg.itzkatze.katze.text.TextArg;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.permissions.PermissionDefault;
@@ -10,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -49,7 +52,7 @@ public abstract class KatzeCommand {
     public static @NotNull Set<String> getRegisteredCommandNames() {
         return COMMANDS.stream()
                 .flatMap(c -> Stream.concat(Stream.of(c.id), c.aliases.stream()))
-                .map(String::toLowerCase)
+                .map(name -> name.toLowerCase(Locale.ROOT))
                 .collect(Collectors.toSet());
     }
 
@@ -100,11 +103,11 @@ public abstract class KatzeCommand {
     }
 
     public boolean matches(String commandId) {
-        return this.id.equalsIgnoreCase(commandId) || this.aliases.contains(commandId.toLowerCase());
+        return this.id.equalsIgnoreCase(commandId) || this.aliases.contains(commandId.toLowerCase(Locale.ROOT));
     }
 
     public void sendUsage(@NotNull CommandCaller caller) {
-        caller.sendMessage(Component.translatable("katze.command.usage", gg.itzkatze.katze.text.TextArg.text("usage", this.usage)));
+        caller.sendMessage(Component.translatable("katze.command.usage", TextArg.text("usage", this.usage)));
     }
 
     protected void execute(CommandCaller caller, String @NotNull [] args) {

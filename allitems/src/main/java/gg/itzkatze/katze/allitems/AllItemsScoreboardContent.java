@@ -3,12 +3,14 @@ package gg.itzkatze.katze.allitems;
 import gg.itzkatze.katze.allitems.data.AllItemsData;
 import gg.itzkatze.katze.player.KatzePlayer;
 import gg.itzkatze.katze.scoreboard.ScoreboardContent;
+import gg.itzkatze.katze.text.TextArg;
 import gg.itzkatze.katze.util.KatzeColor;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 public class AllItemsScoreboardContent implements ScoreboardContent {
@@ -29,7 +31,7 @@ public class AllItemsScoreboardContent implements ScoreboardContent {
         List<Component> lines = new ArrayList<>();
 
         Component mode = Component.translatable(AllItemsSettings.isTeamMode() ? "katze.allitems.mode.team" : "katze.allitems.mode.individual");
-        lines.add(Component.translatable("katze.allitems.scoreboard.mode", gg.itzkatze.katze.text.TextArg.component("mode", mode.color(KatzeColor.WHITE))));
+        lines.add(Component.translatable("katze.allitems.scoreboard.mode", TextArg.component("mode", mode.color(KatzeColor.WHITE))));
 
         UUID playerId = player.getPlayer().getUniqueId();
         if (AllItemsSettings.isItemsEnabled()) {
@@ -65,7 +67,7 @@ public class AllItemsScoreboardContent implements ScoreboardContent {
             if (objective != null) {
                 lines.add(Component.translatable(
                         "katze.allitems.scoreboard.chain",
-                        gg.itzkatze.katze.text.TextArg.component("objective", objective.displayNameComponent())
+                        TextArg.component("objective", objective.displayNameComponent())
                 ));
             }
         }
@@ -83,8 +85,8 @@ public class AllItemsScoreboardContent implements ScoreboardContent {
             case ADVANCEMENT -> data.getTotalAvailableAdvancements();
         };
         return Component.translatable("katze.allitems.scoreboard.progress",
-                gg.itzkatze.katze.text.TextArg.component("type", Component.translatable("katze.allitems.type." + type.name().toLowerCase(java.util.Locale.ROOT))),
-                gg.itzkatze.katze.text.TextArg.number("found", found),
-                gg.itzkatze.katze.text.TextArg.number("total", total));
+                TextArg.component("type", Component.translatable("katze.allitems.type." + type.name().toLowerCase(Locale.ROOT))),
+                TextArg.number("found", found),
+                TextArg.number("total", total));
     }
 }

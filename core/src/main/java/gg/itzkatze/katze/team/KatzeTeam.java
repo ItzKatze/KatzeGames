@@ -1,18 +1,19 @@
 package gg.itzkatze.katze.team;
 
-import gg.itzkatze.katze.util.KatzeColor;
-import lombok.Getter;
-import net.kyori.adventure.text.Component;
 import gg.itzkatze.katze.challenges.Challenge;
 import gg.itzkatze.katze.challenges.ChallengeManager;
 import gg.itzkatze.katze.challenges.ChallengeType;
 import gg.itzkatze.katze.event.PlayerTeamJoinEvent;
 import gg.itzkatze.katze.event.PlayerTeamLeaveEvent;
 import gg.itzkatze.katze.player.KatzePlayer;
+import gg.itzkatze.katze.text.TextArg;
+import gg.itzkatze.katze.util.KatzeColor;
+import lombok.Getter;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -156,7 +157,7 @@ public class KatzeTeam {
         }
         this.lastJoinRequest = new JoinRequest(katzePlayer, this);
         players.forEach(teamPlayer ->
-                teamPlayer.sendMessage(Component.translatable("katze.team.requested_join", gg.itzkatze.katze.text.TextArg.text("name", katzePlayer.getName())))
+                teamPlayer.sendMessage(Component.translatable("katze.team.requested_join", TextArg.text("name", katzePlayer.getName())))
         );
     }
 
@@ -186,9 +187,9 @@ public class KatzeTeam {
         }
 
         players.forEach(teamPlayer ->
-                teamPlayer.sendMessage(Component.translatable("katze.team.player_joined", gg.itzkatze.katze.text.TextArg.text("name", katzePlayer.getName()))));
+                teamPlayer.sendMessage(Component.translatable("katze.team.player_joined", TextArg.text("name", katzePlayer.getName()))));
         players.add(katzePlayer);
-        katzePlayer.sendMessage(Component.translatable("katze.team.joined", gg.itzkatze.katze.text.TextArg.number("id", this.getId())).color(KatzeColor.LIME));
+        katzePlayer.sendMessage(Component.translatable("katze.team.joined", TextArg.number("id", this.getId())).color(KatzeColor.LIME));
     }
 
     public void removePlayer(KatzePlayer katzePlayer) {
@@ -201,7 +202,7 @@ public class KatzeTeam {
 
         players.remove(katzePlayer);
         players.forEach(teamPlayer ->
-                teamPlayer.sendMessage(Component.translatable("katze.team.player_left", gg.itzkatze.katze.text.TextArg.text("name", katzePlayer.getName()))));
+                teamPlayer.sendMessage(Component.translatable("katze.team.player_left", TextArg.text("name", katzePlayer.getName()))));
         if (players.isEmpty()) {
             this.delete();
         }

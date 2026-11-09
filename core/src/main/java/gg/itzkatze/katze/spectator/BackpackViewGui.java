@@ -4,6 +4,7 @@ import gg.itzkatze.katze.gui.GUIClickableItem;
 import gg.itzkatze.katze.gui.GUIItem;
 import gg.itzkatze.katze.gui.KatzeGUI;
 import gg.itzkatze.katze.player.KatzePlayer;
+import gg.itzkatze.katze.text.TextArg;
 import gg.itzkatze.katze.util.ItemStackCreator;
 import gg.itzkatze.katze.util.KatzeColor;
 import net.kyori.adventure.text.Component;
@@ -28,7 +29,7 @@ public class BackpackViewGui extends KatzeGUI implements SpectatorView {
     private int page;
 
     public BackpackViewGui(@NotNull KatzePlayer target) {
-        super(Component.translatable("katze.spectator.backpack.title", gg.itzkatze.katze.text.TextArg.text("name", target.getName())), 54);
+        super(Component.translatable("katze.spectator.backpack.title", TextArg.text("name", target.getName())), 54);
         this.targetId = target.getUuid();
         this.targetName = target.getName();
     }

@@ -5,6 +5,7 @@ import gg.itzkatze.katze.challenges.ChallengeManager;
 import gg.itzkatze.katze.game.GameWorldManager;
 import gg.itzkatze.katze.gui.KatzeGUI;
 import gg.itzkatze.katze.player.KatzePlayer;
+import gg.itzkatze.katze.text.TextArg;
 import gg.itzkatze.katze.util.KatzeColor;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -13,7 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -63,16 +64,15 @@ public class SpectatorListener implements Listener {
             KatzePlayer wrapper = KatzePlayer.adapt(viewer);
             if (Bukkit.getPlayer(view.targetId()) == null) {
                 gui.close(wrapper, KatzeGUI.CloseReason.SERVER_EXITED);
-                viewer.sendMessage(Component.translatable("katze.spectator.target_left", gg.itzkatze.katze.text.TextArg.text("name", view.targetName())).color(KatzeColor.LIGHT_GRAY));
+                viewer.sendMessage(Component.translatable("katze.spectator.target_left", TextArg.text("name", view.targetName())).color(KatzeColor.LIGHT_GRAY));
             } else {
                 gui.updateInventory(wrapper);
             }
         }
     }
 
-    // Paper 26.3 fires PlayerInteractAtEntityEvent for a right-click on an entity, also for spectators; it reaches PlayerInteractEntityEvent listeners.
     @EventHandler
-    public void onInteractEntity(@NotNull PlayerInteractEntityEvent event) {
+    public void onInteractEntity(@NotNull PlayerInteractAtEntityEvent event) {
         if (event.getHand() != EquipmentSlot.HAND || !ChallengeManager.isGameStarted()) return;
 
         Player viewer = event.getPlayer();

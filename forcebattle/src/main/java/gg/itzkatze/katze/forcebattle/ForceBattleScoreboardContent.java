@@ -2,12 +2,13 @@ package gg.itzkatze.katze.forcebattle;
 
 import gg.itzkatze.katze.configuration.GlobalSetting;
 import gg.itzkatze.katze.configuration.SettingsManager;
-import gg.itzkatze.katze.team.KatzeTeam;
 import gg.itzkatze.katze.player.KatzePlayer;
 import gg.itzkatze.katze.scoreboard.ScoreboardContent;
+import gg.itzkatze.katze.team.KatzeTeam;
 import gg.itzkatze.katze.util.KatzeColor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -69,7 +70,7 @@ public class ForceBattleScoreboardContent implements ScoreboardContent {
     }
 
     private Component truncate(Component value, TextColor color) {
-        String plain = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(value);
+        String plain = PlainTextComponentSerializer.plainText().serialize(value);
         if (plain.length() <= MAX_STRING_LENGTH) {
             return value.color(color);
         }

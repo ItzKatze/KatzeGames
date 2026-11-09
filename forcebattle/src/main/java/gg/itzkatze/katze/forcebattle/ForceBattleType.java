@@ -1,13 +1,15 @@
 package gg.itzkatze.katze.forcebattle;
 
 import gg.itzkatze.katze.challenges.Challenge;
+import gg.itzkatze.katze.challenges.ChallengeRegistry;
 import gg.itzkatze.katze.challenges.ChallengeType;
+import gg.itzkatze.katze.configuration.ChallengeSettingsManager;
+import gg.itzkatze.katze.configuration.states.PlayerTeamBothState;
 import gg.itzkatze.katze.configuration.states.SettingStateType;
 import lombok.Getter;
-import gg.itzkatze.katze.configuration.states.PlayerTeamBothState;
-import gg.itzkatze.katze.challenges.ChallengeRegistry;
-import gg.itzkatze.katze.configuration.ChallengeSettingsManager;
 import net.kyori.adventure.text.Component;
+
+import java.util.Locale;
 
 @Getter
 public enum ForceBattleType {
@@ -33,7 +35,7 @@ public enum ForceBattleType {
     }
 
     public Component displayName() {
-        return Component.translatable("katze.forcebattle.type." + name().toLowerCase());
+        return Component.translatable("katze.forcebattle.type." + name().toLowerCase(Locale.ROOT));
     }
 
     public SettingStateType getSettingState() {

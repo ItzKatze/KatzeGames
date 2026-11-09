@@ -4,6 +4,8 @@ import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 
+import java.util.Locale;
+
 @Getter
 public enum AllItemsObjectiveType {
     ITEM(Material.CHEST),
@@ -19,7 +21,7 @@ public enum AllItemsObjectiveType {
     }
 
     public Component displayName() {
-        return Component.translatable("katze.allitems.type." + name().toLowerCase(java.util.Locale.ROOT));
+        return Component.translatable("katze.allitems.type." + name().toLowerCase(Locale.ROOT));
     }
 
 }

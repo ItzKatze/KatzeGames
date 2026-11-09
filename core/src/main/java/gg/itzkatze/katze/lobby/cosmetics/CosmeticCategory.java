@@ -1,8 +1,10 @@
 package gg.itzkatze.katze.lobby.cosmetics;
 
-import org.bukkit.Material;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Locale;
 
 public enum CosmeticCategory {
 
@@ -18,7 +20,7 @@ public enum CosmeticCategory {
     }
 
     public @NotNull Component titleComponent() {
-        return Component.translatable("katze.cosmetics.category." + name().toLowerCase(java.util.Locale.ROOT));
+        return Component.translatable("katze.cosmetics.category." + name().toLowerCase(Locale.ROOT));
     }
 
     public @NotNull Material icon() {

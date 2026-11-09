@@ -1,18 +1,17 @@
 package gg.itzkatze.katze.forcebattle;
 
+import gg.itzkatze.katze.KatzeGames;
 import gg.itzkatze.katze.achievements.AchievementService;
-
 import gg.itzkatze.katze.challenges.ChallengeObjective;
 import gg.itzkatze.katze.challenges.ChallengeType;
 import gg.itzkatze.katze.configuration.SettingsManager;
-import gg.itzkatze.katze.KatzeGames;
 import gg.itzkatze.katze.event.ObjectiveUpdateEvent;
 import gg.itzkatze.katze.event.PlayerResetEvent;
 import gg.itzkatze.katze.forcebattle.gui.TeamBackpackGUI;
 import gg.itzkatze.katze.game.SessionPersistence;
 import gg.itzkatze.katze.level.LevelStore;
-import gg.itzkatze.katze.team.KatzeTeam;
 import gg.itzkatze.katze.player.KatzePlayer;
+import gg.itzkatze.katze.team.KatzeTeam;
 import gg.itzkatze.katze.text.TextArg;
 import gg.itzkatze.katze.util.Joker;
 import gg.itzkatze.katze.util.KatzeColor;
@@ -58,7 +57,7 @@ public class ForceBattlePlayer extends KatzePlayer {
 
     public ForceBattlePlayer(@NotNull UUID uuid, @NotNull String name) {
         super(uuid, name);
-        this.BACKPACK_INVENTORY = Bukkit.createInventory(null, 27, name + "'s Backpack");
+        this.BACKPACK_INVENTORY = Bukkit.createInventory(null, 27, Component.text(name + "'s Backpack"));
     }
 
     /**

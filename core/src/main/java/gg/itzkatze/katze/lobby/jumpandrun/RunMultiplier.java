@@ -1,5 +1,6 @@
 package gg.itzkatze.katze.lobby.jumpandrun;
 
+import gg.itzkatze.katze.text.TextArg;
 import gg.itzkatze.katze.util.KatzeColor;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
@@ -32,7 +33,7 @@ public final class RunMultiplier {
 
             player.sendMessage(
                     Component.translatable("katze.cosmetics.multiplier_increased",
-                                    gg.itzkatze.katze.text.TextArg.decimal("multiplier", multiplier))
+                                    TextArg.decimal("multiplier", multiplier))
                             .color(KatzeColor.LIME)
             );
         }

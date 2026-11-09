@@ -1,31 +1,36 @@
 package gg.itzkatze.katze;
 
-import gg.itzkatze.katze.bossbar.BossbarManager;
-import gg.itzkatze.katze.achievements.AchievementService;
-import gg.itzkatze.katze.achievements.AchievementSampler;
 import gg.itzkatze.katze.achievements.AchievementGameplayListener;
+import gg.itzkatze.katze.achievements.AchievementSampler;
+import gg.itzkatze.katze.achievements.AchievementService;
+import gg.itzkatze.katze.bossbar.BossbarManager;
 import gg.itzkatze.katze.challenges.ChallengeManager;
 import gg.itzkatze.katze.chat.LevelChat;
 import gg.itzkatze.katze.chat.TeamChatManager;
-import gg.itzkatze.katze.commands.framework.KatzeCommand;
 import gg.itzkatze.katze.commands.framework.CommandHandler;
 import gg.itzkatze.katze.commands.framework.CommandVisibilityListener;
+import gg.itzkatze.katze.commands.framework.KatzeCommand;
+import gg.itzkatze.katze.configuration.SettingsFile;
 import gg.itzkatze.katze.game.GameLifecycleManager;
-import gg.itzkatze.katze.game.GameWorldManager;
-import gg.itzkatze.katze.game.seed.SeedGenerator;
+import gg.itzkatze.katze.game.GameTimer;
 import gg.itzkatze.katze.game.GameWorldListener;
-import gg.itzkatze.katze.game.LimboBiomes;
+import gg.itzkatze.katze.game.GameWorldManager;
 import gg.itzkatze.katze.game.GlobalGameplayListener;
 import gg.itzkatze.katze.game.KatzeTimer;
+import gg.itzkatze.katze.game.LimboBiomes;
 import gg.itzkatze.katze.game.PauseManager;
 import gg.itzkatze.katze.game.SessionPersistence;
+import gg.itzkatze.katze.game.TaskManager;
+import gg.itzkatze.katze.game.TimerRegistry;
+import gg.itzkatze.katze.game.seed.SeedGenerator;
 import gg.itzkatze.katze.gui.GUIListener;
+import gg.itzkatze.katze.gui.sign.SignInput;
 import gg.itzkatze.katze.level.LevelStore;
 import gg.itzkatze.katze.level.LevelUpNotice;
 import gg.itzkatze.katze.level.PlaytimeXp;
 import gg.itzkatze.katze.level.XpDigest;
-import gg.itzkatze.katze.player.AfkTracker;
 import gg.itzkatze.katze.lobby.LobbyManager;
+import gg.itzkatze.katze.lobby.PointsSidebar;
 import gg.itzkatze.katze.lobby.cosmetics.ClientModHint;
 import gg.itzkatze.katze.lobby.cosmetics.CosmeticStore;
 import gg.itzkatze.katze.lobby.cosmetics.MusicChannel;
@@ -33,19 +38,14 @@ import gg.itzkatze.katze.lobby.cosmetics.MusicManager;
 import gg.itzkatze.katze.lobby.cosmetics.cases.CaseFireworkGuard;
 import gg.itzkatze.katze.lobby.cosmetics.cases.CaseRollGui;
 import gg.itzkatze.katze.lobby.jumpandrun.EventBlock;
-import gg.itzkatze.katze.lobby.PointsSidebar;
+import gg.itzkatze.katze.player.AfkTracker;
 import gg.itzkatze.katze.player.data.PlayerDataStore;
-import gg.itzkatze.katze.gui.sign.SignInput;
-import gg.itzkatze.katze.configuration.SettingsFile;
-import gg.itzkatze.katze.game.GameTimer;
-import gg.itzkatze.katze.game.TimerRegistry;
-import gg.itzkatze.katze.game.TaskManager;
 import gg.itzkatze.katze.scoreboard.NameTags;
 import gg.itzkatze.katze.scoreboard.ScoreboardManager;
 import gg.itzkatze.katze.spectator.SpectatorChat;
 import gg.itzkatze.katze.spectator.SpectatorListener;
-import gg.itzkatze.katze.text.Texts;
 import gg.itzkatze.katze.text.LanguageListener;
+import gg.itzkatze.katze.text.Texts;
 import gg.itzkatze.katze.util.StructureScanner;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -58,6 +58,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -103,7 +104,9 @@ public final class KatzeGames extends JavaPlugin {
         PointsSidebar.install(CosmeticStore.get(), LevelStore.get());
         LevelUpNotice.install(LevelStore.get());
 
-        CommandHandler.registerAll(loopThroughPackage("gg.itzkatze.katze.commands", KatzeCommand.class).toList());
+        loopThroughPackage("gg.itzkatze.katze.commands", KatzeCommand.class)
+                .forEach(command -> logger.info("Loaded command: {}", command.getId()));
+        CommandHandler.install(this);
         getServer().getPluginManager().registerEvents(new CommandVisibilityListener(), this);
         getServer().getPluginManager().registerEvents(new GUIListener(), this);
         getServer().getPluginManager().registerEvents(new LanguageListener(), this);
@@ -206,6 +209,6 @@ public final class KatzeGames extends JavaPlugin {
                         return null;
                     }
                 })
-                .filter(java.util.Objects::nonNull);
+                .filter(Objects::nonNull);
     }
 }

@@ -44,7 +44,7 @@ public class PlayerViewGui extends KatzeGUI implements SpectatorView {
     private final String targetName;
 
     public PlayerViewGui(@NotNull KatzePlayer target) {
-        super(Component.translatable("katze.spectator.player_view.title", gg.itzkatze.katze.text.TextArg.text("name", target.getName())), 54);
+        super(Component.translatable("katze.spectator.player_view.title", TextArg.text("name", target.getName())), 54);
         this.targetId = target.getUuid();
         this.targetName = target.getName();
     }

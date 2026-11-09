@@ -5,6 +5,7 @@ import gg.itzkatze.katze.allitems.AllItemsSettings;
 import gg.itzkatze.katze.gui.GUIClickableItem;
 import gg.itzkatze.katze.gui.KatzeGUI;
 import gg.itzkatze.katze.player.KatzePlayer;
+import gg.itzkatze.katze.text.TextArg;
 import gg.itzkatze.katze.util.ItemStackCreator;
 import gg.itzkatze.katze.util.KatzeColor;
 import net.kyori.adventure.text.Component;
@@ -13,6 +14,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
+import java.util.Locale;
 
 public class AllItemsMissingObjectivesMenu extends KatzeGUI {
 
@@ -44,11 +46,11 @@ public class AllItemsMissingObjectivesMenu extends KatzeGUI {
             public ItemStack getItem(KatzePlayer p) {
                 TextColor color = enabled ? KatzeColor.LIGHT_BLUE : KatzeColor.RED;
                 return ItemStackCreator.getStack(
-                        Component.translatable("katze.allitems.type." + type.name().toLowerCase(java.util.Locale.ROOT)).color(color),
+                        Component.translatable("katze.allitems.type." + type.name().toLowerCase(Locale.ROOT)).color(color),
                         type.getIcon(),
                         1,
                         List.of(
-                                Component.translatable("katze.allitems.gui.status", gg.itzkatze.katze.text.TextArg.component("state", Component.translatable(enabled ? "katze.allitems.gui.enabled" : "katze.allitems.gui.disabled").color(color))),
+                                Component.translatable("katze.allitems.gui.status", TextArg.component("state", Component.translatable(enabled ? "katze.allitems.gui.enabled" : "katze.allitems.gui.disabled").color(color))),
                                 Component.empty(),
                                 Component.translatable("katze.allitems.gui.view").color(KatzeColor.YELLOW)
                         )

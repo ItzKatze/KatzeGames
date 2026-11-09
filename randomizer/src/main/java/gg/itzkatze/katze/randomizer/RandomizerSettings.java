@@ -7,6 +7,8 @@ import gg.itzkatze.katze.configuration.states.SettingStateType;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 
+import java.util.Locale;
+
 public class RandomizerSettings {
 
     public static boolean isBlockDropsEnabled() {
@@ -42,7 +44,7 @@ public class RandomizerSettings {
 
         @Override
         public Component getDisplayName() {
-            return Component.translatable("katze.randomizer.setting." + name().toLowerCase(java.util.Locale.ROOT));
+            return Component.translatable("katze.randomizer.setting." + name().toLowerCase(Locale.ROOT));
         }
 
         @Override

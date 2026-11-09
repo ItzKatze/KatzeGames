@@ -1,5 +1,6 @@
 package gg.itzkatze.katze.lobby.cosmetics;
 
+import gg.itzkatze.katze.text.TextArg;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,14 +22,14 @@ public final class PointsText {
     }
 
     public static @NotNull Component amountComponent(int points) {
-        return Component.translatable("katze.cosmetics.points_amount", gg.itzkatze.katze.text.TextArg.number("points", points));
+        return Component.translatable("katze.cosmetics.points_amount", TextArg.number("points", points));
     }
 
     public static @NotNull Component signedComponent(int points) {
-        return Component.translatable("katze.cosmetics.points_signed", gg.itzkatze.katze.text.TextArg.signed("points", points));
+        return Component.translatable("katze.cosmetics.points_signed", TextArg.signed("points", points));
     }
 
     public static @NotNull Component missingComponent(int points) {
-        return Component.translatable("katze.cosmetics.points_missing", gg.itzkatze.katze.text.TextArg.number("points", points));
+        return Component.translatable("katze.cosmetics.points_missing", TextArg.number("points", points));
     }
 }

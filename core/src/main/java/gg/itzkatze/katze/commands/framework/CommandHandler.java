@@ -1,33 +1,48 @@
 package gg.itzkatze.katze.commands.framework;
 
-import gg.itzkatze.katze.KatzeGames;
 import gg.itzkatze.katze.player.KatzePlayer;
-import org.bukkit.command.*;
+import io.papermc.paper.command.brigadier.BasicCommand;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
+import org.bukkit.command.BlockCommandSender;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
-import org.jspecify.annotations.NonNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.List;
 
-public class CommandHandler implements CommandExecutor, TabCompleter {
+public final class CommandHandler implements BasicCommand {
 
-    private static final Logger logger = LoggerFactory.getLogger("ForceBattle/" + CommandHandler.class.getSimpleName());
-    private static final CommandHandler handler = new CommandHandler();
+    private final String commandId;
 
-    public static void registerAll(@NotNull Collection<KatzeCommand> commands) {
-        commands.forEach(CommandHandler::register);
+    CommandHandler(String commandId) {
+        this.commandId = commandId;
     }
 
-    public static void register(@NotNull KatzeCommand command) {
-        PluginCommand pluginCommand = KatzeGames.get().getCommand(command.getId());
-
-        if (pluginCommand != null) {
-            pluginCommand.setExecutor(handler);
-            logger.info("Registered command: {}", command.getId());
+    public static void install(JavaPlugin plugin) {
+        if (!(plugin.getPluginMeta() instanceof PluginDescriptionFile description)) {
+            throw new IllegalStateException("Command declarations require plugin.yml metadata");
         }
+        plugin.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event -> {
+            description.getCommands().forEach((name, properties) -> {
+                Object aliases = properties.get("aliases");
+                List<String> aliasNames = switch (aliases) {
+                    case Collection<?> values -> values.stream().map(Object::toString).toList();
+                    case null -> List.of();
+                    default -> List.of(aliases.toString());
+                };
+                String help = KatzeCommand.getCommandById(name).map(KatzeCommand::getDescription).orElse(null);
+                CommandHandler handler = new CommandHandler(name);
+                event.registrar().register(name, help, List.of(), handler);
+                for (String alias : aliasNames) {
+                    event.registrar().register(alias, help, List.of(), handler);
+                }
+            });
+        });
     }
 
     private static @NotNull CommandCaller createCaller(CommandSender sender) {
@@ -35,23 +50,19 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
             return KatzePlayer.adapt(player);
         } else if (sender instanceof ConsoleCommandSender) {
             return BukkitConsoleCommandCaller.instance();
-        } else if (sender instanceof BlockCommandSender) {
-            return BukkitBlockCommandCaller.adapt((BlockCommandSender) sender);
+        } else if (sender instanceof BlockCommandSender block) {
+            return BukkitBlockCommandCaller.adapt(block);
         }
-        throw new RuntimeException("Unknown sender type: " + sender.getClass());
+        throw new IllegalArgumentException("Unknown sender type: " + sender.getClass());
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String @NonNull [] args) {
-        CommandCaller caller = createCaller(sender);
-        KatzeCommand.execute(command.getName(), caller, args);
-        return true;
+    public void execute(CommandSourceStack source, String[] args) {
+        KatzeCommand.execute(commandId, createCaller(source.getSender()), args);
     }
 
     @Override
-    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String @NonNull [] args) {
-        CommandCaller caller = createCaller(sender);
-        return KatzeCommand.tabComplete(command.getName(), caller, args);
+    public Collection<String> suggest(CommandSourceStack source, String[] args) {
+        return KatzeCommand.tabComplete(commandId, createCaller(source.getSender()), args);
     }
-
 }

@@ -6,6 +6,7 @@ import gg.itzkatze.katze.commands.framework.KatzeCommand;
 import gg.itzkatze.katze.lobby.Lobby;
 import gg.itzkatze.katze.lobby.LobbyIsland;
 import gg.itzkatze.katze.lobby.LobbyManager;
+import gg.itzkatze.katze.text.TextArg;
 import gg.itzkatze.katze.util.KatzeColor;
 import gg.itzkatze.katze.util.StringUtility;
 import net.kyori.adventure.text.Component;
@@ -47,19 +48,19 @@ public class SetSpawnCommand extends KatzeCommand {
             fail(caller, args.length == 0
                     ? Component.translatable("katze.command.setspawn.no_other_island")
                     : Component.translatable("katze.command.setspawn.unknown_island",
-                            gg.itzkatze.katze.text.TextArg.text("island", args[0]),
-                            gg.itzkatze.katze.text.TextArg.text("islands", String.join(", ", islandIds()))));
+                            TextArg.text("island", args[0]),
+                            TextArg.text("islands", String.join(", ", islandIds()))));
             return;
         }
         if (target.getId().equals(lobby.getIsland().getId())) {
-            fail(caller, Component.translatable("katze.command.setspawn.already_active", gg.itzkatze.katze.text.TextArg.text("island", target.getId())));
+            fail(caller, Component.translatable("katze.command.setspawn.already_active", TextArg.text("island", target.getId())));
             return;
         }
         if (!LobbyManager.switchIsland(target)) {
-            fail(caller, Component.translatable("katze.command.setspawn.load_failed", gg.itzkatze.katze.text.TextArg.text("island", target.getId())));
+            fail(caller, Component.translatable("katze.command.setspawn.load_failed", TextArg.text("island", target.getId())));
             return;
         }
-        caller.sendMessage(Component.translatable("katze.command.setspawn.success", gg.itzkatze.katze.text.TextArg.text("island", target.getId())).color(KatzeColor.LIME));
+        caller.sendMessage(Component.translatable("katze.command.setspawn.success", TextArg.text("island", target.getId())).color(KatzeColor.LIME));
     }
 
     @Override

@@ -6,6 +6,7 @@ import gg.itzkatze.katze.commands.framework.CallerType;
 import gg.itzkatze.katze.commands.framework.CommandCaller;
 import gg.itzkatze.katze.commands.framework.KatzeCommand;
 import gg.itzkatze.katze.game.GameTimer;
+import gg.itzkatze.katze.text.TextArg;
 import gg.itzkatze.katze.util.KatzeColor;
 import gg.itzkatze.katze.util.StringUtility;
 import net.kyori.adventure.text.Component;
@@ -15,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class TimerCommand extends KatzeCommand {
 
@@ -36,7 +38,7 @@ public class TimerCommand extends KatzeCommand {
             return;
         }
         GameTimer timer = KatzeGames.getTimer();
-        switch (args[0].toLowerCase()) {
+        switch (args[0].toLowerCase(Locale.ROOT)) {
             case "pause" -> {
                 timer.pause();
                 caller.sendMessage(Component.translatable("katze.game.timer.pause").color(KatzeColor.BLUE));
@@ -61,7 +63,7 @@ public class TimerCommand extends KatzeCommand {
                     return;
                 }
                 timer.setRemainingSeconds(newTime);
-                caller.sendMessage(Component.translatable("katze.game.timer.set", gg.itzkatze.katze.text.TextArg.text("time", StringUtility.formatTime(newTime))).color(KatzeColor.BLUE));
+                caller.sendMessage(Component.translatable("katze.game.timer.set", TextArg.text("time", StringUtility.formatTime(newTime))).color(KatzeColor.BLUE));
                 return;
             }
         }

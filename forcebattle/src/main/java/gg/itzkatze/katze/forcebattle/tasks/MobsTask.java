@@ -9,6 +9,7 @@ import gg.itzkatze.katze.forcebattle.ForceBattleObjective;
 import gg.itzkatze.katze.forcebattle.ForceBattlePlayer;
 import gg.itzkatze.katze.forcebattle.ForceBattleType;
 import gg.itzkatze.katze.player.KatzePlayer;
+import gg.itzkatze.katze.text.TextArg;
 import gg.itzkatze.katze.util.KatzeColor;
 import gg.itzkatze.katze.util.Toast;
 import net.kyori.adventure.text.Component;
@@ -76,7 +77,7 @@ public class MobsTask {
             player.getTeam().getPlayers().stream()
                     .filter(teammate -> teammate != player)
                     .forEach(teammate -> {
-                        teammate.sendMessage(Component.translatable("katze.forcebattle.task.teammate_finished", gg.itzkatze.katze.text.TextArg.text("player", player.getName()), gg.itzkatze.katze.text.TextArg.component("objective", formattedObjective)));
+                        teammate.sendMessage(Component.translatable("katze.forcebattle.task.teammate_finished", TextArg.text("player", player.getName()), TextArg.component("objective", formattedObjective)));
                         Player teammatePlayer = teammate.getPlayer();
                         if (teammatePlayer != null) {
                             Toast.display(teammatePlayer, toastIcon, formattedObjective.color(KatzeColor.BLUE), Toast.Style.GOAL, plugin);
@@ -84,7 +85,7 @@ public class MobsTask {
                     });
         }
 
-        player.sendMessage(Component.translatable("katze.forcebattle.task.personal_finished", gg.itzkatze.katze.text.TextArg.component("objective", formattedObjective)));
+        player.sendMessage(Component.translatable("katze.forcebattle.task.personal_finished", TextArg.component("objective", formattedObjective)));
         Player playerObj = player.getPlayer();
         if (playerObj != null) {
             Toast.display(playerObj, toastIcon, formattedObjective.color(KatzeColor.BLUE), Toast.Style.GOAL, plugin);

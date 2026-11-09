@@ -6,6 +6,8 @@ import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Locale;
+
 @Getter
 public enum GlobalSetting implements Setting {
     NO_HUNGER(false, OnOffState.OFF),
@@ -28,7 +30,7 @@ public enum GlobalSetting implements Setting {
 
     @Override
     public @NotNull Component getDisplayName() {
-        return Component.translatable("katze.settings.global." + name().toLowerCase(java.util.Locale.ROOT));
+        return Component.translatable("katze.settings.global." + name().toLowerCase(Locale.ROOT));
     }
 
     @Override

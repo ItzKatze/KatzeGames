@@ -4,9 +4,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 public final class StringUtility {
 
@@ -39,7 +39,7 @@ public final class StringUtility {
         if (time == 0) {
             message.append("0s");
         }
-        return String.valueOf(message);
+        return message.toString();
     }
 
     /**
@@ -49,25 +49,27 @@ public final class StringUtility {
      * @return A formatted string.
      */
     public static @NotNull String formatName(String input) {
-        input = input.replace("_", " ");
-        String[] words = input.split(" ");
+        String[] words = input.replace('_', ' ').split("\\s+");
         StringBuilder formatted = new StringBuilder();
         for (String word : words) {
-            String formattedWord = word.substring(0, 1).toUpperCase() + word.substring(1).toLowerCase();
-            formatted.append(formattedWord).append(" ");
+            if (word.isEmpty()) continue;
+            if (!formatted.isEmpty()) formatted.append(' ');
+            String formattedWord = word.substring(0, 1).toUpperCase(Locale.ROOT) + word.substring(1).toLowerCase(Locale.ROOT);
+            formatted.append(formattedWord);
         }
-        return formatted.toString().trim();
+        return formatted.toString();
     }
 
     public static List<String> splitByWordAndLength(String text, int maxLength) {
+        if (maxLength < 1) throw new IllegalArgumentException("Maximum line length must be positive");
         List<String> lines = new ArrayList<>();
-        if (text == null || text.isEmpty()) return lines;
+        if (text == null || text.isBlank()) return lines;
 
-        String[] words = text.split(" ");
+        String[] words = text.strip().split("\\s+");
         StringBuilder line = new StringBuilder();
 
         for (String word : words) {
-            if (line.length() + word.length() > maxLength) {
+            if (!line.isEmpty() && line.length() + 1 + word.length() > maxLength) {
                 lines.add(line.toString());
                 line = new StringBuilder();
             }
@@ -79,13 +81,13 @@ public final class StringUtility {
     }
 
     /**
-     * Splits the input string by the delimiter "{br}" and returns an unmodifiable list of the resulting substrings.
+     * Splits the input string at line breaks and returns an unmodifiable list.
      *
      * @param input The string to be split.
-     * @return An unmodifiable list of substrings obtained by splitting the input string by "{br}".
+     * @return An unmodifiable list of lines.
      */
     public static @Unmodifiable List<String> formatLineBreaks(@NotNull String input) {
-        return Arrays.asList(input.split("\n"));
+        return List.of(input.split("\\R"));
     }
 
     @NotNull public static <T extends Collection<? super String>> T copyPartialMatches(

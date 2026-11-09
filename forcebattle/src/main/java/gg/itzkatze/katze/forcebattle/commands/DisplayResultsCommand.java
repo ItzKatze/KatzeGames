@@ -2,10 +2,10 @@ package gg.itzkatze.katze.forcebattle.commands;
 
 import gg.itzkatze.katze.KatzeGames;
 import gg.itzkatze.katze.commands.framework.CallerType;
-import gg.itzkatze.katze.commands.framework.KatzeCommand;
 import gg.itzkatze.katze.commands.framework.CommandCaller;
-import gg.itzkatze.katze.team.KatzeTeam;
+import gg.itzkatze.katze.commands.framework.KatzeCommand;
 import gg.itzkatze.katze.player.KatzePlayer;
+import gg.itzkatze.katze.team.KatzeTeam;
 import gg.itzkatze.katze.util.KatzeColor;
 import gg.itzkatze.katze.util.StringUtility;
 import net.kyori.adventure.text.Component;
@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -49,7 +50,7 @@ public class DisplayResultsCommand extends KatzeCommand {
         final long delay = 750;
         final long[] counter = {0};
 
-        switch (args[0].toLowerCase()) {
+        switch (args[0].toLowerCase(Locale.ROOT)) {
             case "player" -> {
                 List<KatzePlayer> sortedPlayers = new ArrayList<>(KatzePlayer.PLAYERS.stream().filter(KatzePlayer::isRanked).toList());
                 sortedPlayers.sort(Comparator.comparingInt(KatzePlayer::getPoints).reversed());

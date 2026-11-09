@@ -80,7 +80,7 @@ public final class AchievementGui extends KatzeGUI {
             AchievementCategory[] categories = AchievementCategory.values();
             for (int i = 0; i < categories.length; i++) {
                 AchievementCategory entry = categories[i];
-                set(button(ENTRIES[i], ItemStackCreator.getStack(entry.title().color(KatzeColor.YELLOW), entry.icon(),
+                set(button(ENTRIES[i], ItemStackCreator.getStack(entry.title().color(KatzeColor.YELLOW), entry.getIcon(),
                         List.of(completion(viewer, Achievement.in(entry)), text("open_category"))),
                         player -> new AchievementGui(entry, null, 0).open(player)));
             }

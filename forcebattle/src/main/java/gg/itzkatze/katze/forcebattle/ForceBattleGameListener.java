@@ -1,37 +1,37 @@
 package gg.itzkatze.katze.forcebattle;
 
-import gg.itzkatze.katze.achievements.AchievementService;
-import gg.itzkatze.katze.game.GameWorldManager;
-
 import gg.itzkatze.katze.KatzeGames;
+import gg.itzkatze.katze.achievements.AchievementService;
 import gg.itzkatze.katze.configuration.GlobalSetting;
-import gg.itzkatze.katze.forcebattle.tasks.*;
-import gg.itzkatze.katze.util.Joker;
 import gg.itzkatze.katze.configuration.SettingsManager;
-import gg.itzkatze.katze.team.KatzeTeam;
-import org.bukkit.event.Listener;
 import gg.itzkatze.katze.event.PlayerTeamJoinEvent;
 import gg.itzkatze.katze.event.PlayerTeamLeaveEvent;
+import gg.itzkatze.katze.forcebattle.tasks.*;
+import gg.itzkatze.katze.game.GameWorldManager;
 import gg.itzkatze.katze.player.KatzePlayer;
+import gg.itzkatze.katze.team.KatzeTeam;
+import gg.itzkatze.katze.text.TextArg;
+import gg.itzkatze.katze.util.Joker;
 import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.permissions.PermissionDefault;
-import org.jetbrains.annotations.NotNull;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLocaleChangeEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.permissions.PermissionDefault;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -209,7 +209,7 @@ public class ForceBattleGameListener implements Listener {
         ForceBattleObjective oldObjective = player.getObjective();
 
         player.sendMessage(Component.translatable("katze.forcebattle.action.skipped_objective",
-                gg.itzkatze.katze.text.TextArg.component("objective", oldObjective.displayName())));
+                TextArg.component("objective", oldObjective.displayName())));
         player.updateObjective(true, true);
         AchievementService.get().recordJoker(player.getUuid());
 
@@ -255,13 +255,13 @@ public class ForceBattleGameListener implements Listener {
         team.getPlayers().forEach(player -> {
             if (player != katzePlayer) {
                 player.sendMessage(Component.translatable("katze.forcebattle.action.teammate_skipped_objective",
-                        gg.itzkatze.katze.text.TextArg.text("player", katzePlayer.getName()),
-                        gg.itzkatze.katze.text.TextArg.component("objective", oldObjective.displayName())));
+                        TextArg.text("player", katzePlayer.getName()),
+                        TextArg.component("objective", oldObjective.displayName())));
             }
         });
 
         katzePlayer.sendMessage(Component.translatable("katze.forcebattle.action.skipped_objective",
-                gg.itzkatze.katze.text.TextArg.component("objective", oldObjective.displayName())));
+                TextArg.component("objective", oldObjective.displayName())));
 
         team.updateObjective(katzePlayer, true, true);
         AchievementService.get().recordJoker(katzePlayer.getUuid());
@@ -328,10 +328,10 @@ public class ForceBattleGameListener implements Listener {
         AchievementService.get().recordJoker(katzePlayer.getUuid());
 
         targetPlayer.sendMessage(Component.translatable("katze.forcebattle.action.objective_swapped_by",
-                gg.itzkatze.katze.text.TextArg.text("player", katzePlayer.getName())));
+                TextArg.text("player", katzePlayer.getName())));
 
         katzePlayer.sendMessage(Component.translatable("katze.forcebattle.action.objective_swapped_with",
-                gg.itzkatze.katze.text.TextArg.text("player", targetPlayer.getName())));
+                TextArg.text("player", targetPlayer.getName())));
 
         targetPlayer.getPlayer().playSound(targetPlayer.getPlayer(), Sound.BLOCK_NOTE_BLOCK_BASS, SoundCategory.MASTER, 1, 20);
     }

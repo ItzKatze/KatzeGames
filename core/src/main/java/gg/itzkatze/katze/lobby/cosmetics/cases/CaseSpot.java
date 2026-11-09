@@ -23,7 +23,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.TextDisplay;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerLocaleChangeEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.util.Vector;
@@ -116,7 +116,7 @@ public final class CaseSpot implements LobbyFeature, Listener {
     }
 
     @EventHandler
-    public void onInteractEntity(@NotNull PlayerInteractEntityEvent event) {
+    public void onInteractEntity(@NotNull PlayerInteractAtEntityEvent event) {
         if (!isHitbox(event.getRightClicked())) return;
 
         event.setCancelled(true);

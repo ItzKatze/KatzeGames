@@ -4,6 +4,7 @@ import gg.itzkatze.katze.allitems.data.AllItemsData;
 import gg.itzkatze.katze.bossbar.BossbarContent;
 import gg.itzkatze.katze.bossbar.BossbarKind;
 import gg.itzkatze.katze.player.KatzePlayer;
+import gg.itzkatze.katze.text.TextArg;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
@@ -11,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class AllItemsBossbarContent implements BossbarContent {
 
@@ -48,11 +50,11 @@ public class AllItemsBossbarContent implements BossbarContent {
 
         Component scope = Component.translatable(AllItemsSettings.isTeamMode() ? "katze.allitems.bossbar.team" : "katze.allitems.bossbar.personal");
         Component title = Component.translatable("katze.allitems.bossbar.progress",
-                gg.itzkatze.katze.text.TextArg.component("type", Component.translatable("katze.allitems.type." + type.name().toLowerCase(java.util.Locale.ROOT))),
-                gg.itzkatze.katze.text.TextArg.component("scope", scope),
-                gg.itzkatze.katze.text.TextArg.number("found", found),
-                gg.itzkatze.katze.text.TextArg.number("total", total),
-                gg.itzkatze.katze.text.TextArg.decimal("percent", percent));
+                TextArg.component("type", Component.translatable("katze.allitems.type." + type.name().toLowerCase(Locale.ROOT))),
+                TextArg.component("scope", scope),
+                TextArg.number("found", found),
+                TextArg.number("total", total),
+                TextArg.decimal("percent", percent));
 
         return BossbarContent.update(current,
                 title,

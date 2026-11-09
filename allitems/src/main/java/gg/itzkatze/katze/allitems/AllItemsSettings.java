@@ -5,8 +5,10 @@ import gg.itzkatze.katze.configuration.SettingsManager;
 import gg.itzkatze.katze.configuration.states.OnOffState;
 import gg.itzkatze.katze.configuration.states.SettingStateType;
 import lombok.Getter;
-import net.kyori.adventure.text.Component;
 import lombok.Setter;
+import net.kyori.adventure.text.Component;
+
+import java.util.Locale;
 
 public class AllItemsSettings {
 
@@ -70,7 +72,7 @@ public class AllItemsSettings {
 
         @Override
         public Component getDisplayName() {
-            return Component.translatable("katze.allitems.setting." + name().toLowerCase(java.util.Locale.ROOT));
+            return Component.translatable("katze.allitems.setting." + name().toLowerCase(Locale.ROOT));
         }
 
         @Override

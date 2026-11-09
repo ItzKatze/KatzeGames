@@ -1,24 +1,23 @@
 package gg.itzkatze.katze.forcebattle;
 
-import gg.itzkatze.katze.achievements.AchievementService;
-
 import gg.itzkatze.katze.KatzeGames;
+import gg.itzkatze.katze.achievements.AchievementService;
+import gg.itzkatze.katze.challenges.ChallengeType;
 import gg.itzkatze.katze.configuration.SettingsManager;
-import gg.itzkatze.katze.team.KatzeTeam;
 import gg.itzkatze.katze.event.ObjectiveUpdateEvent;
 import gg.itzkatze.katze.event.PlayerTeamJoinEvent;
 import gg.itzkatze.katze.event.PlayerTeamLeaveEvent;
+import gg.itzkatze.katze.forcebattle.gui.TeamBackpackGUI;
 import gg.itzkatze.katze.game.SessionPersistence;
-import gg.itzkatze.katze.challenges.ChallengeType;
 import gg.itzkatze.katze.level.LevelStore;
 import gg.itzkatze.katze.player.KatzePlayer;
+import gg.itzkatze.katze.team.KatzeTeam;
 import gg.itzkatze.katze.text.TextArg;
 import gg.itzkatze.katze.util.KatzeColor;
 import gg.itzkatze.katze.util.Toast;
-import net.kyori.adventure.text.Component;
-import gg.itzkatze.katze.forcebattle.gui.TeamBackpackGUI;
 import lombok.Getter;
 import lombok.Setter;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.slf4j.Logger;
@@ -68,11 +67,11 @@ public class ForceBattleTeam extends KatzeTeam {
         }
 
         Component joinMessage = Component.translatable("katze.forcebattle.team.member_joined",
-                gg.itzkatze.katze.text.TextArg.text("player", katzePlayer.getName()));
+                TextArg.text("player", katzePlayer.getName()));
         players.forEach(teamPlayer -> teamPlayer.sendMessage(joinMessage));
         players.add(katzePlayer);
         katzePlayer.sendMessage(Component.translatable("katze.forcebattle.team.joined",
-                gg.itzkatze.katze.text.TextArg.number("team", this.getId())).color(KatzeColor.LIME));
+                TextArg.number("team", this.getId())).color(KatzeColor.LIME));
     }
 
     @Override
@@ -86,7 +85,7 @@ public class ForceBattleTeam extends KatzeTeam {
 
         players.remove(katzePlayer);
         Component leaveMessage = Component.translatable("katze.forcebattle.team.member_left",
-                gg.itzkatze.katze.text.TextArg.text("player", katzePlayer.getName()));
+                TextArg.text("player", katzePlayer.getName()));
         players.forEach(teamPlayer -> teamPlayer.sendMessage(leaveMessage));
         if (players.isEmpty()) {
             this.delete();

@@ -10,11 +10,13 @@ import gg.itzkatze.katze.commands.framework.CallerType;
 import gg.itzkatze.katze.commands.framework.CommandCaller;
 import gg.itzkatze.katze.commands.framework.KatzeCommand;
 import gg.itzkatze.katze.player.KatzePlayer;
+import gg.itzkatze.katze.text.TextArg;
 import net.kyori.adventure.text.Component;
 import org.bukkit.permissions.PermissionDefault;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 public class AllItemsProgressCommand extends KatzeCommand {
@@ -72,7 +74,7 @@ public class AllItemsProgressCommand extends KatzeCommand {
         }
 
         Component mode = Component.translatable(AllItemsSettings.isTeamMode() ? "katze.allitems.mode.team" : "katze.allitems.mode.individual");
-        caller.sendMessage(Component.translatable("katze.allitems.command.current_mode", gg.itzkatze.katze.text.TextArg.component("mode", mode)));
+        caller.sendMessage(Component.translatable("katze.allitems.command.current_mode", TextArg.component("mode", mode)));
 
         List<AllItemsData.FoundObjective> recentItems = data.getRecentFinds(5).stream()
                 .sorted((a, b) -> b.entry().foundTime().compareTo(a.entry().foundTime()))
@@ -83,19 +85,19 @@ public class AllItemsProgressCommand extends KatzeCommand {
 
             for (AllItemsData.FoundObjective item : recentItems) {
                 caller.sendMessage(Component.translatable("katze.allitems.command.recent_item",
-                        gg.itzkatze.katze.text.TextArg.component("item", item.displayNameComponent()),
-                        gg.itzkatze.katze.text.TextArg.text("player", item.entry().playerName()),
-                        gg.itzkatze.katze.text.TextArg.text("time", item.entry().getFormattedTime())));
+                        TextArg.component("item", item.displayNameComponent()),
+                        TextArg.text("player", item.entry().playerName()),
+                        TextArg.text("time", item.entry().getFormattedTime())));
             }
         }
     }
 
     private Component progress(AllItemsObjectiveType type, int found, int total, double percent) {
         return Component.translatable("katze.allitems.command.progress",
-                gg.itzkatze.katze.text.TextArg.component("type", Component.translatable("katze.allitems.type." + type.name().toLowerCase(java.util.Locale.ROOT))),
-                gg.itzkatze.katze.text.TextArg.number("found", found),
-                gg.itzkatze.katze.text.TextArg.number("total", total),
-                gg.itzkatze.katze.text.TextArg.decimal("percent", percent));
+                TextArg.component("type", Component.translatable("katze.allitems.type." + type.name().toLowerCase(Locale.ROOT))),
+                TextArg.number("found", found),
+                TextArg.number("total", total),
+                TextArg.decimal("percent", percent));
     }
 
     @Override

@@ -1,6 +1,7 @@
 package gg.itzkatze.katze.gui.sign;
 
 import gg.itzkatze.katze.player.KatzePlayer;
+import gg.itzkatze.katze.text.TextArg;
 import gg.itzkatze.katze.util.KatzeColor;
 import net.kyori.adventure.text.Component;
 
@@ -26,8 +27,8 @@ public final class NumberSignInput {
                 List.of(
                         Component.empty(),
                         label.color(KatzeColor.LIGHT_BLUE),
-                        Component.translatable("katze.settings.sign.current", gg.itzkatze.katze.text.TextArg.number("n", current)).color(KatzeColor.LIGHT_GRAY),
-                        Component.translatable("katze.settings.sign.range", gg.itzkatze.katze.text.TextArg.number("min", min), gg.itzkatze.katze.text.TextArg.number("max", max)).color(KatzeColor.YELLOW)
+                        Component.translatable("katze.settings.sign.current", TextArg.number("n", current)).color(KatzeColor.LIGHT_GRAY),
+                        Component.translatable("katze.settings.sign.range", TextArg.number("min", min), TextArg.number("max", max)).color(KatzeColor.YELLOW)
                 ),
                 (katzePlayer, lines) -> {
                     String raw = lines.stream()
@@ -53,7 +54,7 @@ public final class NumberSignInput {
 
                     int clamped = Math.max(min, Math.min(max, value));
                     if (value != clamped && onError != null) {
-                        onError.accept(katzePlayer, Component.translatable("katze.settings.sign.error.clamped", gg.itzkatze.katze.text.TextArg.number("n", clamped)));
+                        onError.accept(katzePlayer, Component.translatable("katze.settings.sign.error.clamped", TextArg.number("n", clamped)));
                     }
                     onComplete.accept(katzePlayer, clamped);
                 }

@@ -2,13 +2,14 @@ package gg.itzkatze.katze.forcebattle.commands;
 
 import gg.itzkatze.katze.challenges.ChallengeManager;
 import gg.itzkatze.katze.commands.framework.CallerType;
-import gg.itzkatze.katze.util.KatzeColor;
-import net.kyori.adventure.text.Component;
-import gg.itzkatze.katze.commands.framework.KatzeCommand;
 import gg.itzkatze.katze.commands.framework.CommandCaller;
-import gg.itzkatze.katze.team.KatzeTeam;
+import gg.itzkatze.katze.commands.framework.KatzeCommand;
 import gg.itzkatze.katze.player.KatzePlayer;
+import gg.itzkatze.katze.team.KatzeTeam;
+import gg.itzkatze.katze.text.TextArg;
+import gg.itzkatze.katze.util.KatzeColor;
 import gg.itzkatze.katze.util.StringUtility;
+import net.kyori.adventure.text.Component;
 import org.bukkit.permissions.PermissionDefault;
 
 import java.util.ArrayList;
@@ -112,7 +113,7 @@ public class RandomTeamsCommand extends KatzeCommand {
             }
         }
 
-        caller.sendMessage(Component.translatable("katze.forcebattle.command.teams_created", gg.itzkatze.katze.text.TextArg.number("amount", amountOfTeams)).color(KatzeColor.LIME));
+        caller.sendMessage(Component.translatable("katze.forcebattle.command.teams_created", TextArg.number("amount", amountOfTeams)).color(KatzeColor.LIME));
     }
 
     @Override

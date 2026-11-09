@@ -1,5 +1,6 @@
 package gg.itzkatze.katze.lobby.cosmetics;
 
+import gg.itzkatze.katze.text.TextArg;
 import gg.itzkatze.katze.util.KatzeColor;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
@@ -54,18 +55,18 @@ public enum Season {
         String season = "katze.cosmetics.season." + name().toLowerCase(Locale.ROOT);
         return isActive(today)
                 ? Component.translatable("katze.cosmetics.season.until",
-                        gg.itzkatze.katze.text.TextArg.component("season", Component.translatable(season)),
-                        gg.itzkatze.katze.text.TextArg.day("day", last)).color(color)
+                        TextArg.component("season", Component.translatable(season)),
+                        TextArg.day("day", last)).color(color)
                 : Component.translatable("katze.cosmetics.season.returns",
-                        gg.itzkatze.katze.text.TextArg.component("season", Component.translatable(season)),
-                        gg.itzkatze.katze.text.TextArg.day("day", first)).color(color);
+                        TextArg.component("season", Component.translatable(season)),
+                        TextArg.day("day", first)).color(color);
     }
 
     public @NotNull Component returnsMessage(@NotNull Cosmetic cosmetic) {
         return Component.translatable("katze.cosmetics.season.cosmetic_returns",
-                gg.itzkatze.katze.text.TextArg.component("cosmetic", cosmetic.styledName()),
-                gg.itzkatze.katze.text.TextArg.component("season", Component.translatable("katze.cosmetics.season." + name().toLowerCase(Locale.ROOT))),
-                gg.itzkatze.katze.text.TextArg.day("day", first)).color(KatzeColor.RED);
+                TextArg.component("cosmetic", cosmetic.styledName()),
+                TextArg.component("season", Component.translatable("katze.cosmetics.season." + name().toLowerCase(Locale.ROOT))),
+                TextArg.day("day", first)).color(KatzeColor.RED);
     }
 
     // A window whose first day comes after its last day runs over New Year.

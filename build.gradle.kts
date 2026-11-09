@@ -15,6 +15,10 @@ val paperVersion = providers.gradleProperty("paperVersion").get()
 allprojects {
     group = "gg.itzkatze"
     version = findProperty("releaseVersion") ?: "0.0.1-SNAPSHOT"
+
+    tasks.withType<JavaCompile>().configureEach {
+        options.compilerArgs.addAll(listOf("-Xlint:deprecation", "-Xlint:removal"))
+    }
 }
 
 configure(subprojects.filter { it.name != "clientmod" }) {

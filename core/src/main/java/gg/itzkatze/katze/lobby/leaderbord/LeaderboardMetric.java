@@ -1,8 +1,10 @@
 package gg.itzkatze.katze.lobby.leaderbord;
 
 import gg.itzkatze.katze.lobby.cosmetics.CosmeticProfile;
+import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Locale;
 import java.util.function.ToIntFunction;
 
 public enum LeaderboardMetric {
@@ -18,8 +20,8 @@ public enum LeaderboardMetric {
         this.reader = reader;
     }
 
-    public @NotNull net.kyori.adventure.text.Component title() {
-        return net.kyori.adventure.text.Component.translatable("katze.cosmetics.leaderboard." + name().toLowerCase(java.util.Locale.ROOT));
+    public @NotNull Component title() {
+        return Component.translatable("katze.cosmetics.leaderboard." + name().toLowerCase(Locale.ROOT));
     }
 
     public @NotNull LeaderboardMetric next() {

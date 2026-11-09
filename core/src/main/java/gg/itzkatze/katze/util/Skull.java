@@ -1,10 +1,10 @@
 package gg.itzkatze.katze.util;
 
+import com.destroystokyo.paper.profile.PlayerProfile;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.profile.PlayerProfile;
 import org.bukkit.profile.PlayerTextures;
 import org.jetbrains.annotations.NotNull;
 
@@ -47,7 +47,7 @@ public enum Skull {
     public @NotNull ItemStack asItemStack() {
         ItemStack skullStack = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta skullMeta = (SkullMeta) skullStack.getItemMeta();
-        PlayerProfile profile = Bukkit.getServer().createPlayerProfile(UUID.randomUUID());
+        PlayerProfile profile = Bukkit.createProfile(UUID.randomUUID());
         PlayerTextures textures = profile.getTextures();
 
         try {
@@ -59,7 +59,7 @@ public enum Skull {
         profile.setTextures(textures);
 
         if (skullMeta != null) {
-            skullMeta.setOwnerProfile(profile);
+            skullMeta.setPlayerProfile(profile);
             skullStack.setItemMeta(skullMeta);
         }
 
@@ -74,7 +74,7 @@ public enum Skull {
             PlayerProfile profile = Bukkit.getOfflinePlayer(uuid).getPlayerProfile();
 
             if (skullMeta != null) {
-                skullMeta.setOwnerProfile(profile);
+                skullMeta.setPlayerProfile(profile);
                 skullStack.setItemMeta(skullMeta);
             }
 

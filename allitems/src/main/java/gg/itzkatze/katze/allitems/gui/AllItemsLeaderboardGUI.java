@@ -6,6 +6,7 @@ import gg.itzkatze.katze.allitems.data.AllItemsData;
 import gg.itzkatze.katze.gui.GUIClickableItem;
 import gg.itzkatze.katze.gui.KatzeGUI;
 import gg.itzkatze.katze.player.KatzePlayer;
+import gg.itzkatze.katze.text.TextArg;
 import gg.itzkatze.katze.util.ItemStackCreator;
 import gg.itzkatze.katze.util.KatzeColor;
 import net.kyori.adventure.text.Component;
@@ -15,6 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 public class AllItemsLeaderboardGUI extends KatzeGUI {
@@ -87,7 +89,7 @@ public class AllItemsLeaderboardGUI extends KatzeGUI {
     private Component[] buildLore(AllItemsData data, UUID uuid) {
         List<Component> lore = new ArrayList<>();
         lore.add(Component.translatable("katze.allitems.leaderboard.total",
-                gg.itzkatze.katze.text.TextArg.number("value", getTotalProgress(data, uuid))).color(KatzeColor.LIGHT_GRAY));
+                TextArg.number("value", getTotalProgress(data, uuid))).color(KatzeColor.LIGHT_GRAY));
         lore.add(Component.empty());
         for (AllItemsObjectiveType type : AllItemsObjectiveType.values()) {
             int found = data.getFoundCount(type, uuid);
@@ -99,9 +101,9 @@ public class AllItemsLeaderboardGUI extends KatzeGUI {
                 case ADVANCEMENT -> data.getTotalAvailableAdvancements();
             };
             lore.add(Component.translatable("katze.allitems.leaderboard.progress",
-                    gg.itzkatze.katze.text.TextArg.component("type", Component.translatable("katze.allitems.type." + type.name().toLowerCase(java.util.Locale.ROOT))),
-                    gg.itzkatze.katze.text.TextArg.number("found", found),
-                    gg.itzkatze.katze.text.TextArg.number("total", total)).color(KatzeColor.LIGHT_GRAY));
+                    TextArg.component("type", Component.translatable("katze.allitems.type." + type.name().toLowerCase(Locale.ROOT))),
+                    TextArg.number("found", found),
+                    TextArg.number("total", total)).color(KatzeColor.LIGHT_GRAY));
         }
         return lore.toArray(new Component[0]);
     }

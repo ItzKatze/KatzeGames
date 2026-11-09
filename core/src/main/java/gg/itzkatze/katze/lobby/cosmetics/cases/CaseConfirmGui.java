@@ -7,6 +7,7 @@ import gg.itzkatze.katze.lobby.cosmetics.PurchaseConfirmGui;
 import gg.itzkatze.katze.lobby.cosmetics.Rarity;
 import gg.itzkatze.katze.lobby.cosmetics.ShopSounds;
 import gg.itzkatze.katze.player.KatzePlayer;
+import gg.itzkatze.katze.text.TextArg;
 import gg.itzkatze.katze.util.ItemStackCreator;
 import gg.itzkatze.katze.util.KatzeColor;
 import net.kyori.adventure.text.Component;
@@ -55,7 +56,7 @@ public final class CaseConfirmGui extends PurchaseConfirmGui {
             return Component.translatable("katze.cosmetics.next_case_new").color(KatzeColor.MAGENTA);
         }
         int left = CaseLoot.PITY_STREAK - streak;
-        return Component.translatable("katze.cosmetics.pity_progress", gg.itzkatze.katze.text.TextArg.number("count", left)).color(KatzeColor.LIGHT_GRAY);
+        return Component.translatable("katze.cosmetics.pity_progress", TextArg.number("count", left)).color(KatzeColor.LIGHT_GRAY);
     }
 
     @Override
@@ -63,25 +64,25 @@ public final class CaseConfirmGui extends PurchaseConfirmGui {
         int balance = CosmeticStore.get().points(viewer.getUuid());
         int price = CaseLoot.PRICE * count;
         List<Component> lore = new ArrayList<>();
-        lore.add(Component.translatable("katze.cosmetics.price", gg.itzkatze.katze.text.TextArg.number("points", price)).color(KatzeColor.GOLD));
-        lore.add(balance >= price ? Component.translatable("katze.cosmetics.after_opening", gg.itzkatze.katze.text.TextArg.number("points", balance - price)).color(KatzeColor.LIGHT_GRAY)
+        lore.add(Component.translatable("katze.cosmetics.price", TextArg.number("points", price)).color(KatzeColor.GOLD));
+        lore.add(balance >= price ? Component.translatable("katze.cosmetics.after_opening", TextArg.number("points", balance - price)).color(KatzeColor.LIGHT_GRAY)
                 : PointsText.missingComponent(price - balance).color(KatzeColor.RED));
         lore.add(pityLine(viewer.getUuid()));
         lore.add(Component.empty());
         lore.add(Component.translatable("katze.cosmetics.contains", KatzeColor.LIGHT_GRAY));
         lore.add(rarities());
         lore.add(Component.empty());
-        lore.add(Component.translatable("katze.cosmetics.add_case_hint", gg.itzkatze.katze.text.TextArg.number("max", CaseRollGui.MAX_CASES)).color(KatzeColor.LIGHT_GRAY));
+        lore.add(Component.translatable("katze.cosmetics.add_case_hint", TextArg.number("max", CaseRollGui.MAX_CASES)).color(KatzeColor.LIGHT_GRAY));
         lore.add(Component.translatable("katze.cosmetics.remove_case_hint").color(KatzeColor.LIGHT_GRAY));
         Component name = Component.translatable(count == 1 ? "katze.cosmetics.case" : "katze.cosmetics.cases",
-                gg.itzkatze.katze.text.TextArg.number("count", count)).color(KatzeColor.MAGENTA);
+                TextArg.number("count", count)).color(KatzeColor.MAGENTA);
         return ItemStackCreator.getStack(name, Material.ENDER_CHEST, count, lore);
     }
 
     @Override
     protected @NotNull Component acceptHint() {
-        return Component.translatable("katze.cosmetics.open_for", gg.itzkatze.katze.text.TextArg.number("count", count),
-                gg.itzkatze.katze.text.TextArg.number("points", CaseLoot.PRICE * count));
+        return Component.translatable("katze.cosmetics.open_for", TextArg.number("count", count),
+                TextArg.number("points", CaseLoot.PRICE * count));
     }
 
     @Override

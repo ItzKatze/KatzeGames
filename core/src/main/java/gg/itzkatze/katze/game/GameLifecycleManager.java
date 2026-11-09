@@ -3,13 +3,14 @@ package gg.itzkatze.katze.game;
 import gg.itzkatze.katze.KatzeGames;
 import gg.itzkatze.katze.achievements.AchievementService;
 import gg.itzkatze.katze.challenges.ChallengeManager;
+import gg.itzkatze.katze.game.seed.SeedGenerator;
 import gg.itzkatze.katze.level.GameXp;
 import gg.itzkatze.katze.lobby.LobbyManager;
 import gg.itzkatze.katze.player.KatzePlayer;
 import gg.itzkatze.katze.spectator.SpectatorManager;
 import gg.itzkatze.katze.util.KatzeColor;
 import gg.itzkatze.katze.util.StructureScanner;
-import gg.itzkatze.katze.game.seed.SeedGenerator;
+import io.papermc.paper.event.connection.PlayerConnectionValidateLoginEvent;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
@@ -22,7 +23,6 @@ import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.world.WorldSaveEvent;
 import org.jetbrains.annotations.NotNull;
@@ -30,9 +30,9 @@ import org.jetbrains.annotations.NotNull;
 public class GameLifecycleManager implements Listener {
 
     @EventHandler
-    public void onPlayerLogin(@NotNull PlayerLoginEvent event) {
+    public void onPlayerLogin(@NotNull PlayerConnectionValidateLoginEvent event) {
         if (SessionPersistence.isRecoveryFailed()) {
-            event.disallow(PlayerLoginEvent.Result.KICK_OTHER, Component.translatable("katze.game.start.recovery_failed"));
+            event.kickMessage(Component.translatable("katze.game.start.recovery_failed"));
         }
     }
 

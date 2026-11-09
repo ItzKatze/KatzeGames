@@ -10,6 +10,7 @@ import gg.itzkatze.katze.level.LevelTag;
 import gg.itzkatze.katze.player.KatzePlayer;
 import gg.itzkatze.katze.player.data.PlayerDataStore;
 import gg.itzkatze.katze.player.data.PlayerProfile;
+import gg.itzkatze.katze.text.TextArg;
 import gg.itzkatze.katze.util.KatzeColor;
 import gg.itzkatze.katze.util.StringUtility;
 import net.kyori.adventure.text.Component;
@@ -96,9 +97,9 @@ public class LevelCommand extends KatzeCommand {
         }
         int total = LevelStore.get().adjust(target.get().id(), target.get().name(), amount);
         caller.sendMessage(Component.translatable("katze.level.updated",
-                gg.itzkatze.katze.text.TextArg.text("name", target.get().name()),
-                gg.itzkatze.katze.text.TextArg.number("xp", total),
-                gg.itzkatze.katze.text.TextArg.number("level", LevelCurve.levelFor(total))).color(KatzeColor.LIME));
+                TextArg.text("name", target.get().name()),
+                TextArg.number("xp", total),
+                TextArg.number("level", LevelCurve.levelFor(total))).color(KatzeColor.LIME));
     }
 
     private static void show(@NotNull CommandCaller caller, @NotNull Target target) {
@@ -106,18 +107,18 @@ public class LevelCommand extends KatzeCommand {
         Component next = progress.cost() == 0
                 ? Component.translatable("katze.level.max")
                 : Component.translatable("katze.level.next_progress",
-                        gg.itzkatze.katze.text.TextArg.number("into", progress.into()),
-                        gg.itzkatze.katze.text.TextArg.number("cost", progress.cost()),
-                        gg.itzkatze.katze.text.TextArg.number("level", progress.level() + 1));
+                        TextArg.number("into", progress.into()),
+                        TextArg.number("cost", progress.cost()),
+                        TextArg.number("level", progress.level() + 1));
         caller.sendMessage(Component.textOfChildren(
                 LevelTag.of(progress.level()),
-                Component.translatable("katze.level.status", gg.itzkatze.katze.text.TextArg.text("name", target.name()),
-                        gg.itzkatze.katze.text.TextArg.component("next", next),
-                        gg.itzkatze.katze.text.TextArg.number("xp", LevelStore.get().xp(target.id())))));
+                Component.translatable("katze.level.status", TextArg.text("name", target.name()),
+                        TextArg.component("next", next),
+                        TextArg.number("xp", LevelStore.get().xp(target.id())))));
     }
 
     private static void unknown(@NotNull CommandCaller caller, @NotNull String name) {
-        caller.sendMessage(Component.translatable("katze.level.unknown_player", gg.itzkatze.katze.text.TextArg.text("name", name)).color(KatzeColor.RED));
+        caller.sendMessage(Component.translatable("katze.level.unknown_player", TextArg.text("name", name)).color(KatzeColor.RED));
     }
 
     private static @NotNull Optional<Target> find(@NotNull String name) {

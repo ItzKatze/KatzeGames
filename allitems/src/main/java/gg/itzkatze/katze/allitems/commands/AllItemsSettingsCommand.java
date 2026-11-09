@@ -2,13 +2,15 @@ package gg.itzkatze.katze.allitems.commands;
 
 import gg.itzkatze.katze.allitems.AllItemsSettings;
 import gg.itzkatze.katze.commands.framework.CallerType;
-import gg.itzkatze.katze.commands.framework.KatzeCommand;
 import gg.itzkatze.katze.commands.framework.CommandCaller;
+import gg.itzkatze.katze.commands.framework.KatzeCommand;
+import gg.itzkatze.katze.text.TextArg;
 import net.kyori.adventure.text.Component;
 import org.bukkit.permissions.PermissionDefault;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Locale;
 
 public class AllItemsSettingsCommand extends KatzeCommand {
 
@@ -30,16 +32,16 @@ public class AllItemsSettingsCommand extends KatzeCommand {
             return;
         }
 
-        String mode = args[0].toLowerCase();
+        String mode = args[0].toLowerCase(Locale.ROOT);
 
         switch (mode) {
             case "team" -> {
                 AllItemsSettings.setGameMode(AllItemsSettings.GameMode.TEAM);
-                caller.sendMessage(Component.translatable("katze.allitems.command.mode_set", gg.itzkatze.katze.text.TextArg.component("mode", Component.translatable("katze.allitems.mode.team"))));
+                caller.sendMessage(Component.translatable("katze.allitems.command.mode_set", TextArg.component("mode", Component.translatable("katze.allitems.mode.team"))));
             }
             case "individual" -> {
                 AllItemsSettings.setGameMode(AllItemsSettings.GameMode.INDIVIDUAL);
-                caller.sendMessage(Component.translatable("katze.allitems.command.mode_set", gg.itzkatze.katze.text.TextArg.component("mode", Component.translatable("katze.allitems.mode.individual"))));
+                caller.sendMessage(Component.translatable("katze.allitems.command.mode_set", TextArg.component("mode", Component.translatable("katze.allitems.mode.individual"))));
             }
             default -> {
                 caller.sendMessage(Component.translatable("katze.allitems.command.invalid_mode"));

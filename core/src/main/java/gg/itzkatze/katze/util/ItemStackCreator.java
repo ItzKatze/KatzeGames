@@ -4,7 +4,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -13,7 +12,6 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * Utility class for creating {@link ItemStack} objects with various customizations,
@@ -58,7 +56,7 @@ public class ItemStackCreator {
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
             meta.customName(withoutDefaultItalics(name));
-            meta.lore(lore.stream().map(ItemStackCreator::withoutDefaultItalics).collect(Collectors.toList()));
+            meta.lore(lore.stream().map(ItemStackCreator::withoutDefaultItalics).toList());
             meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE);
             item.setItemMeta(meta);
         }
@@ -99,8 +97,7 @@ public class ItemStackCreator {
     public static ItemStack enchant(ItemStack item) {
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
-            meta.addEnchant(Enchantment.UNBREAKING, 1, true);
-            meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            meta.setEnchantmentGlintOverride(true);
             item.setItemMeta(meta);
         }
         return item;
@@ -122,7 +119,7 @@ public class ItemStackCreator {
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
             meta.customName(withoutDefaultItalics(name));
-            meta.lore(lore.stream().map(ItemStackCreator::withoutDefaultItalics).collect(Collectors.toList()));
+            meta.lore(lore.stream().map(ItemStackCreator::withoutDefaultItalics).toList());
             meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS);
             item.setItemMeta(meta);
         }
@@ -158,7 +155,7 @@ public class ItemStackCreator {
         ItemMeta meta = skull.getItemMeta();
         if (meta != null) {
             meta.customName(withoutDefaultItalics(name));
-            meta.lore(Arrays.stream(lore).map(ItemStackCreator::withoutDefaultItalics).collect(Collectors.toList()));
+            meta.lore(Arrays.stream(lore).map(ItemStackCreator::withoutDefaultItalics).toList());
             meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS);
             skull.setItemMeta(meta);
         }

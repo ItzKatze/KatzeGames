@@ -1,7 +1,8 @@
 package gg.itzkatze.katze.util;
 
-import gg.itzkatze.katze.team.KatzeTeam;
 import gg.itzkatze.katze.player.KatzePlayer;
+import gg.itzkatze.katze.team.KatzeTeam;
+import gg.itzkatze.katze.text.TextArg;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 
@@ -14,9 +15,9 @@ public class ResultUtils {
         int place = KatzePlayer.getPlace(player);
 
         return Component.translatable("katze.game.results.player",
-                        gg.itzkatze.katze.text.TextArg.text("name", player.getName()),
-                        gg.itzkatze.katze.text.TextArg.number("place", place),
-                        gg.itzkatze.katze.text.TextArg.number("points", player.getPoints()))
+                        TextArg.text("name", player.getName()),
+                        TextArg.number("place", place),
+                        TextArg.number("points", player.getPoints()))
                 .append(Component.translatable("katze.game.results.open")
                         .color(KatzeColor.LIME)
                         .clickEvent(ClickEvent.runCommand("/result player " + player.getName()))
@@ -31,10 +32,10 @@ public class ResultUtils {
                 .collect(Collectors.joining(", "));
 
         return Component.translatable("katze.game.results.team",
-                        gg.itzkatze.katze.text.TextArg.number("id", team.getId()),
-                        gg.itzkatze.katze.text.TextArg.text("players", players),
-                        gg.itzkatze.katze.text.TextArg.number("place", place),
-                        gg.itzkatze.katze.text.TextArg.number("points", team.getPoints()))
+                        TextArg.number("id", team.getId()),
+                        TextArg.text("players", players),
+                        TextArg.number("place", place),
+                        TextArg.number("points", team.getPoints()))
                 .append(Component.translatable("katze.game.results.open")
                         .color(KatzeColor.LIME)
                         .clickEvent(ClickEvent.runCommand("/result team " + team.getId())));

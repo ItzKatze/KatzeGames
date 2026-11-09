@@ -6,6 +6,8 @@ import org.bukkit.block.Biome;
 import org.bukkit.entity.EntityType;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Locale;
+
 public final class ObjectiveNames {
 
     private ObjectiveNames() {
@@ -25,19 +27,19 @@ public final class ObjectiveNames {
     }
 
     public static @NotNull Component of(@NotNull BiomeSimplified value) {
-        return Component.translatable("katze.objective.biome." + value.name().toLowerCase(java.util.Locale.ROOT));
+        return Component.translatable("katze.objective.biome." + value.name().toLowerCase(Locale.ROOT));
     }
 
     public static @NotNull Component of(@NotNull MobsSimplified value) {
-        return Component.translatable("katze.objective.mob." + value.name().toLowerCase(java.util.Locale.ROOT));
+        return Component.translatable("katze.objective.mob." + value.name().toLowerCase(Locale.ROOT));
     }
 
     public static @NotNull Component of(@NotNull DamageTypeSimplified value) {
-        return Component.translatable("katze.objective.death." + value.name().toLowerCase(java.util.Locale.ROOT));
+        return Component.translatable("katze.objective.death." + value.name().toLowerCase(Locale.ROOT));
     }
 
     public static @NotNull Component of(@NotNull StructureSimplified value) {
-        return Component.translatable("katze.objective.structure." + value.name().toLowerCase(java.util.Locale.ROOT));
+        return Component.translatable("katze.objective.structure." + value.name().toLowerCase(Locale.ROOT));
     }
 
     public static @NotNull Component of(@NotNull KatzeAdvancement value) {
@@ -46,10 +48,10 @@ public final class ObjectiveNames {
     }
 
     public static @NotNull Component of(@NotNull KatzeStructure value) {
-        return Component.translatable("katze.objective.structure_detail." + value.name().toLowerCase(java.util.Locale.ROOT));
+        return Component.translatable("katze.objective.structure_detail." + value.name().toLowerCase(Locale.ROOT));
     }
 
     public static @NotNull Component of(@NotNull KatzeDamageType value) {
-        return Component.translatable("katze.objective.damage." + value.name().toLowerCase(java.util.Locale.ROOT));
+        return Component.translatable("katze.objective.damage." + value.name().toLowerCase(Locale.ROOT));
     }
 }

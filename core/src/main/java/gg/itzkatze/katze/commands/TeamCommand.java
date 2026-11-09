@@ -2,10 +2,11 @@ package gg.itzkatze.katze.commands;
 
 import gg.itzkatze.katze.challenges.ChallengeManager;
 import gg.itzkatze.katze.commands.framework.CallerType;
-import gg.itzkatze.katze.team.KatzeTeam;
-import gg.itzkatze.katze.commands.framework.KatzeCommand;
 import gg.itzkatze.katze.commands.framework.CommandCaller;
+import gg.itzkatze.katze.commands.framework.KatzeCommand;
 import gg.itzkatze.katze.player.KatzePlayer;
+import gg.itzkatze.katze.team.KatzeTeam;
+import gg.itzkatze.katze.text.TextArg;
 import gg.itzkatze.katze.util.KatzeColor;
 import gg.itzkatze.katze.util.StringUtility;
 import gg.itzkatze.katze.util.TabCompletions;
@@ -57,7 +58,7 @@ public class TeamCommand extends KatzeCommand {
             case "create" -> {
                 katzePlayer.leaveTeam();
                 KatzeTeam team = KatzeTeam.create(List.of(katzePlayer));
-                caller.sendMessage(Component.translatable("katze.team.created", gg.itzkatze.katze.text.TextArg.number("id", team.getId())));
+                caller.sendMessage(Component.translatable("katze.team.created", TextArg.number("id", team.getId())));
             }
             case "join" -> {
                 if (args.length < 2) {
@@ -90,7 +91,7 @@ public class TeamCommand extends KatzeCommand {
                 if (team.getLastJoinRequest() != null) {
                     KatzePlayer requester = team.getLastJoinRequest().katzePlayer();
                     if (requester.isSpectator()) {
-                        caller.sendMessage(Component.translatable("katze.team.requester_spectating", gg.itzkatze.katze.text.TextArg.text("name", requester.getName())).color(KatzeColor.RED));
+                        caller.sendMessage(Component.translatable("katze.team.requester_spectating", TextArg.text("name", requester.getName())).color(KatzeColor.RED));
                         team.finishLastJoinRequest(false);
                         return;
                     }

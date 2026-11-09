@@ -3,6 +3,7 @@ package gg.itzkatze.katze.lobby.cosmetics;
 import gg.itzkatze.katze.gui.GUIClickableItem;
 import gg.itzkatze.katze.gui.KatzeGUI;
 import gg.itzkatze.katze.player.KatzePlayer;
+import gg.itzkatze.katze.text.TextArg;
 import gg.itzkatze.katze.util.ItemStackCreator;
 import gg.itzkatze.katze.util.KatzeColor;
 import net.kyori.adventure.text.Component;
@@ -61,8 +62,8 @@ public final class CosmeticMenuGui extends KatzeGUI {
                 List<Cosmetic> cosmetics = store.catalog().in(category);
                 long collected = cosmetics.stream().filter(cosmetic -> store.owns(viewer.getUuid(), cosmetic)).count();
                 return ItemStackCreator.getStack(category.titleComponent().color(KatzeColor.YELLOW).decorate(TextDecoration.BOLD), category.icon(),
-                        List.of(Component.translatable("katze.cosmetics.collected", gg.itzkatze.katze.text.TextArg.number("collected", collected),
-                                gg.itzkatze.katze.text.TextArg.number("total", cosmetics.size())).color(KatzeColor.LIGHT_GRAY),
+                        List.of(Component.translatable("katze.cosmetics.collected", TextArg.number("collected", collected),
+                                TextArg.number("total", cosmetics.size())).color(KatzeColor.LIGHT_GRAY),
                                 Component.translatable("katze.cosmetics.click_to_open").color(KatzeColor.LIGHT_GRAY)));
             }
         };

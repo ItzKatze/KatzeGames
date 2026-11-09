@@ -1,5 +1,6 @@
 package gg.itzkatze.katze.level;
 
+import gg.itzkatze.katze.text.TextArg;
 import gg.itzkatze.katze.util.KatzeColor;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
@@ -35,6 +36,6 @@ public final class LevelUpNotice {
         player.showTitle(Title.title(Component.translatable("katze.level.level_up").color(KatzeColor.GOLD), subtitle, TIMES));
         player.playSound(LEVEL_UP);
         player.sendMessage(Component.translatable("katze.level.reached",
-                gg.itzkatze.katze.text.TextArg.number("level", newLevel)).color(KatzeColor.GOLD));
+                TextArg.number("level", newLevel)).color(KatzeColor.GOLD));
     }
 }

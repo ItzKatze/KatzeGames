@@ -1,14 +1,15 @@
 package gg.itzkatze.katze.commands;
 
 import gg.itzkatze.katze.commands.framework.CallerType;
+import gg.itzkatze.katze.commands.framework.CommandCaller;
+import gg.itzkatze.katze.commands.framework.KatzeCommand;
+import gg.itzkatze.katze.configuration.GlobalSetting;
+import gg.itzkatze.katze.configuration.SettingsManager;
+import gg.itzkatze.katze.player.KatzePlayer;
 import gg.itzkatze.katze.util.KatzeColor;
 import net.kyori.adventure.text.Component;
-import gg.itzkatze.katze.commands.framework.KatzeCommand;
-import gg.itzkatze.katze.commands.framework.CommandCaller;
-import gg.itzkatze.katze.configuration.SettingsManager;
-import gg.itzkatze.katze.configuration.GlobalSetting;
-import gg.itzkatze.katze.player.KatzePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.MenuType;
 import org.bukkit.permissions.PermissionDefault;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,7 +37,7 @@ public class MobileCraftingCommand extends KatzeCommand {
         if (caller instanceof KatzePlayer katzePlayer) {
             Player player = katzePlayer.getPlayer();
             if (player == null || !katzePlayer.isParticipating()) return;
-            player.openWorkbench(null, true);
+            player.openInventory(MenuType.CRAFTING.builder().checkReachable(false).build(player));
         }
     }
 

@@ -4,11 +4,14 @@ import gg.itzkatze.katze.configuration.Setting;
 import gg.itzkatze.katze.configuration.SettingsManager;
 import gg.itzkatze.katze.configuration.states.ConfigurableSettingState;
 import gg.itzkatze.katze.configuration.states.SettingStateType;
+import gg.itzkatze.katze.text.TextArg;
 import gg.itzkatze.katze.util.KatzeColor;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Locale;
 
 public class DeathSwapSettings {
 
@@ -34,7 +37,7 @@ public class DeathSwapSettings {
 
         @Override
         public Component getDisplayName() {
-            return Component.translatable("katze.deathswap.setting." + name().toLowerCase(java.util.Locale.ROOT));
+            return Component.translatable("katze.deathswap.setting." + name().toLowerCase(Locale.ROOT));
         }
 
         @Override
@@ -74,7 +77,7 @@ public class DeathSwapSettings {
 
         @Override
         public @NotNull Component getDisplayName() {
-            return Component.translatable("katze.deathswap.state.interval", gg.itzkatze.katze.text.TextArg.number("minutes", minutes)).color(KatzeColor.LIGHT_BLUE);
+            return Component.translatable("katze.deathswap.state.interval", TextArg.number("minutes", minutes)).color(KatzeColor.LIGHT_BLUE);
         }
 
         @Override

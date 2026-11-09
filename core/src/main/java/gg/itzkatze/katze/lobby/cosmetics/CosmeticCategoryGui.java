@@ -3,6 +3,7 @@ package gg.itzkatze.katze.lobby.cosmetics;
 import gg.itzkatze.katze.gui.GUIClickableItem;
 import gg.itzkatze.katze.gui.KatzeGUI;
 import gg.itzkatze.katze.player.KatzePlayer;
+import gg.itzkatze.katze.text.TextArg;
 import gg.itzkatze.katze.util.ItemStackCreator;
 import gg.itzkatze.katze.util.KatzeColor;
 import net.kyori.adventure.sound.Sound;
@@ -19,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 public final class CosmeticCategoryGui extends KatzeGUI {
@@ -38,7 +40,7 @@ public final class CosmeticCategoryGui extends KatzeGUI {
     private int page;
 
     public CosmeticCategoryGui(@NotNull CosmeticCategory category) {
-        super(Component.translatable("katze.cosmetics.category_title", gg.itzkatze.katze.text.TextArg.component("category", category.titleComponent())), 54);
+        super(Component.translatable("katze.cosmetics.category_title", TextArg.component("category", category.titleComponent())), 54);
         this.category = category;
     }
 
@@ -124,7 +126,7 @@ public final class CosmeticCategoryGui extends KatzeGUI {
             @Override
             public ItemStack getItem(KatzePlayer viewer) {
                 return ItemStackCreator.getStack(Component.translatable("katze.cosmetics." + name).color(KatzeColor.YELLOW), Material.ARROW,
-                        List.of(Component.translatable("katze.cosmetics.page", gg.itzkatze.katze.text.TextArg.number("page", page + 1), gg.itzkatze.katze.text.TextArg.number("pages", pages)).color(KatzeColor.LIGHT_GRAY)));
+                        List.of(Component.translatable("katze.cosmetics.page", TextArg.number("page", page + 1), TextArg.number("pages", pages)).color(KatzeColor.LIGHT_GRAY)));
             }
         };
     }
@@ -169,7 +171,7 @@ public final class CosmeticCategoryGui extends KatzeGUI {
             }
         }
         if (cosmetic != null) {
-            lore.add(Component.translatable("katze.cosmetics.rarity_label", gg.itzkatze.katze.text.TextArg.component("rarity", cosmetic.rarity().displayNameComponent())).color(cosmetic.rarity().color()));
+            lore.add(Component.translatable("katze.cosmetics.rarity_label", TextArg.component("rarity", cosmetic.rarity().displayNameComponent())).color(cosmetic.rarity().color()));
         }
         if (!owned) {
             lore.add(Component.translatable("katze.cosmetics.not_owned").color(KatzeColor.RED));
@@ -191,7 +193,7 @@ public final class CosmeticCategoryGui extends KatzeGUI {
 
         Component name = entry.random() ? Component.translatable("katze.cosmetics.random").color(KatzeColor.WHITE) : cosmetic != null
                 ? cosmetic.styledName()
-                : Component.translatable("katze.cosmetics.default." + category.name().toLowerCase(java.util.Locale.ROOT)).color(KatzeColor.WHITE);
+                : Component.translatable("katze.cosmetics.default." + category.name().toLowerCase(Locale.ROOT)).color(KatzeColor.WHITE);
 
         Material icon = entry.random() ? Material.HOPPER : cosmetic != null
                 ? owned || category == CosmeticCategory.HIGHLIGHT ? cosmetic.icon() : Material.GRAY_DYE
@@ -233,7 +235,7 @@ public final class CosmeticCategoryGui extends KatzeGUI {
             Season season = cosmetic.season();
             player.sendMessage(season != null && !cosmetic.isAvailable(store.today())
                     ? season.returnsMessage(cosmetic)
-                    : Component.translatable("katze.cosmetics.win_from_case", gg.itzkatze.katze.text.TextArg.component("cosmetic", cosmetic.displayName())).color(KatzeColor.RED));
+                    : Component.translatable("katze.cosmetics.win_from_case", TextArg.component("cosmetic", cosmetic.displayName())).color(KatzeColor.RED));
             CosmeticGuiItems.play(clicker, ShopSounds.DENY);
         }
     }

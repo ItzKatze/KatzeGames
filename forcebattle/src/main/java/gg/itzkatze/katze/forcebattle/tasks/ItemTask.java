@@ -1,13 +1,14 @@
 package gg.itzkatze.katze.forcebattle.tasks;
 
 import gg.itzkatze.katze.KatzeGames;
-import gg.itzkatze.katze.forcebattle.ForceBattleObjective;
 import gg.itzkatze.katze.configuration.GlobalSetting;
 import gg.itzkatze.katze.configuration.SettingsManager;
 import gg.itzkatze.katze.configuration.states.PlayerTeamBothState;
+import gg.itzkatze.katze.forcebattle.ForceBattleObjective;
 import gg.itzkatze.katze.forcebattle.ForceBattlePlayer;
-import gg.itzkatze.katze.player.KatzePlayer;
 import gg.itzkatze.katze.forcebattle.ForceBattleType;
+import gg.itzkatze.katze.player.KatzePlayer;
+import gg.itzkatze.katze.text.TextArg;
 import gg.itzkatze.katze.util.KatzeColor;
 import gg.itzkatze.katze.util.Toast;
 import net.kyori.adventure.text.Component;
@@ -68,12 +69,12 @@ public class ItemTask implements ForceTask {
                     .filter(teammate -> teammate != player)
                     .filter(teammate -> !teammate.isOffline())
                     .forEach(teammate -> {
-                        teammate.sendMessage(Component.translatable("katze.forcebattle.task.teammate_finished", gg.itzkatze.katze.text.TextArg.text("player", player.getName()), gg.itzkatze.katze.text.TextArg.component("objective", formattedObjective)));
+                        teammate.sendMessage(Component.translatable("katze.forcebattle.task.teammate_finished", TextArg.text("player", player.getName()), TextArg.component("objective", formattedObjective)));
                         Toast.display(teammate.getPlayer(), toastIcon, formattedObjective.color(KatzeColor.BLUE), Toast.Style.GOAL, plugin);
                     });
         }
 
-        player.sendMessage(Component.translatable("katze.forcebattle.task.personal_finished", gg.itzkatze.katze.text.TextArg.component("objective", formattedObjective)));
+        player.sendMessage(Component.translatable("katze.forcebattle.task.personal_finished", TextArg.component("objective", formattedObjective)));
         Toast.display(player.getPlayer(), toastIcon, formattedObjective.color(KatzeColor.BLUE), Toast.Style.GOAL, plugin);
     }
 }

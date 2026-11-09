@@ -219,12 +219,12 @@ public final class AchievementService {
     }
 
     boolean tracks(Achievement achievement) {
-        ChallengeType challenge = achievement.category().challenge();
+        ChallengeType challenge = achievement.category().getChallenge();
         return challenge == null || round != null && round.initialChallenges().contains(challenge) && !round.ended().contains(challenge);
     }
 
     private boolean eligible(Player player, Achievement achievement) {
-        ChallengeType challenge = achievement.category().challenge();
+        ChallengeType challenge = achievement.category().getChallenge();
         return tracks(achievement) && (challenge == null || ChallengeManager.isChallengeActive(challenge)) && eligible(player);
     }
 
@@ -299,12 +299,12 @@ public final class AchievementService {
     public void naturalEnd(ChallengeType challenge, Set<UUID> winners, Set<UUID> teamWinners) {
         if (round == null || !round.initialChallenges().contains(challenge)) return;
         if (!round.end(challenge)) return;
-        if (Achievement.VEGAN_ROUND.category().challenge() == challenge) round.players().forEach((id, state) -> {
+        if (Achievement.VEGAN_ROUND.category().getChallenge() == challenge) round.players().forEach((id, state) -> {
             if (state.vegan()) progress(id, state.name(), Achievement.VEGAN_ROUND, 1);
         });
         Map<UUID, AchievementRound.Participant> players = round.players();
         winners.forEach(id -> {
-            if (Achievement.WIN_GAME.category().challenge() != challenge) return;
+            if (Achievement.WIN_GAME.category().getChallenge() != challenge) return;
             AchievementRound.Participant state = round.player(id);
             progress(id, state.name(), Achievement.WIN_GAME, 1);
             if (challenge != ChallengeType.FORCE_BATTLE) return;

@@ -1,10 +1,12 @@
 package gg.itzkatze.katze.challenges;
 
 import gg.itzkatze.katze.gui.GUIMaterial;
-import net.kyori.adventure.text.Component;
-import org.jetbrains.annotations.NotNull;
 import lombok.Getter;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Locale;
 
 @Getter
 public enum ChallengeType {
@@ -23,10 +25,10 @@ public enum ChallengeType {
     }
 
     public @NotNull Component displayName() {
-        return Component.translatable("katze.game.challenge." + name().toLowerCase(java.util.Locale.ROOT) + ".name");
+        return Component.translatable("katze.game.challenge." + name().toLowerCase(Locale.ROOT) + ".name");
     }
 
     public @NotNull Component getDescription() {
-        return Component.translatable("katze.game.challenge." + name().toLowerCase(java.util.Locale.ROOT) + ".description");
+        return Component.translatable("katze.game.challenge." + name().toLowerCase(Locale.ROOT) + ".description");
     }
 }

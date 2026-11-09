@@ -7,6 +7,8 @@ import gg.itzkatze.katze.configuration.states.SettingStateType;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 
+import java.util.Locale;
+
 @Getter
 public enum ForceBattleSettings implements Setting {
     FORCE_ITEM(true, PlayerTeamBothState.BOTH),
@@ -44,7 +46,7 @@ public enum ForceBattleSettings implements Setting {
 
     @Override
     public Component getDisplayName() {
-        return Component.translatable("katze.forcebattle.setting." + name().toLowerCase(java.util.Locale.ROOT));
+        return Component.translatable("katze.forcebattle.setting." + name().toLowerCase(Locale.ROOT));
     }
 
     @Override

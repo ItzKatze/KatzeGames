@@ -1,23 +1,25 @@
 package gg.itzkatze.katze.deathswap;
 
-import gg.itzkatze.katze.achievements.AchievementService;
-
 import gg.itzkatze.katze.KatzeGames;
+import gg.itzkatze.katze.achievements.AchievementService;
 import gg.itzkatze.katze.challenges.ChallengeType;
+import gg.itzkatze.katze.deathswap.DeathSwapResults.Elimination;
 import gg.itzkatze.katze.game.ChallengeTimer;
 import gg.itzkatze.katze.game.GameTimer;
 import gg.itzkatze.katze.game.SessionPersistence;
 import gg.itzkatze.katze.level.GameXp;
 import gg.itzkatze.katze.level.LevelStore;
 import gg.itzkatze.katze.player.KatzePlayer;
+import gg.itzkatze.katze.results.ResultArchives;
+import gg.itzkatze.katze.results.ResultRoster;
 import gg.itzkatze.katze.spectator.SpectatorManager;
 import gg.itzkatze.katze.spectator.SpectatorReason;
+import gg.itzkatze.katze.text.TextArg;
 import gg.itzkatze.katze.util.KatzeColor;
 import gg.itzkatze.katze.util.StringUtility;
 import gg.itzkatze.katze.util.WorldStorage;
-import gg.itzkatze.katze.results.ResultRoster;
-import gg.itzkatze.katze.results.ResultArchives;
-import gg.itzkatze.katze.deathswap.DeathSwapResults.Elimination;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
@@ -162,9 +164,9 @@ public class DeathSwapGameListener implements Listener {
         int secondsUntilSwap = swapTimer.getSecondsRemaining();
         if (secondsUntilSwap <= 10 && secondsUntilSwap > 0 && secondsUntilSwap != lastPlayedCountdownSecond) {
             lastPlayedCountdownSecond = secondsUntilSwap;
-            net.kyori.adventure.sound.Sound sound = net.kyori.adventure.sound.Sound.sound(
-                    net.kyori.adventure.key.Key.key("block.note_block.bass"),
-                    net.kyori.adventure.sound.Sound.Source.MASTER,
+            Sound sound = Sound.sound(
+                    Key.key("block.note_block.bass"),
+                    Sound.Source.MASTER,
                     20f,
                     20f
             );
@@ -211,13 +213,13 @@ public class DeathSwapGameListener implements Listener {
         }
 
         Component message = Component.translatable("katze.deathswap.actionbar.status",
-                gg.itzkatze.katze.text.TextArg.text("time", StringUtility.formatTime(elapsedSeconds).trim()),
-                gg.itzkatze.katze.text.TextArg.number("swaps", swapCount));
+                TextArg.text("time", StringUtility.formatTime(elapsedSeconds).trim()),
+                TextArg.number("swaps", swapCount));
 
         int secondsUntilSwap = swapTimer != null ? swapTimer.getSecondsRemaining() : 0;
         if (secondsUntilSwap <= 10) {
             message = message.append(Component.translatable("katze.deathswap.actionbar.next_swap",
-                    gg.itzkatze.katze.text.TextArg.number("seconds", secondsUntilSwap)));
+                    TextArg.number("seconds", secondsUntilSwap)));
         } else if (KatzeGames.getTimer().getMode() != GameTimer.Mode.DISABLED && !timerRunning) {
             message = message.append(Component.translatable("katze.deathswap.actionbar.paused").color(KatzeColor.BLUE));
         }
@@ -274,11 +276,11 @@ public class DeathSwapGameListener implements Listener {
             AchievementService.get().naturalEnd(ChallengeType.DEATH_SWAP, Set.of(winner.getUniqueId()), Set.of());
             LevelStore.get().grant(winnerWrapper, DeathSwapXp.WIN.xp());
         }
-        KatzeGames.broadcast(Component.translatable("katze.deathswap.winner", gg.itzkatze.katze.text.TextArg.text("name", winner.getName())));
+        KatzeGames.broadcast(Component.translatable("katze.deathswap.winner", TextArg.text("name", winner.getName())));
 
         Title title = Title.title(
                 Component.translatable("katze.deathswap.title").color(KatzeColor.GOLD),
-                Component.translatable("katze.deathswap.title.winner", gg.itzkatze.katze.text.TextArg.text("name", winner.getName())).color(KatzeColor.LIME),
+                Component.translatable("katze.deathswap.title.winner", TextArg.text("name", winner.getName())).color(KatzeColor.LIME),
                 Title.Times.times(Duration.ofSeconds(1), Duration.ofSeconds(3), Duration.ofSeconds(1))
         );
 

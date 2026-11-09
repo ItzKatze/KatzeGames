@@ -5,11 +5,14 @@ import gg.itzkatze.katze.configuration.SettingsManager;
 import gg.itzkatze.katze.configuration.states.ConfigurableSettingState;
 import gg.itzkatze.katze.configuration.states.OnOffState;
 import gg.itzkatze.katze.configuration.states.SettingStateType;
+import gg.itzkatze.katze.text.TextArg;
 import gg.itzkatze.katze.util.KatzeColor;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Locale;
 
 public class ItemRainSettings {
 
@@ -49,7 +52,7 @@ public class ItemRainSettings {
 
         @Override
         public Component getDisplayName() {
-            return Component.translatable("katze.itemrain.setting." + name().toLowerCase(java.util.Locale.ROOT));
+            return Component.translatable("katze.itemrain.setting." + name().toLowerCase(Locale.ROOT));
         }
 
         @Override
@@ -89,7 +92,7 @@ public class ItemRainSettings {
 
         @Override
         public @NotNull Component getDisplayName() {
-            return Component.translatable("katze.itemrain.state.interval", gg.itzkatze.katze.text.TextArg.number("seconds", seconds)).color(KatzeColor.LIGHT_BLUE);
+            return Component.translatable("katze.itemrain.state.interval", TextArg.number("seconds", seconds)).color(KatzeColor.LIGHT_BLUE);
         }
 
         @Override
@@ -141,7 +144,7 @@ public class ItemRainSettings {
 
         @Override
         public @NotNull Component getDisplayName() {
-            return Component.translatable("katze.itemrain.state.radius", gg.itzkatze.katze.text.TextArg.number("radius", radius)).color(KatzeColor.LIGHT_BLUE);
+            return Component.translatable("katze.itemrain.state.radius", TextArg.number("radius", radius)).color(KatzeColor.LIGHT_BLUE);
         }
 
         @Override

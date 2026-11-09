@@ -1,6 +1,7 @@
 package gg.itzkatze.katze.level;
 
 import gg.itzkatze.katze.KatzeGames;
+import gg.itzkatze.katze.text.TextArg;
 import gg.itzkatze.katze.util.KatzeColor;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -22,7 +23,7 @@ public final class XpDigest {
             Player player = Bukkit.getPlayer(id);
             if (player != null) {
                 player.sendMessage(Component.translatable("katze.level.xp_digest",
-                        gg.itzkatze.katze.text.TextArg.number("xp", gained)).color(KatzeColor.LIGHT_BLUE));
+                        TextArg.number("xp", gained)).color(KatzeColor.LIGHT_BLUE));
             }
         });
     }

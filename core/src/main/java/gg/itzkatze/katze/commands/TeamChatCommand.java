@@ -7,10 +7,12 @@ import gg.itzkatze.katze.commands.framework.KatzeCommand;
 import gg.itzkatze.katze.player.KatzePlayer;
 import gg.itzkatze.katze.spectator.SpectatorManager;
 import gg.itzkatze.katze.spectator.WhisperFilter;
-import java.util.List;
 import net.kyori.adventure.text.Component;
 import org.bukkit.permissions.PermissionDefault;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+import java.util.Locale;
 
 public class TeamChatCommand extends KatzeCommand {
 
@@ -43,7 +45,7 @@ public class TeamChatCommand extends KatzeCommand {
 
     @Override
     protected List<String> tabComplete(CommandCaller caller, String @NotNull [] args) {
-        if (args.length == 1 && "chat".startsWith(args[0].toLowerCase())) {
+        if (args.length == 1 && "chat".startsWith(args[0].toLowerCase(Locale.ROOT))) {
             return List.of("chat");
         }
         return List.of();

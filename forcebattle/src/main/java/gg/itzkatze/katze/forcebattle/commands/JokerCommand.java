@@ -1,17 +1,18 @@
 package gg.itzkatze.katze.forcebattle.commands;
 
-import gg.itzkatze.katze.forcebattle.ForceBattlePlayer;
 import gg.itzkatze.katze.commands.framework.CallerType;
-import gg.itzkatze.katze.util.KatzeColor;
-import net.kyori.adventure.text.Component;
-import gg.itzkatze.katze.commands.framework.KatzeCommand;
 import gg.itzkatze.katze.commands.framework.CommandCaller;
+import gg.itzkatze.katze.commands.framework.KatzeCommand;
+import gg.itzkatze.katze.forcebattle.ForceBattlePlayer;
+import gg.itzkatze.katze.util.KatzeColor;
 import gg.itzkatze.katze.util.StringUtility;
 import gg.itzkatze.katze.util.TabCompletions;
+import net.kyori.adventure.text.Component;
 import org.bukkit.permissions.PermissionDefault;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 public class JokerCommand extends KatzeCommand {
@@ -98,7 +99,7 @@ public class JokerCommand extends KatzeCommand {
         TEAMSKIP,
         SWAP;
 
-        private final String IDENTIFIER = name().toLowerCase();
+        private final String IDENTIFIER = name().toLowerCase(Locale.ROOT);
 
         public String getIdentifier() {
             return IDENTIFIER;

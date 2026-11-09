@@ -15,8 +15,8 @@ import org.bukkit.block.sign.Side;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,7 +52,7 @@ public class SignInput implements Listener {
         Sign sign = (Sign) target.getState();
         for (int i = 0; i < 4; i++) {
             Component line = i < lines.size() ? Texts.render(lines.get(i), bukkitPlayer) : Component.empty();
-            sign.line(i, line);
+            sign.getSide(Side.FRONT).line(i, line);
         }
         sign.update(false, false);
 
