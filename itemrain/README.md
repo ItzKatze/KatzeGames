@@ -1,22 +1,20 @@
 # ItemRain
 
-Get a random item every few seconds. Use what turns up, whether it's exactly what you need or completely useless.
+Get random items throughout the round and use whatever arrives to help you survive or complete your objectives.
 
-## Where the items go
+## How to play
 
+- An item arrives every **10 seconds by default**.
 - **Inventory mode:** items arrive directly in your inventory.
-- **Sky drops:** items fall above and around you, so you'll need to pick them up.
+- **Sky drops:** items fall above and around you; pick them up from the ground.
+- Your round's settings determine the drop timing and delivery mode.
 
 ## Settings
 
-Operators can adjust these in `/settings`.
-
-| Setting | Range | Default |
-| --- | --- | --- |
-| Time between drops | 1–300 seconds | 10 seconds |
-| Sky drops | On / off | Off |
-| Sky drop radius | 0–32 blocks | 5 blocks |
-
-The radius only affects sky drops. Set it to **0** to drop items directly above each player.
+| Setting         | What changes                                                          | Default    |
+|-----------------|-----------------------------------------------------------------------|------------|
+| Item interval   | Time between items: **1–300 seconds**.                                | 10 seconds |
+| Sky drops       | Drop items from above instead of delivering them to inventories.      | Off        |
+| Sky drop radius | Scatter sky drops within **0–32 blocks**; 0 means directly above you. | 5 blocks   |
 
 [Back to KatzeGames](../README.md)

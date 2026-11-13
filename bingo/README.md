@@ -1,62 +1,36 @@
 # Bingo
 
-Race another player or team to claim five objectives in a row on a shared **5×5 board**. Complete a row, column, or diagonal to win.
+Claim **five objectives in a row** on a shared 5×5 board before your opponent. Rows, columns, and diagonals count.
 
-## How it works
+**Requires a Resource Pack.**
 
-- The first side to complete an objective owns that cell. Your opponent can no longer claim it.
-- Teammates share their board and claimed cells. Each pair of players or teams gets its own match.
-- If time runs out, the side with **more claimed cells wins**. Equal counts are a draw.
-- If both sides have no possible winning line left, the match ends in a draw.
+## How to play
 
-## Your objectives
+- Complete an objective first to own its cell; your opponent can no longer claim it.
+- Teammates share their board and claimed cells.
+- Each pair of players or teams has its own match; you need an even number of competitors.
+- Rounds last **45 minutes by default**. When time runs out, the side with more cells wins; equal counts are a draw.
+- If neither side can complete a line, the match is a draw.
+- **Rejoin within 2 minutes** after disconnecting to avoid forfeiting.
 
-| Type        | What to do                                                 |
-|-------------|------------------------------------------------------------|
-| Item        | Collect **one** of the requested item. It is not consumed. |
-| Mob         | Kill the requested mob.                                    |
-| Biome       | Visit the requested biome.                                 |
-| Structure   | Find the requested structure.                              |
-| Advancement | Complete the requested advancement during the round.       |
+## Settings
 
-Keep collection items in your inventory or offhand; armor slots and items inside containers do not count.
+| Setting              | What changes                                                                                     | Default                   |
+|----------------------|--------------------------------------------------------------------------------------------------|---------------------------|
+| Match duration       | Play for **30, 45, or 60 minutes**, or without a time limit.                                     | 45 minutes                |
+| Unequal teams        | Allow competitors with different team sizes.                                                     | Off                       |
+| Objective categories | Enable items, mob kills, biomes, structures, and advancements separately.                        | All on                    |
+| Objective exclusions | Leave selected groups, such as End content, ores, or armor templates, out of the objective pool. | All exclusion switches on |
 
-With **Simplified Objectives**, any allowed member of the requested mob, biome, or structure group counts.
-
-## Read your board
-
-Accept the server's **required resource pack** when joining. No client mod is needed.
-
-The sidebar shows your board, each side's color, and claimed-cell counts. Remaining time appears above the hotbar.
-
-Each cell has a small category badge: **chest** for items, **sword** for mob kills, **sapling** for biomes, **tower** for structures, and **star** for advancements. Open `/bingo` and hover the book for the symbol legend.
-
-Open `/bingo` and hover cells for details:
-
-- **Item icons** are still available to claim.
-- **Blue or orange glass panes** are claimed by the matching side.
-- **Glowing panes** mark a completed winning line.
-
-After your match ends, you can spectate other matches. If you disconnect, rejoin within two minutes to avoid forfeiting.
+**Simplified Objectives** is a shared setting; see the [main guide](../README.md#settings) for its effect and default.
 
 ## Commands
 
-| Command | What it does |
-| --- | --- |
-| `/bingo` | Open your board and inspect objectives. |
-| `/bingo overlay` | Hide or show the sidebar board. |
-| `/recipe <item>` | Look up crafting and processing recipes. |
-| `/bingo matches` | Choose a match to watch as a spectator. |
-| `/results` | Review saved rounds you played in. |
-
-## Set up a round
-
-Operators can enable Bingo in `/settings` and right-click it to change the rules.
-
-- Choose **30, 45, or 60 minutes**, or unlimited time. The default is **45 minutes**.
-- Choose objective types and use the bottom-right arrow to exclude categories such as End content, ores, or armor templates.
-- Change **Simplified Objectives** in Global settings, reached through the bottom-right arrow in `/settings`.
-
-Bring an even number of players or teams and use `/start`. Bingo must be the only enabled gamemode. Teams and Bingo settings are locked during the round.
+| Command          | What it does                                                  |
+|------------------|---------------------------------------------------------------|
+| `/bingo`         | Inspect your board and objectives.                            |
+| `/bingo overlay` | Hide or show the sidebar board.                               |
+| `/recipe <item>` | Look up crafting and processing recipes.                      |
+| `/bingo matches` | Choose a match to watch after yours ends or while spectating. |
 
 [Server setup and pack tools](SETUP.md) · [Back to KatzeGames](../README.md)

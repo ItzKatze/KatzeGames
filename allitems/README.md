@@ -2,30 +2,29 @@
 
 Work through Minecraft's collection checklist, on your own or with a team.
 
-**Still in development; not fully supported yet.**
+## How to play
 
-## What counts
+- Collect the missing objectives and check your progress menu for what remains.
+- **Items** count by default; a round may also include biomes, structures, mob kills, or advancements.
+- In **team collection mode**, everyone contributes to one shared collection.
+- In **chain mode**, follow the objectives in the displayed order.
 
-Collect items, discover biomes and structures, kill mobs, and complete advancements.
-Use the progress menu to see what you're still missing.
+**This gamemode is still in development.**
 
 ## Settings
 
-Operators can open `/settings` and right-click AllItems to choose the rules.
-
-- Play individually or share progress as a team.
-- Choose which categories count. Only **items** are enabled by default.
-- Enable **chain mode** to work through objectives in a fixed order.
+| Setting                                | What changes                                                        | Default |
+|----------------------------------------|---------------------------------------------------------------------|---------|
+| Collection mode                        | Track progress individually or contribute to one shared collection. | Shared  |
+| Items                                  | Count collected items.                                              | On      |
+| Biomes, mobs, structures, advancements | Enable each additional collection category separately.              | Off     |
+| Chain mode                             | Complete objectives in the displayed order.                         | Off     |
 
 ## Commands
 
-| Command | What it does |
-| --- | --- |
-| `/allitemsprogress` | Check your progress and missing objectives. |
-| `/leaderboard` | See how players or teams are doing. |
-| `/allitemssettings <team\|individual>` | Set the collection mode (operator). |
-| `/results` | Review saved rounds you played in. |
-
-Resetting a round saves its discoveries and category totals. In team mode, you can review the shared collection and each player's contributions.
+| Command             | What it does                              |
+|---------------------|-------------------------------------------|
+| `/allitemsprogress` | See your progress and missing objectives. |
+| `/leaderboard`      | Compare player or team progress.          |
 
 [Back to KatzeGames](../README.md)

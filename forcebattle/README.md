@@ -1,55 +1,45 @@
 # ForceBattle
 
-Complete random objectives before time runs out. The player or team with the most points wins.
+Complete random objectives before time runs out. The player or team with the **most points wins**.
 
-## Your next objective
+## Your objectives
 
-| Type | What to do |
-| --- | --- |
-| Item | Collect the requested item. |
-| Mob | Kill the requested mob. |
-| Biome | Find the requested biome. |
-| Advancement | Complete the requested advancement. |
-| Height | Reach the requested height. |
+| Type        | What to do                           |
+|-------------|--------------------------------------|
+| Item        | Collect the requested item.          |
+| Mob         | Kill the requested mob.              |
+| Biome       | Visit the requested biome.           |
+| Structure   | Find the requested structure.        |
+| Advancement | Complete the requested advancement.  |
+| Height      | Reach the requested height.          |
 | Coordinates | Travel to the requested coordinates. |
-| Structure | Find the requested structure. |
-| Death | Die from the requested damage type. |
+| Death       | Die from the requested damage type.  |
 
-## A little help
+- Follow your current objective to earn points and receive the next one.
+- Rounds can include **personal objectives, shared team objectives, or both**.
+- In **chain mode**, players follow the same sequence; teams have a separate shared sequence.
 
-- **Skip jokers** replace a difficult personal or team objective.
-- **Swap jokers** trade your personal objective with an opponent's.
-- **Backpacks** give you extra storage, shared with your teammates when you're in a team.
-- **Recipes** are a command away if you forget how to craft something.
+## Useful items
 
-Right-click a joker item to use it.
+- **Skip joker:** right-click to replace a difficult personal or team objective.
+- **Swap joker:** right-click to trade your personal objective with an opponent's.
 
-## Set up the battle
+## Settings
 
-Operators can use `/settings` to choose objective types for players, teams, or both.
-
-- Turn on **chain mode** to give players the same objective sequence, with a separate sequence for teams.
-- Exclude categories such as End content or armor templates from the objective pool.
-- Adjust shared objective rules, including simplified objectives and duplicates.
-- Enable or disable backpacks.
-
-Before the countdown, the plugin checks for biomes and structures needed by the selected objectives
-and rerolls unsuitable maps. Everyone waits in the lobby during preparation.
-By default, checks cover a 5,000-block radius; this is **not a world border** and does not guarantee rare loot or mob spawns.
+| Setting              | What changes                                                                                     | Default                        |
+|----------------------|--------------------------------------------------------------------------------------------------|--------------------------------|
+| Objective types      | Set each type to off, personal, team, or both.                                                   | Items: both; other types: team |
+| Backpack             | Give players or teams extra storage.                                                             | On                             |
+| Chain mode           | Use the same objective sequence for players, with a separate sequence for teams.                 | Off                            |
+| Objective exclusions | Leave selected groups, such as End content, ores, or armor templates, out of the objective pool. | All exclusion switches on      |
 
 ## Commands
 
-| Command | What it does |
-| --- | --- |
-| `/backpack` or `/bp` | Open your personal or team backpack. |
-| `/recipe <item>` | Look up a crafting recipe. |
-| `/displayresults <player\|team>` | Show the final player or team leaderboard (operator). |
-| `/result player <name>` | View a player's objective history while the timer is paused or after the battle. |
-| `/result team <id>` | View a team's results. |
-| `/results` | Browse saved rounds you played in, including standings and objectives. |
-
-Completed rounds stay available after map resets and server restarts. Spectating a round does not add it to your history.
-
-Based on [nicolaigrv's original ForceBattle](https://github.com/nicolaigrv/ForceBattle).
+| Command                 | What it does                                                                    |
+|-------------------------|---------------------------------------------------------------------------------|
+| `/backpack` or `/bp`    | Open your backpack, if enabled.                                                 |
+| `/recipe <item>`        | Look up a crafting recipe.                                                      |
+| `/result player <name>` | View a player's objective history while the timer is paused or after the round. |
+| `/result team <id>`     | View a team's objective history under the same conditions.                      |
 
 [Back to KatzeGames](../README.md)

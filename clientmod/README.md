@@ -1,25 +1,21 @@
-# KatzeGames Client Mod
+# Optional Jump & Run music
 
-Developers can run `gradlew.bat :clientmod:exportItemIcons` to export every registered item's real inventory icon for the Bingo resource pack. The hidden client uses its own world/run directory and exits after saving transparent 64×64 PNGs rendered at GUI scale 4 in the Git-ignored local cache at `bingo/src/main/item-icons/<minecraft-version>/`. Only the required generated icons in the resource pack are committed. This mode activates only when the dedicated Gradle task sets its export property; normal clients continue to run the music features described below. Players do not need the mod for Bingo's exported pictures.
+Add soundtrack songs to your lobby parkour runs. **The mod is optional for every gamemode.**
 
-Developers can also run `gradlew.bat :clientmod:exportMobIcons` for transparent 128×128 portraits rendered from Minecraft's mob models. The export frames each mob individually and keeps its cache local at `bingo/src/main/mob-icons/<minecraft-version>/`. Run `gradlew.bat :clientmod:generateBingoPack` to export both items and mobs and regenerate the pack. Mob portraits appear on the Bingo overlay; the inventory GUI keeps spawn eggs.
+## What you get
 
-An optional Fabric mod for the lobby's Jump & Run music. You can play every challenge without it.
-
-## What it adds
-
-- C418 soundtrack songs, including **Aria Math**, **Sweden**, and **Wet Hands**, as run music.
-- Run music fades out when an attempt ends.
+- C418 songs such as **Aria Math**, **Sweden**, and **Wet Hands** as run music.
+- Music fades out when your attempt ends.
 - Minecraft's background music stays quiet during a run.
 
-Without the mod, music discs still work. Soundtrack songs marked **Needs the client mod** stay silent.
+Music discs work without the mod. Songs marked **Needs the client mod** require it.
 
-## Install
+## Settings
 
-1. Install **Fabric Loader 0.20.1 or newer** and **Fabric API** for **Minecraft 26.3**.
-2. Download `KatzeGames-Client-<version>+26.3.jar` from the release linked in the server's join message.
-3. Put the jar in your Minecraft `mods` folder and launch the Fabric profile.
+| Setting                    | What changes                                         |
+|----------------------------|------------------------------------------------------|
+| Jukebox/Note Blocks volume | Adjust run music volume in Minecraft sound settings. |
 
-The mod only acts on KatzeGames Jump & Run music; it does not change music on other servers.
+No separate mod settings are required.
 
-[Back to KatzeGames](../README.md)
+[Installation and developer tools](SETUP.md) · [Back to KatzeGames](../README.md)

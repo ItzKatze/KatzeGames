@@ -1,73 +1,67 @@
 # KatzeGames
 
-Minecraft challenges with teams, a shared lobby, and fresh maps between rounds.
+Play Minecraft challenges solo or with friends, then return to the lobby for the next round.
 
-**Minecraft 26.3** · [GPLv3](LICENSE)
+## Choose a gamemode
 
-## Game guides
+| Gamemode                             | Your goal                                                       |
+|--------------------------------------|-----------------------------------------------------------------|
+| [ForceBattle](forcebattle/README.md) | Complete objectives and score the most points.                  |
+| [Bingo](bingo/README.md)             | Claim five objectives in a row before your opponent.            |
+| [MobArmy](mobarmy/README.md)         | Collect an army and beat your opponents' waves fastest.         |
+| [DeathSwap](deathswap/README.md)     | Build traps and survive until you are the last player standing. |
+| [AllItems](allitems/README.md)       | Work through a collection checklist.                            |
+| [Randomizer](randomizer/README.md)   | Discover which sources give you the items you need.             |
+| [ItemRain](itemrain/README.md)       | Make use of random items arriving throughout the round.         |
 
-[ForceBattle](forcebattle/README.md) · [DeathSwap](deathswap/README.md) · [AllItems](allitems/README.md)
+## Join a round
 
-[ItemRain](itemrain/README.md) · [Randomizer](randomizer/README.md) · [Optional client mod](clientmod/README.md)
+1. Choose your team in the lobby, or stay unteamed to play solo.
+2. Use `/spectate` if you want to sit out the next round.
+3. Wait for the host to start the round and follow your gamemode's guide.
 
-[MobArmy](mobarmy/README.md) · Collect mobs, configure three waves, and race through your opponents’ armies.
+**Joining mid-round makes you a spectator.** You can play in the next round.
 
-[Bingo](bingo/README.md) · Exclusive objective races on a shared 5×5 board; requires the Bingo resource pack.
+## Player commands
 
-## Get a round going
+| Command                                          | What it does                                                |
+|--------------------------------------------------|-------------------------------------------------------------|
+| `/team create`, `/team join <id>`, `/team leave` | Create, join, or leave a team.                              |
+| `/team list`                                     | Show the teams.                                             |
+| `/chat team`, `/chat all`                        | Choose your chat channel.                                   |
+| `/t chat <message>`                              | Send one message to your team.                              |
+| `/spectate`                                      | Choose whether to play the next round; use it in the lobby. |
+| `/results`                                       | Review saved rounds you played in.                          |
+| `/level [player]`                                | Check your level or another player's level.                 |
+| `/achievements`                                  | Browse achievements and rewards.                            |
 
-1. An operator opens `/settings` to choose the challenges, timer, and rules.
-2. Sort out teams with `/team`, or use `/spectate` in the lobby to sit this round out.
-3. The operator runs `/start`. Once the map is ready, a five-second countdown begins.
+## Settings
 
-Global settings include no hunger, no damage, portable crafting, scoreboard visibility, and objective rules.
-In `/settings`, left-click a challenge to toggle it or right-click to open its settings.
+The host chooses the round rules. Each gamemode guide lists its own settings; these shared settings apply where supported.
 
-## Handy commands
+| Setting                 | What changes                                                                      | Default |
+|-------------------------|-----------------------------------------------------------------------------------|---------|
+| No hunger               | Keep hunger full.                                                                 | Off     |
+| No damage               | Prevent player damage in modes that allow it.                                     | Off     |
+| Mobile crafting         | Open a crafting table with `/craft` or `/crafting`.                               | Off     |
+| Hide points             | Hide points in player name tags.                                                  | On      |
+| Hide objectives         | Hide objectives in player name tags.                                              | Off     |
+| No duplicate objectives | Avoid repeated objectives in modes that use this rule.                            | On      |
+| Simplified Objectives   | Accept allowed members of an objective group, such as any matching biome variant. | On      |
+| Extra team objective    | Enable an additional shared team objective in ForceBattle.                        | On      |
+| Show scoreboard         | Display the sidebar.                                                              | On      |
 
-| Command | What it does |
-| --- | --- |
-| `/team create`, `/team join <id>`, `/team leave` | Create a team, request to join one, or leave it. |
-| `/team list` | See the teams. |
-| `/chat team`, `/chat all` | Choose where your chat messages go. |
-| `/t chat <message>` | Send one message to your team. |
-| `/spectate` | Toggle spectating before the next round. |
-| `/level [player]` | Check your level and XP, or someone else's. |
-| `/achievements` | Browse achievements and rewards. |
+## Watch or take a break
 
-## Hosting a round
+- **Spectating:** fly around and right-click a player to inspect their inventory, progress, or view.
+- **Spectator chat:** chat and private messages stay between spectators.
+- **Lobby:** try Jump & Run, earn XP, and collect cosmetics between rounds.
+- **Progress:** levels, achievements, and cosmetics carry over between rounds.
+- **Music:** the [optional client mod](clientmod/README.md) adds soundtrack songs to Jump & Run.
 
-These commands need operator permissions by default.
+## Credits
 
-| Command | What it does |
-| --- | --- |
-| `/settings` | Choose challenges and adjust the rules. |
-| `/start` | Start the selected challenges. |
-| `/timer pause`, `/timer resume` | Pause or resume the round. |
-| `/timer set <seconds>` | Change the remaining time. |
-| `/reset` | Return everyone to the lobby and replace the game map with a fresh seed. |
-| `/map [overworld\|nether\|end]` | Inspect the next map in creative mode before starting. |
-| `/map limbo` | Return to the lobby after a map visit. |
+- **Lobby builds:** q8h (classic) and IchmagYorkleffs (balloninsel, inselmithaus).
+- **ForceBattle:** based on [nicolaigrv’s original ForceBattle](https://github.com/nicolaigrv/ForceBattle).
 
-**Resetting replaces the game worlds.** Levels, achievements, and cosmetics carry over.
-Players wait in the lobby while the new map is prepared.
-
-## Watching a round
-
-Joining mid-round makes you a spectator. Fly around and right-click a player to inspect their inventory,
-check their progress, or watch through their eyes. Spectator chat and private messages stay between spectators.
-
-Late joiners play again after a reset. If you chose `/spectate`, use it again in the lobby when you're ready to play.
-
-## Between rounds
-
-- **Jump & Run:** try the lobby parkour and collect cosmetics for your runs.
-- **Levels:** earn XP through playtime and challenges. Your level appears beside your name.
-- **Achievements:** completed stages award separate achievement XP. Unfinished requirements stay hidden.
-  Use the name-tag button in `/achievements` to switch between translated and custom names.
-
-Menus and messages support English and German.
-
-Lobby builds: **q8h** (classic) and **IchmagYorkleffs** (balloninsel, inselmithaus).
-
-The optional local achievement-name file `core/src/main/resources/text-packs/achievements/custom.properties` is ignored by Git. If it is absent, custom-name preferences fall back to the normal translated achievement titles. Tests use separate generated name data.
+[Server setup and development](SETUP.md)

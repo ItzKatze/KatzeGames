@@ -1,22 +1,21 @@
 # DeathSwap
 
-Prepare a trap, then let the next swap bring someone into it. Stay alive until you're the last player standing.
+Prepare traps for the next position swap and stay alive until you are the **last player standing**.
 
-## How it works
+## How to play
 
-- Surviving players swap positions at regular intervals.
-- A countdown and sound cues warn you during the final 10 seconds.
-- When you die, you become a spectator for the rest of the round.
+1. Gather supplies and prepare a trap where you are standing.
+2. Survive until the swap sends another player into your position.
+3. Escape the position you arrive in and prepare your next trap.
 
-Lava, a long fall, or a well-timed trap can finish someone off. Just make sure you survive until the swap.
+- Swaps happen every **5 minutes by default**.
+- A countdown and sound cues warn you during the **last 10 seconds**.
+- **Death eliminates you:** you spectate for the rest of the round.
 
 ## Settings
 
-Operators can change the **swap interval** in `/settings`: **1–60 minutes**, with **5 minutes** as the default.
-
-## Past rounds
-
-Use `/results` to review rounds you played in. Results are saved when a winner is decided,
-including placements, survival time, and swaps survived. Spectators do not gain access to the round.
+| Setting       | What changes                                   | Default   |
+|---------------|------------------------------------------------|-----------|
+| Swap interval | Time between position swaps: **1–60 minutes**. | 5 minutes |
 
 [Back to KatzeGames](../README.md)

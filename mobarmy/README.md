@@ -1,94 +1,64 @@
 # MobArmy
 
-**Build an army. Send it against your friends. Beat theirs faster.**
+Collect an army, send it against your opponents, and finish their waves in the **fastest total combat time**. Play solo or in teams.
 
-Every mob you defeat can become part of a wave your opponents have to fight. Spend the collection phase hunting mobs and gearing up,
-then put your army to the test in a race against the clock. Play solo or team up with friends.
+## 1. Collect and gear up
 
-## How a round works
+- You have **90 minutes by default** to gather supplies and kill mobs for your army.
+- Almost every mob counts, including animals, golems, and bosses; **the Ender Dragon does not count**.
+- Collected mobs return at full health with their equipment and variants.
+- Starter equipment, when enabled, is an **unbreakable diamond axe, pickaxe, and shovel with Efficiency I**.
+- Collection deaths can drop your other gear; **starter tools you were carrying and collected mobs are safe**.
+- Use `/bp` for extra storage, shared with teammates when you are in a team, if backpacks are enabled.
 
-### 1. Hunt and gear up
+## 2. Build three waves
 
-You have **90 minutes by default** to collect equipment, gather supplies, and kill mobs for your army.
-Almost every mob counts—even animals, golems, and bosses. The Ender Dragon is the exception.
+| Wave menu control | Action                               |
+|-------------------|--------------------------------------|
+| Left-click a mob  | Add one to the selected wave.        |
+| Right-click a mob | Remove one from the selected wave.   |
+| Hover a mob       | Check assigned and available counts. |
+| Back button       | Return to the three-wave overview.   |
+| Ready button      | Mark your team ready or undo it.     |
 
-Mobs keep their equipment and variants when they return at full health. Find a drowned with a trident? Your opponents will have to deal with it too.
+- Each collected mob can enter **one wave only**; you may leave mobs unused.
+- Teammates can edit together. Changing waves makes your team unready again.
+- Combat starts when **every team is ready**; one teammate can ready the whole team.
 
-- Start with a **diamond axe, pickaxe, and shovel**, each with Efficiency I, when starter equipment is enabled.
-- Store supplies in a **27-slot backpack** with `/bp`. Teammates share the same backpack.
-- Stay alive: deaths during collection follow normal survival rules, so you can drop your gear. Your starter tools and collected mobs are safe.
+## 3. Beat the opposing armies
 
-### 2. Build your three waves
+- Fight all **three waves from each opponent** in your own village arena.
+- A wave ends when all its mobs are defeated. Mobs arrive gradually.
+- **No PvP.** You may place defenses and break player-placed blocks; the arena itself is protected.
+- Arena mobs drop **no loot or XP**, so bring supplies.
+- Captured iron golems attack players; golems created or spawned during battle are friendly.
+- Use `/tracker` when **five or fewer mobs remain**, including mobs still waiting to spawn.
+- **Fastest total time wins; tied times share the win.** Finished teams can watch the remaining teams.
 
-When collection ends, the **Waves** menu opens. Choose a wave to start adding mobs:
+## Deaths and supplies
 
-| Control | What it does |
-| --- | --- |
-| Left-click a mob | Add one to this wave. |
-| Right-click a mob | Remove one from this wave. |
-| Red back button | Return to your three-wave overview. |
-| Ready button on the right | Mark your team ready—or undo it. |
+- During combat, you **keep your items and XP**, then wait on the roof before returning.
+- Each of your deaths increases your roof wait by **30 seconds**: **30, 60, 90, 120 seconds**, and so on.
+- Your team's clock keeps running during roof waits and disconnects.
+- Before each new opponent, death penalties reset and your gear, supplies, backpack, and arena return to their state at the start of combat.
+- Supplies used within one opponent's three waves stay used until you face the next opponent.
 
-Each collected mob can go into **one wave only**. You can leave mobs unused, and teammates can edit together.
-Each mob type has one slot. Hover over it to see your assigned and available counts.
+## Settings
 
-Take your time to organize your waves and supplies. Combat starts when **one player from every team presses Ready**.
-Changing your waves makes your team unready again. Use `/waves` if you close the menu.
+| Setting           | What changes                                                        | Default    |
+|-------------------|---------------------------------------------------------------------|------------|
+| Collection time   | Time to collect mobs and supplies: **1–1,440 minutes**.             | 90 minutes |
+| Starter equipment | Start with the unbreakable enchanted diamond tools described above. | On         |
+| Backpack          | Enable personal or shared team storage.                             | On         |
 
-### 3. Beat the opposing armies
+## Commands
 
-Every team fights in a separate world with its own copy of the village arena, under clear daytime skies.
-Clear all three waves from one opponent, then face the next.
-With three teams, for example, each team fights **six waves** in total.
-
-Mobs arrive at **five per second**, and the next wave begins once every mob in the current wave is defeated.
-Aquatic and lava mobs can spawn on dry ground too, with protection against drying out or losing air.
-Mobs can fight one another, but iron golems target players.
-
-**The team with the fastest total combat time wins.** Wait until everyone finishes to see the winners,
-then click **[Details]** in chat to browse each team’s collected army.
-
-Finished your waves? You can watch the remaining teams with `/watch <player>`. Spectators stay hidden from teams still fighting.
-When five or fewer mobs remain in your current wave, use `/tracker` for a compass pointing to the nearest one.
-
-## What happens if you die?
-
-During combat, you **keep your items and XP**, but must wait on the arena roof before returning.
-Your first death costs **30 seconds**, followed by **60 seconds, 90 seconds, 120 seconds**, and another 30 seconds for each further death.
-Your team’s clock keeps running while you wait, including when players disconnect.
-
-Death penalties reset when you face the next opponent. Your gear, supplies, backpack, and arena also return to their state at the start of combat.
-Within an opponent’s three waves, used supplies and equipment wear carry over—so make them last.
-
-## Arena rules
-
-- **No PvP:** focus on surviving the army.
-- **Build your defenses:** place blocks and break player-placed blocks. The arena itself is protected.
-- **Bring your supplies:** arena mobs drop no loot or XP.
-- **Tied times share the win.**
-
-## Start a game with friends
-
-1. An operator enables **MobArmy** in `/settings` and adjusts its settings with a right-click.
-2. Choose teams with `/team`, or stay unteamed to play solo. You need at least two teams or solo players.
-3. Run `/start` and get hunting!
-
-Collection time is adjustable. Starter equipment and backpacks are enabled by default and can be switched off.
-Want a twist? Add **Randomizer** or **ItemRain** for the collection phase; both stop when wave configuration begins.
-
-## Handy commands
-
-| Command | What it does |
-| --- | --- |
-| `/waves` | Reopen your wave configuration menu. |
-| `/tracker` | Get a mob-tracking compass when five or fewer mobs remain in your wave. |
-| `/watch <player>` | Watch a remaining team after yours has finished. |
-| `/backpack` or `/bp` | Open your personal or shared team backpack. |
-| `/timer pause` / `/timer resume` | Pause or resume the round, including combat timers and roof waits (operator). |
-| `/waves forfeit <player>` | Mark that player’s team as having forfeited during configuration or combat (operator). |
-| `/reset` | End the round and return to the lobby (operator). |
-
-Rounds are saved across server restarts and return paused. An operator can use `/timer resume` to continue.
-Results remain available until the next reset.
+| Command                   | What it does                                                         |
+|---------------------------|----------------------------------------------------------------------|
+| `/waves`                  | Reopen wave configuration before combat.                             |
+| `/backpack` or `/bp`      | Open your personal or shared team backpack, if enabled.              |
+| `/tracker`                | Get a compass pointing to a remaining mob when five or fewer remain. |
+| `/watch <player>`         | Watch a remaining team after yours has finished.                     |
+| `/waves details <player>` | Browse that team's collected army after the round.                   |
 
 [Back to KatzeGames](../README.md)
