@@ -29,6 +29,8 @@ Accept the server's **required resource pack** when joining. No client mod is ne
 
 The sidebar shows your board, each side's color, and claimed-cell counts. Remaining time appears above the hotbar.
 
+Each cell has a small category badge: **chest** for items, **sword** for mob kills, **sapling** for biomes, **tower** for structures, and **star** for advancements. Open `/bingo` and hover the book for the symbol legend.
+
 Open `/bingo` and hover cells for details:
 
 - **Item icons** are still available to claim.

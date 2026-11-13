@@ -5,6 +5,7 @@ import gg.itzkatze.katze.gui.GUIClickableItem;
 import gg.itzkatze.katze.gui.KatzeGUI;
 import gg.itzkatze.katze.player.KatzePlayer;
 import gg.itzkatze.katze.text.TextArg;
+import gg.itzkatze.katze.text.Texts;
 import gg.itzkatze.katze.util.ItemStackCreator;
 import gg.itzkatze.katze.util.KatzeColor;
 import gg.itzkatze.katze.util.StringUtility;
@@ -39,7 +40,7 @@ public final class SavedBingoGUI extends KatzeGUI {
                                 TextArg.text("time", StringUtility.formatTime(cell.claimedAt()))));
                     } else lore.add(Component.translatable("katze.bingo.unclaimed"));
                     if (bingo.winningLine().contains(cellIndex)) lore.add(Component.translatable("katze.bingo.winning_line").color(KatzeColor.GOLD));
-                    Component name = GsonComponentSerializer.gson().deserialize(cell.name())
+                    Component name = GsonComponentSerializer.gson().deserialize(cell.germanName() != null && Texts.isGerman(viewer.getPlayer().locale()) ? cell.germanName() : cell.name())
                             .color(cell.owner() < 0 ? KatzeColor.WHITE : cell.owner() == 0 ? KatzeColor.LIGHT_BLUE : KatzeColor.ORANGE);
                     Material material = Material.matchMaterial(cell.icon());
                     ItemStack item = ItemStackCreator.getStack(name, material == null ? Material.PAPER : material,

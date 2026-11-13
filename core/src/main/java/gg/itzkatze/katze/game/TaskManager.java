@@ -2,6 +2,7 @@ package gg.itzkatze.katze.game;
 
 import gg.itzkatze.katze.KatzeGames;
 import gg.itzkatze.katze.challenges.Challenge;
+import gg.itzkatze.katze.challenges.ChallengeManager;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -36,8 +37,9 @@ public class TaskManager {
         }
 
         runningTask = Bukkit.getScheduler().runTaskTimer(KatzeGames.get(), () -> {
-            for (List<Runnable> tasks : tasksByChallenge.values()) {
-                for (Runnable task : tasks) {
+            for (var entry : tasksByChallenge.entrySet()) {
+                if (!ChallengeManager.isGameplayActive(entry.getKey().getType())) continue;
+                for (Runnable task : entry.getValue()) {
                     task.run();
                 }
             }

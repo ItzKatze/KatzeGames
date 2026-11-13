@@ -10,6 +10,8 @@ Minecraft challenges with teams, a shared lobby, and fresh maps between rounds.
 
 [ItemRain](itemrain/README.md) · [Randomizer](randomizer/README.md) · [Optional client mod](clientmod/README.md)
 
+[MobArmy](mobarmy/README.md) · Collect mobs, configure three waves, and race through your opponents’ armies.
+
 [Bingo](bingo/README.md) · Exclusive objective races on a shared 5×5 board; requires the Bingo resource pack.
 
 ## Get a round going

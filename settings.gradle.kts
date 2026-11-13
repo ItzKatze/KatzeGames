@@ -20,6 +20,7 @@ include(":deathswap")
 include(":randomizer")
 include(":itemrain")
 include(":bingo")
+include(":mobarmy")
 
 // The client mod needs Minecraft itself, which Loom downloads and sets up, so it joins the build only when it is asked for.
 // IntelliJ syncs include it too, so the IDE knows the module; IntelliJ sets idea.sync.active only for syncs, never for task runs.

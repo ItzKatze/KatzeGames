@@ -29,7 +29,6 @@ public final class BingoScoreboard implements ScoreboardContent {
         List<Component> lines = new ArrayList<>();
         lines.add(Component.text(BingoHudLayout.competitor("■", match.competitors.get(0).name(), match.tiles(0)), KatzeColor.LIGHT_BLUE));
         lines.add(Component.text(BingoHudLayout.competitor("■", match.competitors.get(1).name(), match.tiles(1)), KatzeColor.ORANGE));
-        lines.add(Component.text(" "));
         Component columns = Component.text("\uE002").font(Key.key("katzegames", "bingo/layout"));
         for (int column = 0; column < 5; column++) {
             columns = columns.append(Component.text(String.valueOf((char) ('A' + column))).font(Key.key("katzegames", "bingo/layout")));
@@ -44,7 +43,7 @@ public final class BingoScoreboard implements ScoreboardContent {
             for (int column = 0; column < 5; column++) {
                 int cell = row * 5 + column;
                 int index = catalog.indexOf(matches.catalog().get(match.objectives.get(cell)));
-                text.append(BingoHudLayout.cell(index, match.owners[cell], match.winningLine.contains(cell)));
+                text.append(BingoHudLayout.cell(index, match.owners[cell], match.winningLine.contains(cell), catalog.get(index).category()));
             }
             if (row != 4) text.append('\uE000');
             graphics = graphics.append(Component.text(text.toString()).font(Key.key("katzegames", "bingo/row_" + row))

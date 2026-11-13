@@ -14,6 +14,7 @@ import gg.itzkatze.katze.util.ItemStackCreator;
 import gg.itzkatze.katze.util.KatzeColor;
 import gg.itzkatze.katze.util.StringUtility;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -22,6 +23,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 public final class BingoBoardGUI extends KatzeGUI {
@@ -49,6 +51,19 @@ public final class BingoBoardGUI extends KatzeGUI {
                                 Component.text(match.competitors.get(0).name() + ": " + match.tiles(0), KatzeColor.LIGHT_BLUE),
                                 Component.text(match.competitors.get(1).name() + ": " + match.tiles(1), KatzeColor.ORANGE),
                                 Component.translatable("katze.bingo.overview.remaining", TextArg.number("count", 25 - match.tiles(0) - match.tiles(1))).color(KatzeColor.LIME)));
+            }
+        });
+        set(new GUIItem(51) {
+            @Override public ItemStack getItem(KatzePlayer viewer) {
+                List<Component> legend = new ArrayList<>();
+                for (var category : BingoObjective.Category.values()) {
+                    legend.add(Component.text(Character.toString(0xE030 + category.ordinal()), KatzeColor.WHITE)
+                            .font(Key.key("katzegames", "bingo/categories"))
+                            .append(Component.space().font(Key.key("minecraft", "default")))
+                            .append(Component.translatable("katze.bingo.category." + category.name().toLowerCase(Locale.ROOT))
+                                    .font(Key.key("minecraft", "default")).color(KatzeColor.LIGHT_GRAY)));
+                }
+                return ItemStackCreator.getStack(Component.translatable("katze.bingo.categories.title"), Material.BOOK, legend);
             }
         });
         set(GUIClickableItem.getCloseItem(49));

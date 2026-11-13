@@ -4,6 +4,9 @@ main: gg.itzkatze.katze.KatzeGames
 api-version: '26.3'
 
 commands:
+    tracker:
+    watch:
+    waves:
     bingo:
     achievements:
     backpack:

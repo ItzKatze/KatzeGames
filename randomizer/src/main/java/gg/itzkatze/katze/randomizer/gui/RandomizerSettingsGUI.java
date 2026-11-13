@@ -32,14 +32,19 @@ public class RandomizerSettingsGUI extends SettingsMenu {
     private enum SettingButton {
         BLOCK_DROPS(10, Material.GRASS_BLOCK, "katze.randomizer.setting.block_drops", RandomizerSettings.RandomizerSetting.BLOCK_DROPS,
                 List.of(Component.translatable("katze.randomizer.gui.block_drops.description").color(KatzeColor.LIGHT_GRAY))),
-        MOB_DROPS(12, Material.ROTTEN_FLESH, "katze.randomizer.setting.mob_drops", RandomizerSettings.RandomizerSetting.MOB_DROPS,
+        MOB_DROPS(11, Material.ROTTEN_FLESH, "katze.randomizer.setting.mob_drops", RandomizerSettings.RandomizerSetting.MOB_DROPS,
                 List.of(Component.translatable("katze.randomizer.gui.mob_drops.description").color(KatzeColor.LIGHT_GRAY))),
-        CHEST_LOOT(14, Material.CHEST, "katze.randomizer.setting.chest_loot", RandomizerSettings.RandomizerSetting.CHEST_LOOT,
+        CHEST_LOOT(13, Material.CHEST, "katze.randomizer.setting.chest_loot", RandomizerSettings.RandomizerSetting.CHEST_LOOT,
                 List.of(Component.translatable("katze.randomizer.gui.chest_loot.description").color(KatzeColor.LIGHT_GRAY))),
-        SHARED_MAPPINGS(16, Material.PLAYER_HEAD, "katze.randomizer.setting.shared_mappings", RandomizerSettings.RandomizerSetting.SHARED_MAPPINGS,
+        SHARED_MAPPINGS(15, Material.PLAYER_HEAD, "katze.randomizer.setting.shared_mappings", RandomizerSettings.RandomizerSetting.SHARED_MAPPINGS,
                 List.of(
                         Component.translatable("katze.randomizer.gui.shared_mappings.on").color(KatzeColor.LIGHT_GRAY),
                         Component.translatable("katze.randomizer.gui.shared_mappings.off").color(KatzeColor.LIGHT_GRAY)
+                )),
+        TEAM_MAPPINGS(16, Material.WHITE_BANNER, "katze.randomizer.setting.team_mappings", RandomizerSettings.RandomizerSetting.TEAM_MAPPINGS,
+                List.of(
+                        Component.translatable("katze.randomizer.gui.team_mappings.description").color(KatzeColor.LIGHT_GRAY),
+                        Component.translatable("katze.randomizer.gui.team_mappings.solo").color(KatzeColor.LIGHT_GRAY)
                 ));
 
         private final int slot;

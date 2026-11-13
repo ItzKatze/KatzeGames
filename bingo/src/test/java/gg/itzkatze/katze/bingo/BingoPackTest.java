@@ -44,16 +44,30 @@ class BingoPackTest {
         BingoObjectiveCatalog catalog = new BingoObjectiveCatalog();
         for (int row = 0; row < 5; row++) {
             var providers = json(files.get("assets/katzegames/font/bingo/row_" + row + ".json")).getAsJsonArray("providers");
-            assertEquals(catalog.all().size() + 3, providers.size());
+            assertEquals(catalog.all().size() + 8, providers.size());
             assertEquals(BingoHudLayout.ASCENT - row * BingoHudLayout.ROW_PITCH, providers.get(0).getAsJsonObject().get("ascent").getAsInt());
             var numbers = providers.get(1).getAsJsonObject();
             assertEquals("minecraft:font/ascii.png", texture(numbers));
             assertEquals(8, numbers.has("height") ? numbers.get("height").getAsInt() : 8);
-            assertEquals(BingoHudLayout.ASCENT - 5 - row * BingoHudLayout.ROW_PITCH, numbers.get("ascent").getAsInt());
+            assertEquals(BingoHudLayout.ASCENT - 6 - row * BingoHudLayout.ROW_PITCH, numbers.get("ascent").getAsInt());
             var advances = providers.get(providers.size() - 1).getAsJsonObject().getAsJsonObject("advances");
             assertEquals(-BingoHudLayout.ROW_ADVANCE, advances.get("\uE000").getAsInt());
             assertEquals(-BingoHudLayout.CELL_SIZE, advances.get("\uE010").getAsInt());
             assertEquals(3, advances.get("\uE011").getAsInt() + advances.get("\uE012").getAsInt());
+            assertEquals(1, advances.get("\uE013").getAsInt());
+            for (int category = 0; category < BingoObjective.Category.values().length; category++) {
+                var badge = providers.get(catalog.all().size() + 2 + category).getAsJsonObject();
+                String name = BingoObjective.Category.values()[category].name().toLowerCase(Locale.ROOT);
+                assertEquals("katzegames:bingo/categories/" + name + ".png", texture(badge));
+                assertEquals(BingoHudLayout.BADGE_SIZE, badge.has("height") ? badge.get("height").getAsInt() : 8);
+                assertEquals(BingoHudLayout.ASCENT - BingoHudLayout.BADGE_OFFSET - row * BingoHudLayout.ROW_PITCH, badge.get("ascent").getAsInt());
+                assertEquals(0xE030 + category, badge.getAsJsonArray("chars").get(0).getAsString().codePointAt(0));
+                var picture = ImageIO.read(new ByteArrayInputStream(files.get("assets/katzegames/textures/bingo/categories/" + name + ".png")));
+                assertEquals(64, picture.getWidth());
+                assertEquals(64, picture.getHeight());
+                assertEquals(0, picture.getRGB(0, 0) >>> 24);
+                assertNotEquals(0, picture.getRGB(63, 32) >>> 24);
+            }
             int originalSprites = 0;
             var referencedIcons = new HashSet<String>();
             var referencedMobs = new HashSet<String>();
@@ -65,7 +79,8 @@ class BingoPackTest {
                 assertEquals(BingoHudLayout.ASCENT - 1 - row * BingoHudLayout.ROW_PITCH, provider.get("ascent").getAsInt());
                 assertEquals(0xF0000 + index, provider.getAsJsonArray("chars").get(0).getAsString().codePointAt(0));
                 int padding = advances.get(new String(Character.toChars(0xF4000 + index))).getAsInt();
-                assertTrue(padding >= 1 && padding <= BingoHudLayout.CELL_SIZE);
+                assertTrue(padding >= -BingoHudLayout.ICON_SIZE && padding < BingoHudLayout.BADGE_OFFSET);
+
                 if (texture.startsWith("minecraft:")) {
                     originalSprites++;
                     assertFalse(files.containsKey("assets/katzegames/textures/bingo/icons/" + objective.id() + ".png"));

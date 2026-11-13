@@ -1,0 +1,44 @@
+{
+  "providers": [
+    {
+      "type": "bitmap",
+      "file": "katzegames:bingo/categories/item.png",
+      "ascent": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "katzegames:bingo/categories/mob.png",
+      "ascent": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "katzegames:bingo/categories/biome.png",
+      "ascent": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "katzegames:bingo/categories/structure.png",
+      "ascent": 7,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "katzegames:bingo/categories/advancement.png",
+      "ascent": 7,
+      "chars": [
+        ""
+      ]
+    }
+  ]
+}

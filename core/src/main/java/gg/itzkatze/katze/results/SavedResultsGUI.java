@@ -21,6 +21,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -126,7 +127,7 @@ public final class SavedResultsGUI extends KatzeGUI {
                     : Component.translatable("katze.results.team", TextArg.number("id", team.id()));
             name = name.color(KatzeColor.GOLD);
             List<Component> lore = new ArrayList<>();
-            lore.add(score(battle, team.points()));
+            if (battle.game() != SavedBattle.Game.MOB_ARMY) lore.add(score(battle, team.points()));
             battle.players().stream().filter(player -> Integer.valueOf(team.id()).equals(player.teamId()))
                     .forEach(player -> lore.add(Component.text(player.name(), KatzeColor.LIGHT_GRAY)));
             entries.add(new Entry(ItemStackCreator.getStack(name, Material.WHITE_BANNER, lore),
@@ -135,7 +136,7 @@ public final class SavedResultsGUI extends KatzeGUI {
         List<SavedBattle.Player> players = battle.players().stream().sorted(Comparator.comparingInt(SavedBattle.Player::points).reversed()).toList();
         for (SavedBattle.Player player : players) {
             List<Component> lore = new ArrayList<>();
-            if (battle.game() != SavedBattle.Game.DEATH_SWAP) lore.add(score(battle, player.points()));
+            if (battle.game() != SavedBattle.Game.DEATH_SWAP && battle.game() != SavedBattle.Game.MOB_ARMY) lore.add(score(battle, player.points()));
             lore.addAll(player.statistics().stream().map(SavedResultsGUI::statistic).toList());
             if (player.teamId() != null && battle.game() != SavedBattle.Game.ALL_ITEMS) {
                 lore.add(Component.translatable("katze.results.team", TextArg.number("id", player.teamId())));
@@ -183,6 +184,14 @@ public final class SavedResultsGUI extends KatzeGUI {
     }
 
     private static Component statistic(SavedBattle.Statistic statistic) {
+        if (statistic.key().equals("battle_ticks")) {
+            int ticks = statistic.value();
+            String time = String.format(Locale.ROOT, "%d:%02d.%02d", ticks / 1200, ticks / 20 % 60, ticks % 20 * 5);
+            return Component.translatable("katze.results.stat.battle_time", TextArg.text("value", time)).color(KatzeColor.LIGHT_GRAY);
+        }
+        if (statistic.key().equals("forfeited")) {
+            return Component.translatable("katze.results." + (statistic.value() == 1 ? "forfeited" : "completed")).color(KatzeColor.LIGHT_GRAY);
+        }
         String value = statistic.key().equals("survived") ? StringUtility.formatTime(statistic.value())
                 : statistic.total() >= 0 ? statistic.value() + "/" + statistic.total() : Integer.toString(statistic.value());
         return Component.translatable("katze.results.stat." + statistic.key(), TextArg.text("value", value)).color(KatzeColor.LIGHT_GRAY);

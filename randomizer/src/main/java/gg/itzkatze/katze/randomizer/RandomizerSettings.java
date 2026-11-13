@@ -27,12 +27,17 @@ public class RandomizerSettings {
         return SettingsManager.isEnabled(RandomizerSetting.SHARED_MAPPINGS);
     }
 
+    public static boolean isTeamMappingsEnabled() {
+        return SettingsManager.isEnabled(RandomizerSetting.TEAM_MAPPINGS);
+    }
+
     @Getter
     public enum RandomizerSetting implements Setting {
         BLOCK_DROPS(false, OnOffState.ON),
         MOB_DROPS(false, OnOffState.OFF),
         CHEST_LOOT(false, OnOffState.ON),
-        SHARED_MAPPINGS(true, OnOffState.ON);
+        SHARED_MAPPINGS(true, OnOffState.ON),
+        TEAM_MAPPINGS(true, OnOffState.OFF);
 
         private final boolean updateOnChange;
         private final SettingStateType defaultState;

@@ -45,6 +45,12 @@ public class ChallengeManager {
             return; // Already loaded
         }
 
+        if (selectionLocked() || (gameStarted && challenge.locksChallengeSelection()) || activeChallenges.stream().anyMatch(active ->
+                !active.allowsCombination(challenge.getType()) || !challenge.allowsCombination(active.getType()))) {
+            KatzeGames.broadcast(Component.translatable("katze.game.challenge.incompatible"));
+            return;
+        }
+
         if (gameStarted && (challenge.getType() == ChallengeType.BINGO || isChallengeActive(ChallengeType.BINGO))) {
             KatzeGames.broadcast(Component.translatable("katze.bingo.error.locked"));
             return;
@@ -95,6 +101,11 @@ public class ChallengeManager {
     public static void unloadChallenge(@NotNull Challenge challenge) {
         if (!activeChallenges.contains(challenge)) {
             return; // Not loaded
+        }
+
+        if (selectionLocked()) {
+            KatzeGames.broadcast(Component.translatable("katze.game.challenge.locked"));
+            return;
         }
 
         if (gameStarted && challenge.getType() == ChallengeType.BINGO) {
@@ -222,6 +233,14 @@ public class ChallengeManager {
     public static boolean isChallengeActive(@NotNull ChallengeType challengeType) {
         return activeChallenges.stream()
                 .anyMatch(challenge -> challenge.getType() == challengeType);
+    }
+
+    public static boolean isGameplayActive(ChallengeType type) {
+        return isChallengeActive(type) && activeChallenges.stream().allMatch(challenge -> challenge.allowsGameplay(type));
+    }
+
+    private static boolean selectionLocked() {
+        return gameStarted && activeChallenges.stream().anyMatch(Challenge::locksChallengeSelection);
     }
 
     private static boolean applyTimerSpec() {

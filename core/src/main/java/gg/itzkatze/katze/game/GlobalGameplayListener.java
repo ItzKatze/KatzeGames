@@ -19,7 +19,8 @@ public final class GlobalGameplayListener implements Listener {
 
     @EventHandler
     public void onDamage(EntityDamageEvent event) {
-        if (event.getEntity() instanceof Player && (isInactiveGame() || SettingsManager.isEnabled(GlobalSetting.NO_DAMAGE))) {
+        boolean combatDamage = ChallengeManager.getActiveChallenges().stream().anyMatch(challenge -> challenge.requiresCombatDamage());
+        if (event.getEntity() instanceof Player && (isInactiveGame() || (!combatDamage && SettingsManager.isEnabled(GlobalSetting.NO_DAMAGE)))) {
             event.setCancelled(true);
         }
     }

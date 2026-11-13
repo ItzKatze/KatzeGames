@@ -7,6 +7,7 @@ import gg.itzkatze.katze.game.seed.SeedRequirement;
 import gg.itzkatze.katze.scoreboard.ScoreboardContent;
 import net.kyori.adventure.text.Component;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,6 +15,16 @@ import java.util.Collections;
 import java.util.List;
 
 public interface Challenge extends ChallengeSettings {
+
+    default boolean allowsGameplay(ChallengeType type) { return true; }
+
+    default boolean allowsCombination(ChallengeType type) { return true; }
+
+    default boolean locksChallengeSelection() { return false; }
+
+    default boolean requiresCombatDamage() { return false; }
+
+    @Nullable default Inventory getBackpack(KatzePlayer player) { return null; }
 
     default void onEnable() {}
 

@@ -370,7 +370,8 @@ public class KatzePlayer implements CommandCaller {
     }
 
     public @Nullable Inventory getBackpack() {
-        return null;
+        return ChallengeManager.getActiveChallenges().stream().map(challenge -> challenge.getBackpack(this))
+                .filter(Objects::nonNull).findFirst().orElse(null);
     }
 
     public @Nullable List<ItemStack> getBackpackContents() {

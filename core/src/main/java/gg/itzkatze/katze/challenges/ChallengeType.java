@@ -16,6 +16,7 @@ public enum ChallengeType {
     RANDOMIZER(new GUIMaterial(Material.SNIFFER_EGG)),
     ITEM_RAIN(new GUIMaterial(Material.DROPPER)),
     BINGO(new GUIMaterial(Material.MAP)),
+    MOB_ARMY(new GUIMaterial(Material.ZOMBIE_SPAWN_EGG)),
     ;
 
     private final GUIMaterial material;

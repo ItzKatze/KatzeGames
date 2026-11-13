@@ -1,6 +1,10 @@
 package gg.itzkatze.katze.bingo.match;
 
 import gg.itzkatze.katze.results.SavedBattle;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.kyori.adventure.translation.GlobalTranslator;
+import java.util.Locale;
 import gg.itzkatze.katze.util.JsonFiles;
 
 import java.io.IOException;
@@ -25,6 +29,13 @@ public final class BingoResultArchive {
             Pending saved = JsonFiles.read(file, Pending.class);
             if (saved != null) for (SavedBattle battle : saved.results()) pending.put(battle.id(), battle);
         } catch (IOException exception) { throw new UncheckedIOException(exception); }
+    }
+
+    public static SavedBattle.BingoCell cell(Component name, Component difficulty, String icon, int owner, String contributor, int claimedAt) {
+        var serializer = GsonComponentSerializer.gson();
+        return new SavedBattle.BingoCell(serializer.serialize(GlobalTranslator.render(name, Locale.ENGLISH)),
+                serializer.serialize(difficulty), icon, owner, contributor, claimedAt, null,
+                serializer.serialize(GlobalTranslator.render(name, Locale.GERMAN)));
     }
 
     public void submit(SavedBattle battle) {

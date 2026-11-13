@@ -27,6 +27,20 @@ configure(subprojects.filter { it.name != "clientmod" }) {
     apply(plugin = "io.freefair.lombok")
     apply(plugin = "com.diffplug.spotless")
 
+    tasks.register("ideaSyncTask") {
+        group = "ide"
+        description = "Runs client mod IDE setup when Loom is included in the build."
+        if (rootProject.findProject(":clientmod") != null) {
+            dependsOn(":clientmod:ideaSyncTask")
+        }
+    }
+
+    tasks.register("prepareKotlinBuildScriptModel") {
+        group = "ide"
+        description = "Prepares Kotlin build script models through the root project."
+        dependsOn(rootProject.tasks.matching { it.name == "prepareKotlinBuildScriptModel" })
+    }
+
     repositories {
         mavenCentral()
         mavenLocal()

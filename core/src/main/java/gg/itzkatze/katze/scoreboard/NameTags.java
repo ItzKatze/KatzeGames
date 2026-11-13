@@ -7,6 +7,8 @@ import gg.itzkatze.katze.level.LevelStore;
 import gg.itzkatze.katze.level.LevelTag;
 import gg.itzkatze.katze.player.KatzePlayer;
 import gg.itzkatze.katze.text.Texts;
+import gg.itzkatze.katze.text.TextArg;
+import gg.itzkatze.katze.util.KatzeColor;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -65,6 +67,8 @@ public final class NameTags {
                 .sorted(Comparator.comparing(Challenge::getType)).toList();
         for (KatzePlayer target : online) {
             onlineIds.add(target.getUuid());
+            Player listed = target.getPlayer();
+            if (listed != null) listed.setPlayerListOrder(target.isSpectator() ? 0 : target.isInTeam() ? target.getTeam().getId() + 1 : 999);
             Decoration decoration = new Decoration(LevelTag.of(LevelStore.get().level(target.getUuid())).append(Component.space()),
                     suffix(target, challenges));
             CachedDecoration cached = DECORATIONS.get(target.getUuid());
@@ -119,7 +123,9 @@ public final class NameTags {
                 .map(challenge -> challenge.getNametagSuffix(target))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElse(Component.empty());
+                .orElseGet(() -> target.getTeam() == null ? Component.empty()
+                        : Component.text(" | ", KatzeColor.GRAY).append(Component.translatable("katze.results.team",
+                                TextArg.number("id", target.getTeam().getId())).color(KatzeColor.LIGHT_BLUE)));
     }
 
     private static boolean isUuid(@NotNull String name) {

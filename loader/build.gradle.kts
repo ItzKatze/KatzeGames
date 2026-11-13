@@ -33,6 +33,7 @@ dependencies {
     implementation(project(":randomizer"))
     implementation(project(":itemrain"))
     implementation(project(":bingo"))
+    implementation(project(":mobarmy"))
     compileOnly("io.papermc.paper:paper-api:$paperVersion")
     testImplementation("io.papermc.paper:paper-api:$paperVersion")
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")

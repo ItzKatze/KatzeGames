@@ -14,7 +14,10 @@ import java.util.Set;
 import java.util.zip.ZipFile;
 
 public final class BuildPack {
-    private static final int ROW_PITCH = 19;
+    private static final int CELL_SIZE = 20;
+    private static final int ROW_PITCH = CELL_SIZE + 1;
+    private static final int BADGE_SIZE = 8;
+    private static final int BADGE_OFFSET = CELL_SIZE - BADGE_SIZE - 1;
     private record Icon(String texture, int advance) {}
 
     private static int advance(BufferedImage image) {
@@ -26,8 +29,9 @@ public final class BuildPack {
 
     public static void main(String[] args) throws Exception {
         Path module = Path.of(args[0]);
+        String version;
         try (ZipFile minecraft = new ZipFile(args[1])) {
-            String version = new MinecraftAssets(minecraft).json("version.json").get("id").getAsString();
+            version = new MinecraftAssets(minecraft).json("version.json").get("id").getAsString();
             BuildObjectives.generate(module, minecraft, args.length > 2 ? Path.of(args[2]) : module.resolve("src/main/item-icons/" + version));
         }
         List<String[]> entries = Files.readAllLines(module.resolve("src/main/resources/bingo/objectives.tsv"), StandardCharsets.UTF_8)
@@ -40,31 +44,33 @@ public final class BuildPack {
         Files.createDirectories(icons);
         Path mobs = textures.resolve("mobs");
         Files.createDirectories(mobs);
-        BufferedImage cells = new BufferedImage(90, 18, BufferedImage.TYPE_INT_ARGB);
+        var badges = BingoCategoryBadges.generate(args.length > 2 ? Path.of(args[2]) : module.resolve("src/main/item-icons/" + version));
+        for (var badge : badges.entrySet()) assets.texture("katzegames:bingo/categories/" + badge.getKey().toLowerCase(Locale.ROOT) + ".png", badge.getValue());
+        BufferedImage cells = new BufferedImage(5 * CELL_SIZE, CELL_SIZE, BufferedImage.TYPE_INT_ARGB);
         Graphics2D cellGraphics = cells.createGraphics();
         Color[] backgrounds = {new Color(35, 40, 51), new Color(28, 78, 145), new Color(161, 65, 29), new Color(28, 78, 145), new Color(161, 65, 29)};
         StringBuilder backgroundCharacters = new StringBuilder();
         for (int state = 0; state < 5; state++) {
-            int x = state * 18;
+            int x = state * CELL_SIZE;
             cellGraphics.setColor(backgrounds[state]);
-            cellGraphics.fillRect(x, 0, 18, 18);
+            cellGraphics.fillRect(x, 0, CELL_SIZE, CELL_SIZE);
             cellGraphics.setColor(state == 0 ? new Color(91, 100, 119) : state == 1 || state == 3 ? new Color(96, 181, 255) : new Color(255, 158, 92));
-            for (int edge = 0; edge < 18; edge++) {
+            for (int edge = 0; edge < CELL_SIZE; edge++) {
                 cellGraphics.fillRect(x + edge, 0, 1, 1);
-                cellGraphics.fillRect(x + edge, 17, 1, 1);
+                cellGraphics.fillRect(x + edge, CELL_SIZE - 1, 1, 1);
                 cellGraphics.fillRect(x, edge, 1, 1);
-                cellGraphics.fillRect(x + 17, edge, 1, 1);
+                cellGraphics.fillRect(x + CELL_SIZE - 1, edge, 1, 1);
             }
             if (state >= 3) {
                 cellGraphics.setColor(new Color(255, 218, 73));
-                cellGraphics.drawRect(x, 0, 17, 17);
+                cellGraphics.drawRect(x, 0, CELL_SIZE - 1, CELL_SIZE - 1);
             }
             backgroundCharacters.append((char) (0xE020 + state));
         }
         cellGraphics.dispose();
         assets.texture("katzegames:bingo/cells.png", cells);
         Files.deleteIfExists(textures.resolve("objectives.png"));
-        BufferedImage atlas = new BufferedImage(90, entries.size() * 18, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage atlas = new BufferedImage(5 * CELL_SIZE, entries.size() * CELL_SIZE, BufferedImage.TYPE_INT_ARGB);
         Graphics2D graphics = atlas.createGraphics();
         List<Icon> iconSources = new ArrayList<>();
         StringBuilder iconMaterials = new StringBuilder();
@@ -110,8 +116,9 @@ public final class BuildPack {
                 iconSources.add(new Icon(texture, advance(icon)));
                 iconMaterials.append(entry[0]).append('=').append(renderer.material(entry)).append('\n');
                 for (int state = 0; state < 5; state++) {
-                    graphics.drawImage(cells, state * 18, index * 18, state * 18 + 18, index * 18 + 18, state * 18, 0, state * 18 + 18, 18, null);
-                    graphics.drawImage(icon, state * 18 + 1, index * 18 + 1, 16, 16, null);
+                    graphics.drawImage(cells, state * CELL_SIZE, index * CELL_SIZE, state * CELL_SIZE + CELL_SIZE, index * CELL_SIZE + CELL_SIZE, state * CELL_SIZE, 0, state * CELL_SIZE + CELL_SIZE, CELL_SIZE, null);
+                    graphics.drawImage(icon, state * CELL_SIZE + 1, index * CELL_SIZE + 1, 16, 16, null);
+                    graphics.drawImage(badges.get(entry[1]), state * CELL_SIZE + BADGE_OFFSET, index * CELL_SIZE + BADGE_OFFSET, BADGE_SIZE, BADGE_SIZE, null);
                 }
             }
         }
@@ -128,21 +135,33 @@ public final class BuildPack {
         Files.deleteIfExists(textures.resolve("rows.png"));
         for (int row = 0; row < 5; row++) {
             List<FontProvider> providers = new ArrayList<>();
-            providers.add(BingoPackAssets.bitmap("katzegames:bingo/cells.png", 18, 7 - row * ROW_PITCH, List.of(backgroundCharacters.toString())));
-            providers.add(BingoPackAssets.bitmap("minecraft:font/ascii.png", 8, 2 - row * ROW_PITCH, numberCharacters));
-            var spaces = FontProvider.space().advance(0xE000, -104).advance(0xE010, -18).advance(0xE011, 2).advance(0xE012, 1);
+            providers.add(BingoPackAssets.bitmap("katzegames:bingo/cells.png", CELL_SIZE, 7 - row * ROW_PITCH, List.of(backgroundCharacters.toString())));
+            providers.add(BingoPackAssets.bitmap("minecraft:font/ascii.png", 8, 1 - row * ROW_PITCH, numberCharacters));
+            var spaces = FontProvider.space().advance(0xE000, -(9 + 5 * ROW_PITCH)).advance(0xE010, -CELL_SIZE).advance(0xE011, 2).advance(0xE012, 1).advance(0xE013, 1);
             for (int index = 0; index < iconSources.size(); index++) {
                 Icon icon = iconSources.get(index);
-                spaces.advance(0xF4000 + index, 18 - icon.advance());
+                spaces.advance(0xF4000 + index, BADGE_OFFSET - 1 - icon.advance());
                 providers.add(BingoPackAssets.bitmap(icon.texture(), 16, 6 - row * ROW_PITCH, List.of(Character.toString(0xF0000 + index))));
+            }
+            int category = 0;
+            for (String name : BingoCategoryBadges.CATEGORIES) {
+                providers.add(BingoPackAssets.bitmap("katzegames:bingo/categories/" + name.toLowerCase(Locale.ROOT) + ".png",
+                        BADGE_SIZE, 7 - BADGE_OFFSET - row * ROW_PITCH, List.of(Character.toString(0xE030 + category++))));
             }
             providers.add(spaces.build());
             assets.font("katzegames:bingo/row_" + row, providers);
         }
+        List<FontProvider> categoryProviders = new ArrayList<>();
+        for (int category = 0; category < BingoCategoryBadges.CATEGORIES.size(); category++) {
+            categoryProviders.add(BingoPackAssets.bitmap("katzegames:bingo/categories/" + BingoCategoryBadges.CATEGORIES.get(category).toLowerCase(Locale.ROOT) + ".png",
+                    BADGE_SIZE, 7, List.of(Character.toString(0xE030 + category))));
+        }
+        assets.font("katzegames:bingo/categories", categoryProviders);
         assets.font("katzegames:bingo/layout", List.of(
                 BingoPackAssets.bitmap("minecraft:font/ascii.png", 8, 7, numberCharacters),
-                FontProvider.space().advance(0xE001, 13).advance(0xE002, 15).build()));
+                FontProvider.space().advance(0xE001, 15).advance(0xE002, 16).build()));
         System.out.println("Direct Minecraft sprite references: " + nativeSprites + "/" + entries.size());
+        BingoBoardPreview.write(module, atlas, entries, badges, CELL_SIZE);
         BufferedImage preview = new BufferedImage(128, 128, BufferedImage.TYPE_INT_ARGB);
         Graphics2D cover = preview.createGraphics();
         cover.setColor(new Color(20, 25, 36));
@@ -152,8 +171,8 @@ public final class BuildPack {
         cover.drawString("BINGO", 31, 23);
         for (int row = 0; row < 5; row++) for (int col = 0; col < 5; col++) {
             int index = row * 5 + col;
-            cover.drawImage(atlas, 11 + col * 21, 29 + row * 19, 31 + col * 21, 47 + row * 19,
-                    (row == col ? 3 : 0) * 18, index * 18, (row == col ? 4 : 1) * 18, index * 18 + 18, null);
+            cover.drawImage(atlas, 11 + col * 21, 23 + row * 21, 31 + col * 21, 43 + row * 21,
+                    (row == col ? 3 : 0) * CELL_SIZE, index * CELL_SIZE, (row == col ? 4 : 1) * CELL_SIZE, index * CELL_SIZE + CELL_SIZE, null);
         }
         cover.dispose();
         assets.icon(preview);

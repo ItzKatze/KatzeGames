@@ -108,6 +108,25 @@ public final class GameWorldManager {
         return world;
     }
 
+    public static void deleteChallengeWorld(NamespacedKey key) {
+        if (!key.getNamespace().equals("katzegames") || !key.getKey().startsWith("arena_")) {
+            throw new IllegalArgumentException("Not a challenge arena world: " + key);
+        }
+        try {
+            GameWorldDirectory directory = new GameWorldDirectory(Bukkit.getServer(), key);
+            World world = Bukkit.getWorld(key);
+            if (world != null) {
+                directory.validateWorldPath(world.getWorldFolder().toPath());
+                if (!world.getPlayers().isEmpty() || !Bukkit.unloadWorld(world, false)) {
+                    throw new IOException("Could not unload " + key);
+                }
+            }
+            directory.delete();
+        } catch (IOException exception) {
+            throw new IllegalStateException("Could not remove challenge arena " + key, exception);
+        }
+    }
+
     public static void reset(Runnable onSuccess, Runnable onFailure) {
         if (resetting) return;
         resetting = true;

@@ -21,14 +21,17 @@ public record SavedBattle(UUID id, long startedAt, long endedAt, int durationSec
     }
 
     public record Bingo(List<String> competitors, int winner, String reason, List<Integer> winningLine, List<BingoCell> cells) {}
-    public record BingoCell(String name, String difficulty, String icon, int owner, String contributor, int claimedAt, String itemModel) {
+    public record BingoCell(String name, String difficulty, String icon, int owner, String contributor, int claimedAt, String itemModel, String germanName) {
+        public BingoCell(String name, String difficulty, String icon, int owner, String contributor, int claimedAt, String itemModel) {
+            this(name, difficulty, icon, owner, contributor, claimedAt, itemModel, null);
+        }
         public BingoCell(String name, String difficulty, String icon, int owner, String contributor, int claimedAt) {
             this(name, difficulty, icon, owner, contributor, claimedAt, null);
         }
     }
 
     public enum Game {
-        FORCE_BATTLE("ForceBattle"), ALL_ITEMS("AllItems"), DEATH_SWAP("DeathSwap"), BINGO("Bingo");
+        FORCE_BATTLE("ForceBattle"), ALL_ITEMS("AllItems"), DEATH_SWAP("DeathSwap"), BINGO("Bingo"), MOB_ARMY("MobArmy");
 
         private final String displayName;
 

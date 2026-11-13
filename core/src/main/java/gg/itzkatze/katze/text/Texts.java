@@ -115,6 +115,10 @@ public final class Texts {
         translator = null;
     }
 
+    public static boolean isGerman(@NotNull Locale locale) {
+        return KatzeTranslator.normalize(locale).equals(Locale.GERMAN);
+    }
+
     public static @NotNull Component render(@NotNull Component component, @NotNull Player player) {
         return GlobalTranslator.render(component, player.locale());
     }

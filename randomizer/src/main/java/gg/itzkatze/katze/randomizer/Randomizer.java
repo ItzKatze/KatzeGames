@@ -77,7 +77,8 @@ public class Randomizer implements Challenge {
     }
 
     private void onSettingChanged(Challenge challenge, Setting setting, SettingStateType oldState, SettingStateType newState) {
-        if (setting == RandomizerSettings.RandomizerSetting.SHARED_MAPPINGS) {
+        if (setting == RandomizerSettings.RandomizerSetting.SHARED_MAPPINGS
+                || setting == RandomizerSettings.RandomizerSetting.TEAM_MAPPINGS) {
             gameListener.resetMappings();
         }
     }

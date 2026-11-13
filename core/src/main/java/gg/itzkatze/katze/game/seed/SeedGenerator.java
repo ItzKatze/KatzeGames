@@ -84,7 +84,6 @@ public final class SeedGenerator {
             }
             running = new SeedGenerator(requirements, radius, onSuccess, onFailure);
             GameWorldManager.setPreparingSeed(true);
-            for (KatzePlayer player : KatzePlayer.getOnlinePlayers()) GameLifecycleManager.sendToLobby(player);
             running.beginCandidate();
         } catch (Exception exception) {
             if (running != null) running.fail("Seed preparation failed: " + exception.getMessage(), exception);
@@ -188,6 +187,10 @@ public final class SeedGenerator {
                 if (!budget.retry()) {
                     fail("No suitable battle seed found after " + budget.attempt() + " attempts. Adjust requirements or retry /start.", null);
                     return;
+                }
+                List<World> replacedWorlds = GameWorldManager.getWorlds();
+                for (KatzePlayer player : KatzePlayer.getOnlinePlayers()) {
+                    if (player.getPlayer() != null && replacedWorlds.contains(player.getPlayer().getWorld())) GameLifecycleManager.sendToLobby(player);
                 }
                 GameWorldManager.reset(this::beginCandidate, () -> {
                     if (running == this) fail("Failed to replace rejected seed. Retry /reset.", null);

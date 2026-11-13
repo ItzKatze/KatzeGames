@@ -88,7 +88,10 @@ public class ScoreboardManager {
                 .filter(c -> c.getScoreboardContent() != null)
                 .max(Comparator.comparingInt(c -> c.getScoreboardContent().getPriority()))
                 .orElse(null);
-        if (highestPriorityChallenge == null) return;
+        if (highestPriorityChallenge == null) {
+            removeSidebar(player);
+            return;
+        }
 
         ScoreboardContent content = highestPriorityChallenge.getScoreboardContent();
         if (content == null) return;

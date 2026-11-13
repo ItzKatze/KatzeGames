@@ -25,7 +25,6 @@ import gg.itzkatze.katze.util.KatzeColor;
 import gg.itzkatze.katze.util.StructureScanner;
 import gg.itzkatze.katze.util.WorldStorage;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -387,9 +386,8 @@ public final class BingoMatchManager {
             UUID contributor = match.contributors[cell];
             String contributorName = players.stream().filter(player -> player.id().equals(contributor)).map(SavedBattle.Player::name).findFirst().orElse("");
             String id = match.objectives.get(cell);
-            cells.add(new SavedBattle.BingoCell(GsonComponentSerializer.gson().serialize(catalog.name(id)),
-                    GsonComponentSerializer.gson().serialize(catalog.difficulty(id)), catalog.icon(id).name(), match.owners[cell], contributorName,
-                    match.claimedAt[cell], null));
+            cells.add(BingoResultArchive.cell(catalog.name(id), catalog.difficulty(id), catalog.icon(id).name(),
+                    match.owners[cell], contributorName, match.claimedAt[cell]));
         }
         SavedBattle.Bingo data = new SavedBattle.Bingo(match.competitors.stream().map(BingoCompetitor::name).toList(), match.winner,
                 match.result.name().toLowerCase(Locale.ROOT), match.winningLine, cells);
